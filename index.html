@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTO-Level AI & Cloud Architecture Consulting</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        container: {
+          center: true,
+          padding: "2rem",
+          screens: {
+            "2xl": "1400px",
+          },
+        },
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "system-ui", "sans-serif"],
+            serif: ["Playfair Display", "Georgia", "serif"],
+          },
+          colors: {
+            border: "hsl(var(--border))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            card: {
+              DEFAULT: "hsl(var(--card))",
+              foreground: "hsl(var(--card-foreground))",
+            },
+            muted: {
+              DEFAULT: "hsl(var(--muted))",
+              foreground: "hsl(var(--muted-foreground))",
+            },
+            secondary: {
+              DEFAULT: "hsl(var(--secondary))",
+              foreground: "hsl(var(--secondary-foreground))",
+            },
+            destructive: {
+              DEFAULT: "hsl(var(--destructive))",
+              foreground: "hsl(var(--destructive-foreground))",
+            },
+            gold: {
+              DEFAULT: "hsl(var(--gold))",
+              light: "hsl(var(--gold-light))",
+              dark: "hsl(var(--gold-dark))",
+            },
+          },
+          animation: {
+            "fade-in-up": "fade-in-up 0.7s ease-out forwards",
+            "fade-in": "fade-in 0.5s ease-out forwards",
+          },
+          keyframes: {
+            "fade-in-up": {
+              from: { opacity: "0", transform: "translateY(24px)" },
+              to: { opacity: "1", transform: "translateY(0)" },
+            },
+            "fade-in": {
+              from: { opacity: "0" },
+              to: { opacity: "1" },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+    @layer base {
+      :root {
+        --background: 220 20% 7%;
+        --foreground: 40 20% 92%;
+        --card: 220 18% 10%;
+        --card-foreground: 40 20% 92%;
+        --secondary: 220 15% 15%;
+        --secondary-foreground: 40 20% 85%;
+        --muted: 220 15% 13%;
+        --muted-foreground: 220 10% 55%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 220 15% 18%;
+        --gold: 40 65% 55%;
+        --gold-light: 40 70% 70%;
+        --gold-dark: 40 55% 40%;
+      }
+      
+      body {
+        @apply bg-background text-foreground font-sans antialiased;
+      }
+      
+      h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+      }
+    }
+
+    @layer utilities {
+      .text-gradient-gold {
+        background: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .glow-gold {
+        box-shadow: 0 0 40px -10px hsl(40 65% 55% / 0.3);
+      }
+    }
+
+    .btn-hero {
+      background-color: hsl(var(--gold));
+      color: hsl(220 20% 7%);
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .btn-hero:hover {
+      background-color: hsl(40 70% 70%);
+      transform: translateY(-2px);
+    }
+    .btn-hero-outline {
+      background-color: transparent;
+      color: hsl(var(--foreground));
+      border: 1px solid hsl(var(--border));
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .btn-hero-outline:hover {
+      border-color: hsl(var(--gold));
+      color: hsl(var(--gold));
+    }
+  </style>
+
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Calendly link widget -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <header class="absolute top-0 left-0 right-0 z-50 py-8">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="text-sm font-bold tracking-[0.2em] text-foreground uppercase flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-gold glow-gold"></div>
+        FAZAL K. <span class="text-muted-foreground font-normal">/ ADVISORY</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center"
+      style="background-image: url('./ai-architect-guild/src/assets/hero-bg.jpg'); opacity: 0.15;"></div>
+    <div class="absolute inset-0 bg-background/80"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent"></div>
+
+    <div class="relative z-10 container mx-auto px-6 py-32 text-center max-w-4xl">
+      <div class="inline-block mb-6 px-4 py-1.5 rounded-full border border-gold/20 bg-gold/5 animate-fade-in">
+        <span class="text-sm font-medium text-gold tracking-widest uppercase">
+          CTO-Level Advisory
+        </span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in-up text-foreground">
+        AI & Cloud Architecture Consulting for <span class="text-gradient-gold">High-Stakes Decisions</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto animate-fade-in-up"
+        style="animation-delay: 0.15s">
+        Design the right AI system, fix what's broken, or get clarity before you commit serious time and money.
+      </p>
+
+      <p class="text-base text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up"
+        style="animation-delay: 0.3s">
+        We work with GCC software companies, digital businesses, and founders to solve critical AI and AWS/Azure
+        architecture problems through short, outcome-driven engagements.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.45s">
+        <button class="btn-hero text-base" onclick="document.getElementById('contact-modal').showModal()">
+          Discuss Your Case
+          <i data-lucide="message-square" class="ml-1 w-5 h-5"></i>
+        </button>
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+          Request 1 Hour
+        </button>
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+          Request 3 Hour
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Positioning Strip -->
+  <section class="relative py-8 border-y border-border bg-card/50">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-wrap justify-center gap-x-10 gap-y-4">
+        <div class="flex items-center gap-2.5 text-muted-foreground">
+          <i data-lucide="brain" class="w-4 h-4 text-gold flex-shrink-0"></i>
+          <span class="text-sm font-medium whitespace-nowrap">AI System Design (LLMs, RAG, Agentic)</span>
+        </div>
+        <div class="flex items-center gap-2.5 text-muted-foreground">
+          <i data-lucide="cloud" class="w-4 h-4 text-gold flex-shrink-0"></i>
+          <span class="text-sm font-medium whitespace-nowrap">AWS & Azure Architecture</span>
+        </div>
+        <div class="flex items-center gap-2.5 text-muted-foreground">
+          <i data-lucide="search" class="w-4 h-4 text-gold flex-shrink-0"></i>
+          <span class="text-sm font-medium whitespace-nowrap">AI System Audits & Fix Plans</span>
+        </div>
+        <div class="flex items-center gap-2.5 text-muted-foreground">
+          <i data-lucide="workflow" class="w-4 h-4 text-gold flex-shrink-0"></i>
+          <span class="text-sm font-medium whitespace-nowrap">AI Automation Workflow Design</span>
+        </div>
+        <div class="flex items-center gap-2.5 text-muted-foreground">
+          <i data-lucide="user-check" class="w-4 h-4 text-gold flex-shrink-0"></i>
+          <span class="text-sm font-medium whitespace-nowrap">Short-Term CTO Advisory</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We Solve -->
+  <section class="py-24 bg-background">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4">What We Solve</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        You don't need more AI ideas.
+      </h2>
+      <p class="text-xl text-muted-foreground mb-12">
+        You need the right decisions <span class="text-foreground font-medium">before</span> you build.
+      </p>
+
+      <p class="text-muted-foreground mb-8 text-lg">We get involved when:</p>
+
+      <div class="space-y-5">
+        <div
+          class="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-border/50 hover:border-gold/20 transition-colors">
+          <i data-lucide="check-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">You are about to invest in an AI product or platform and want to avoid costly
+            mistakes</span>
+        </div>
+        <div
+          class="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-border/50 hover:border-gold/20 transition-colors">
+          <i data-lucide="check-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">Your AI system is underperforming, expensive, or poorly designed</span>
+        </div>
+        <div
+          class="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-border/50 hover:border-gold/20 transition-colors">
+          <i data-lucide="check-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">You need a production-grade AWS or Azure architecture before execution</span>
+        </div>
+        <div
+          class="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-border/50 hover:border-gold/20 transition-colors">
+          <i data-lucide="check-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">You want to automate workflows using AI but need a practical system
+            design</span>
+        </div>
+        <div
+          class="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-border/50 hover:border-gold/20 transition-colors">
+          <i data-lucide="check-circle" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">You don't have a CTO yet but need strong technical direction to get
+            started</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Offerings -->
+  <section class="py-24 bg-card/30">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Core Offerings</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-16 text-center">
+        How We Help
+      </h2>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          class="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="text-xs font-bold text-gold/50 tracking-widest">01</span>
+            <i data-lucide="shield" class="w-5 h-5 text-gold"></i>
+          </div>
+          <h3 class="text-lg font-bold text-foreground mb-3 font-serif">Before You Spend on AI — Get the Architecture
+            Right</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">We design production-grade AI architectures so you
+            invest with confidence, not guesswork.</p>
+        </div>
+
+        <div
+          class="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="text-xs font-bold text-gold/50 tracking-widest">02</span>
+            <i data-lucide="wrench" class="w-5 h-5 text-gold"></i>
+          </div>
+          <h3 class="text-lg font-bold text-foreground mb-3 font-serif">Your AI System Isn't Working — We Diagnose and
+            Fix It</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">We audit underperforming AI systems and deliver a
+            clear fix plan with prioritized actions.</p>
+        </div>
+
+        <div
+          class="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="text-xs font-bold text-gold/50 tracking-widest">03</span>
+            <i data-lucide="cpu" class="w-5 h-5 text-gold"></i>
+          </div>
+          <h3 class="text-lg font-bold text-foreground mb-3 font-serif">Design AI Automation That Actually Works</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">Practical AI workflow design for real business
+            processes — not demos, not experiments.</p>
+        </div>
+
+        <div
+          class="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="text-xs font-bold text-gold/50 tracking-widest">04</span>
+            <i data-lucide="cloud" class="w-5 h-5 text-gold"></i>
+          </div>
+          <h3 class="text-lg font-bold text-foreground mb-3 font-serif">AWS / Azure Architecture That Scales</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">Cloud architectures built for production: scalable,
+            cost-optimized, and reliable.</p>
+        </div>
+
+        <div
+          class="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]">
+          <div class="flex items-center gap-3 mb-5">
+            <span class="text-xs font-bold text-gold/50 tracking-widest">05</span>
+            <i data-lucide="message-square" class="w-5 h-5 text-gold"></i>
+          </div>
+          <h3 class="text-lg font-bold text-foreground mb-3 font-serif">Strategic AI Decision Session</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">A focused session to get clarity on your AI
+            direction, stack choices, or build-vs-buy decisions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sample Deliverables -->
+  <section class="py-24 bg-background">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Proof of Work</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+        Sample Deliverables
+      </h2>
+      <p class="text-muted-foreground text-center mb-16 max-w-2xl mx-auto">
+        Every engagement produces clear, written outputs. Here's what that looks like.
+      </p>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+
+        <!-- Blueprint Card -->
+        <div class="rounded-xl border border-border bg-card p-8 hover:border-gold/20 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 rounded-lg bg-gold/10">
+              <i data-lucide="file-text" class="w-5 h-5 text-gold"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-foreground font-serif">AI Architecture Blueprint</h3>
+              <p class="text-xs text-muted-foreground">Sample Extract</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-muted-foreground mb-6">
+            <span class="text-foreground font-medium">Use Case:</span> AI-powered document intelligence system for
+            enterprise workflows
+          </p>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex items-start gap-3 text-sm">
+              <i data-lucide="layers" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span class="text-secondary-foreground">Frontend + API Gateway → Orchestration → AI Layer (LLM + RAG +
+                Vector DB)</span>
+            </div>
+            <div class="flex items-start gap-3 text-sm">
+              <i data-lucide="database" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span class="text-secondary-foreground">PostgreSQL + S3 for structured/unstructured storage</span>
+            </div>
+            <div class="flex items-start gap-3 text-sm">
+              <i data-lucide="arrow-right" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span class="text-secondary-foreground">Query → Vector search → Context injection → Grounded LLM
+                response</span>
+            </div>
+          </div>
+
+          <div class="border-t border-border pt-5">
+            <p class="text-xs font-semibold text-gold uppercase tracking-wider mb-3">Key Decisions</p>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li class="flex items-start gap-2">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5"></i>
+                Use RAG over fine-tuning for early-stage flexibility
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5"></i>
+                Separate retrieval and generation layers for scalability
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5"></i>
+                Control cost via retrieval filtering and token optimization
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-5 p-3 rounded-lg bg-gold/5 border border-gold/10">
+            <p class="text-sm text-gold font-medium">
+              Outcome: Production-ready, scalable AI system with controlled cost and improved accuracy
+            </p>
+          </div>
+        </div>
+
+        <!-- Audit Card -->
+        <div class="rounded-xl border border-border bg-card p-8 hover:border-gold/20 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 rounded-lg bg-gold/10">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-gold"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-foreground font-serif">AI System Audit Report</h3>
+              <p class="text-xs text-muted-foreground">Sample Extract</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-muted-foreground mb-6">
+            <span class="text-foreground font-medium">System:</span> AI-powered search + recommendation engine
+          </p>
+
+          <div class="space-y-4 mb-6">
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-foreground">Incorrect Architecture</span>
+                  <span
+                    class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-destructive/20 text-destructive">Critical</span>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">No retrieval layer → high hallucination risk</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+              <i data-lucide="trending-down" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-foreground">Cost Inefficiency</span>
+                  <span
+                    class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-gold/15 text-gold">High</span>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">2–4x higher infra cost than necessary</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+              <i data-lucide="clock" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-foreground">Latency Bottleneck</span>
+                  <span
+                    class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-gold/15 text-gold">High</span>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">3–6 second response time, no streaming</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+              <i data-lucide="database" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-foreground">Weak Data Pipeline</span>
+                  <span
+                    class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-muted text-muted-foreground">Medium</span>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">No structured indexing, reliance on raw prompts</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-border pt-5">
+            <p class="text-xs font-semibold text-gold uppercase tracking-wider mb-3">Expected Outcome After Fix</p>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="text-center p-3 rounded-lg bg-gold/5 border border-gold/10">
+                <p class="text-lg font-bold text-gold">40–60%</p>
+                <p class="text-[10px] text-muted-foreground uppercase tracking-wider">Cost Reduction</p>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-gold/5 border border-gold/10">
+                <p class="text-lg font-bold text-gold">2–3x</p>
+                <p class="text-[10px] text-muted-foreground uppercase tracking-wider">Faster Response</p>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-gold/5 border border-gold/10">
+                <p class="text-lg font-bold text-gold">↑↑</p>
+                <p class="text-[10px] text-muted-foreground uppercase tracking-wider">Output Relevance</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Fractional CTO -->
+  <section class="py-24 bg-card/30">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="rounded-xl border border-gold/20 bg-card p-10 md:p-14 glow-gold">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 rounded-lg bg-gold/10">
+            <i data-lucide="rocket" class="w-5 h-5 text-gold"></i>
+          </div>
+          <p class="text-sm font-semibold text-gold tracking-widest uppercase">For Founders</p>
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          Startup Launch CTO
+        </h2>
+        <p class="text-muted-foreground mb-8 text-lg max-w-2xl">
+          For founders without a technical co-founder who need to get their product and technology direction right
+          before execution. A structured, short-term engagement — not an ongoing CTO role.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3 mb-8">
+          <div class="flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm text-foreground/90">Define what to build</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm text-foreground/90">Design the system architecture</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm text-foreground/90">Choose the right tech stack</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm text-foreground/90">Create a build-ready roadmap</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm text-foreground/90">Evaluate developers or vendors</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-6 pt-6 border-t border-border">
+          <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <i data-lucide="clock" class="w-4 h-4 text-gold"></i>
+            <span>2–6 weeks or defined hours</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <i data-lucide="rocket" class="w-4 h-4 text-gold"></i>
+            <span>Complete technical blueprint & execution-ready plan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Work -->
+  <section class="py-20 bg-background">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Process</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">How We Work</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="globe" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">Fully remote</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="clock" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">1 hour to 3 days (core engagements)</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="target" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">Short-term, sharply scoped</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="file-text" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">Outcome-driven with written deliverables</span>
+        </div>
+      </div>
+      <p class="text-center text-muted-foreground mt-8 text-sm italic">
+        Every engagement produces clear, written outputs you can act on immediately.
+      </p>
+    </div>
+  </section>
+
+  <!-- Why Us -->
+  <section class="py-20 bg-card/30">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Why Us</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">The Difference</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="award" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">CTO-level experience building real systems at scale</span>
+        </div>
+        <div class="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="server" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">Deep AI + cloud architecture expertise</span>
+        </div>
+        <div class="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="zap" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">Focus on production-grade systems, not experimentation</span>
+        </div>
+        <div class="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="target" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
+          <span class="text-foreground/90">Built for businesses making serious decisions</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who We Work With -->
+  <section class="py-20 bg-background">
+    <div class="container mx-auto px-6 max-w-4xl text-center">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Clients</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center font-serif">Who We Work With</h2>
+      <div class="grid sm:grid-cols-2 gap-5 text-left">
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="building-2" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">GCC Software & IT Companies</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="rocket" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">SaaS & Platform Businesses</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="cpu" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">Digital Transformation Firms</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="users" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">Founders Building AI Products</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Book a Session -->
+  <section id="book" class="py-20 md:py-28 bg-card/30">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">
+        Request a Session
+      </p>
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center font-serif">
+        Choose the Right Engagement
+      </h2>
+      <p class="text-lg text-muted-foreground mb-4 text-center max-w-2xl mx-auto">
+        These engagements are typically used before committing significant time, budget, or build effort. Pick the depth that matches your decision.
+      </p>
+      <p class="text-sm font-semibold text-gold/80 mb-10 text-center max-w-2xl mx-auto tracking-wide">
+        All session requests are reviewed before confirmation to ensure the engagement is well-scoped and valuable.
+      </p>
+
+      <div class="max-w-3xl mx-auto mb-16 grid gap-6">
+        <div class="p-6 rounded-xl bg-gold/5 border border-gold/20 text-center">
+          <p class="text-sm text-foreground/90 font-medium">
+            <span class="text-gold font-bold">Pricing Philosophy:</span> Engagements are priced based on depth of involvement and complexity of decision-making — not just time spent.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">When to Engage</h3>
+          <div class="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
+            <div class="flex items-start gap-3 bg-card border border-border/50 p-4 rounded-lg">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span>Before committing to AI or cloud development</span>
+            </div>
+            <div class="flex items-start gap-3 bg-card border border-border/50 p-4 rounded-lg">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span>When architecture decisions are unclear</span>
+            </div>
+            <div class="flex items-start gap-3 bg-card border border-border/50 p-4 rounded-lg">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span>When systems are not performing as expected</span>
+            </div>
+            <div class="flex items-start gap-3 bg-card border border-border/50 p-4 rounded-lg">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+              <span>When incorrect decisions risk wasted time or cost</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8 text-left">
+        <!-- 1 Hour -->
+        <div class="relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold/20 to-transparent"></div>
+          <div class="p-8 flex flex-col flex-1">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-gold"></i>
+                <span class="text-sm font-bold text-gold tracking-wide uppercase">1 Hour</span>
+              </div>
+              <span class="text-2xl font-bold text-foreground font-serif">
+                $350<span class="text-xs text-muted-foreground font-sans font-normal ml-1">USD</span>
+              </span>
+            </div>
+            
+            <div class="flex items-start gap-3 mb-4">
+              <i data-lucide="target" class="w-6 h-6 text-gold flex-shrink-0 mt-1"></i>
+              <h3 class="text-xl font-bold text-foreground font-serif">Strategic Clarity Session</h3>
+            </div>
+            
+            <p class="text-sm text-muted-foreground leading-relaxed mb-6">
+              A focused, high-impact session for leaders who need fast clarity on a specific AI or cloud architecture decision.
+            </p>
+            
+            <div class="mb-6">
+              <p class="text-xs font-semibold text-foreground/70 uppercase tracking-wider mb-3">Ideal For</p>
+              <ul class="space-y-2">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Evaluating AI feasibility for a product or workflow</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Choosing between build vs. buy for an AI capability</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Getting a second opinion on an existing architecture</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Understanding LLM, RAG, or agentic workflow fit</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="mb-8 p-4 rounded-lg bg-secondary/50 border border-border/30">
+              <p class="text-xs font-semibold text-gold uppercase tracking-wider mb-2">What You Get</p>
+              <p class="text-sm text-foreground/80 leading-relaxed">
+                Walk away with a clear recommendation, decision framework, or validated direction — documented in a follow-up summary.
+              </p>
+            </div>
+            
+            <div class="mt-auto">
+              <button class="w-full btn-hero bg-card border border-gold text-gold hover:bg-gold hover:text-[#0e121a] flex justify-center items-center py-3 rounded-lg font-semibold transition-colors" onclick="document.getElementById('modal-1hr-intake').showModal()">
+                Request 1 Hour Session
+                <i data-lucide="arrow-right" class="ml-1 w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Hours -->
+        <div class="relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold/50 to-transparent"></div>
+          <div class="p-8 flex flex-col flex-1">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-2">
+                <i data-lucide="zap" class="w-4 h-4 text-gold"></i>
+                <span class="text-sm font-bold text-gold tracking-wide uppercase">3 Hours</span>
+              </div>
+              <span class="text-2xl font-bold text-foreground font-serif">
+                $1,200<span class="text-xs text-muted-foreground font-sans font-normal ml-1">USD</span>
+              </span>
+            </div>
+            
+            <div class="flex items-start gap-3 mb-4">
+              <i data-lucide="zap" class="w-6 h-6 text-gold flex-shrink-0 mt-1"></i>
+              <h3 class="text-xl font-bold text-foreground font-serif">Architecture Decision Intensive</h3>
+            </div>
+            
+            <p class="text-sm text-muted-foreground leading-relaxed mb-6">
+              A structured deep-dive into your system, constraints, and key decisions. Designed to arrive at clear architectural direction and next steps.
+            </p>
+            
+            <div class="mb-6">
+              <p class="text-xs font-semibold text-foreground/70 uppercase tracking-wider mb-3">Ideal For</p>
+              <ul class="space-y-2">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Designing a full AI system architecture end-to-end</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Auditing and troubleshooting an underperforming AI system</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Planning an AWS/Azure migration or optimization</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Building a technical roadmap for a new AI product</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="mb-8 p-4 rounded-lg bg-secondary/50 border border-border/30">
+              <p class="text-xs font-semibold text-gold uppercase tracking-wider mb-2">What You Get</p>
+              <p class="text-sm text-foreground/80 leading-relaxed">
+                You receive a detailed written brief with architecture recommendations, risk assessment, and prioritized next steps.
+              </p>
+            </div>
+            
+            <div class="mt-auto">
+              <button class="w-full btn-hero text-base" onclick="document.getElementById('modal-3hr-intake').showModal()">
+                Request 3 Hour Intensive
+                <i data-lucide="arrow-right" class="ml-1 w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1 Day -->
+        <div class="relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-dark/40 to-transparent"></div>
+          <div class="p-8 flex flex-col flex-1">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-gold"></i>
+                <span class="text-sm font-bold text-gold tracking-wide uppercase">1 Full Day</span>
+              </div>
+              <span class="text-2xl font-bold text-foreground font-serif">
+                $3,000<span class="text-xs text-muted-foreground font-sans font-normal ml-1">USD</span>
+              </span>
+            </div>
+            
+            <div class="flex items-start gap-3 mb-4">
+              <i data-lucide="file-text" class="w-6 h-6 text-gold flex-shrink-0 mt-1"></i>
+              <h3 class="text-xl font-bold text-foreground font-serif">AI Architecture Blueprint</h3>
+            </div>
+            
+            <p class="text-sm text-muted-foreground leading-relaxed mb-4">
+              Used for defining architecture, resolving complex decisions, or working through system design in depth.
+            </p>
+
+            <div class="mb-6 p-3 rounded-lg bg-gold/5 border border-gold/20">
+              <p class="text-xs text-muted-foreground leading-relaxed font-medium">
+                <span class="text-gold font-bold">Note:</span> This is a dedicated engagement, not hourly consulting. The day is reserved exclusively for your problem, with full context immersion and priority focus.
+              </p>
+            </div>
+            
+            <div class="mb-6">
+              <p class="text-xs font-semibold text-foreground/70 uppercase tracking-wider mb-3">Ideal For</p>
+              <ul class="space-y-2">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Launching a new AI-powered product or platform</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Re-architecting an existing system for scale</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Creating a technical blueprint before hiring developers</span>
+                </li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-gold/70 flex-shrink-0 mt-0.5"></i>
+                  <span>Building investor-ready technical documentation</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="mb-8 p-4 rounded-lg bg-secondary/50 border border-border/30">
+              <p class="text-xs font-semibold text-gold uppercase tracking-wider mb-2">What You Get</p>
+              <p class="text-sm text-foreground/80 leading-relaxed">
+                A full architecture document covering system design, tech stack, data flow, cloud infrastructure, cost estimates, and an execution-ready build plan.
+              </p>
+            </div>
+            
+            <div class="mt-auto">
+              <button class="w-full btn-hero text-base" onclick="document.getElementById('modal-1day-intake').showModal()">
+                Request 1 Full Day
+                <i data-lucide="arrow-right" class="ml-1 w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="py-24 bg-card/30 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-gold/5 to-transparent"></div>
+    <div class="relative container mx-auto px-6 max-w-3xl text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-6">
+        Ready to Make the Right Decision?
+      </h2>
+      <p class="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
+        If you are planning, fixing, or accelerating an AI or cloud initiative, we determine the optimal architectural direction and mitigate build risks fast.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button class="btn-hero text-base" onclick="document.getElementById('contact-modal').showModal()">
+          Discuss Your Case
+          <i data-lucide="message-square" class="ml-1 w-5 h-5"></i>
+        </button>
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+          Request 1 Hour
+        </button>
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+          Request 3 Hour
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 border-t border-border bg-background">
+    <div class="container mx-auto px-6 text-center">
+      <p class="text-sm text-muted-foreground max-w-lg mx-auto">
+        CTO-level AI and cloud architecture consulting for businesses that need clarity before execution.
+      </p>
+      <p class="text-xs text-muted-foreground/50 mt-4">
+        © 2026 All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <dialog id="contact-modal"
+    class="backdrop:bg-black/80 backdrop:backdrop-blur-sm bg-transparent p-0 m-auto rounded-xl open:animate-fade-in-up w-[90%] max-w-md shadow-2xl">
+    <div class="bg-card border border-border/50 p-6 md:p-8 rounded-xl relative">
+      <button onclick="document.getElementById('contact-modal').close()"
+        class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors" type="button">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h3 class="text-2xl font-bold text-foreground mb-2 font-serif text-center">Discuss Your Use Case</h3>
+      <p class="text-sm text-muted-foreground text-center mb-6">Not sure what you need? Share your situation and we'll recommend the right engagement.</p>
+
+      <consulting-form session="discuss"></consulting-form>
+    </div>
+  </dialog>
+
+  <!-- 1-Hour Intake Modal Skeleton -->
+  <dialog id="modal-1hr-intake" class="backdrop:bg-black/80 backdrop:backdrop-blur-sm bg-transparent p-0 m-auto rounded-xl open:animate-fade-in-up w-[90%] max-w-md shadow-2xl">
+    <div class="bg-card border border-border/50 p-6 md:p-8 rounded-xl relative">
+      <button onclick="document.getElementById('modal-1hr-intake').close()" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors" type="button">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 class="text-2xl font-bold text-foreground mb-2 font-serif text-center">Strategic Clarity Session</h3>
+      <p class="text-sm text-muted-foreground text-center mb-6">Please complete this pre-qualification form to book your 1-hour session.</p>
+      
+      <consulting-form session="1hour"></consulting-form>
+    </div>
+  </dialog>
+
+  <!-- 3-Hour Intake Modal Skeleton -->
+  <dialog id="modal-3hr-intake" class="backdrop:bg-black/80 backdrop:backdrop-blur-sm bg-transparent p-0 m-auto rounded-xl open:animate-fade-in-up w-[90%] max-w-md shadow-2xl">
+    <div class="bg-card border border-border/50 p-6 md:p-8 rounded-xl relative">
+      <button onclick="document.getElementById('modal-3hr-intake').close()" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors" type="button">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 class="text-2xl font-bold text-foreground mb-2 font-serif text-center">Decision Intensive</h3>
+      <p class="text-sm text-muted-foreground text-center mb-6">Please complete this pre-qualification form to book your 3-hour intensive.</p>
+      
+      <consulting-form session="3hour"></consulting-form>
+    </div>
+  </dialog>
+
+  <!-- 1-Day Intake Modal Skeleton -->
+  <dialog id="modal-1day-intake" class="backdrop:bg-black/80 backdrop:backdrop-blur-sm bg-transparent p-0 m-auto rounded-xl open:animate-fade-in-up w-[90%] max-w-md shadow-2xl">
+    <div class="bg-card border border-border/50 p-6 md:p-8 rounded-xl relative">
+      <button onclick="document.getElementById('modal-1day-intake').close()" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors" type="button">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 class="text-2xl font-bold text-foreground mb-2 font-serif text-center">Architecture Blueprint</h3>
+      <p class="text-sm text-muted-foreground text-center mb-6">Please complete this pre-qualification form to request a 1-Day session.</p>
+      
+      <consulting-form session="1day"></consulting-form>
+    </div>
+  </dialog>
+
+  <style>
+    /* Styling for the internal modal scroll area */
+    .form-scroll-area::-webkit-scrollbar {
+      width: 4px;
+    }
+    .form-scroll-area::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1); 
+    }
+    .form-scroll-area::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.3); 
+      border-radius: 4px;
+    }
+    .form-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.5); 
+    }
+  </style>
+
+  <script>
+    class ConsultingForm extends HTMLElement {
+      connectedCallback() {
+        const session = this.getAttribute("session") || "discuss";
+
+        const labelClass = 'block text-sm font-medium text-foreground mb-1.5 mt-4';
+        const inputClass = 'w-full bg-background border border-border rounded-md px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors';
+        const textareaClass = 'w-full bg-background border border-border rounded-md px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors resize-none';
+        const checkboxLabelClass = 'flex items-start gap-3 text-sm text-foreground font-medium mt-6 cursor-pointer border border-border/30 bg-background/50 p-4 rounded-lg hover:border-gold/30 transition-colors';
+        const checkboxInputClass = 'w-5 h-5 mt-0.5 text-gold bg-background border-border rounded focus:ring-gold focus:ring-1 cursor-pointer shrink-0';
+
+        const mapHTML = (html) => {
+          return html
+            .replace(/<label(.*?)>(.*?)<\/label>/g, (m, attrs, content) => {
+              if (content.includes('type="checkbox"')) return m;
+              return `<label class="${labelClass}">${content}</label>`;
+            })
+            .replace(/<input type="text"(.*?)>/g, `<input type="text" class="${inputClass}"$1>`)
+            .replace(/<input type="email"(.*?)>/g, `<input type="email" class="${inputClass}"$1>`)
+            .replace(/<input type="url"(.*?)>/g, `<input type="url" class="${inputClass}"$1>`)
+            .replace(/<textarea(.*?)>/g, `<textarea class="${textareaClass}" rows="3" $1></textarea>`)
+            .replace(/<select(.*?)>/g, `<select class="${inputClass}"$1>`)
+            .replace(/<label>(\s*)<input type="checkbox" (.*?)>(\s*)(.*?)(\s*)<\/label>/gs, 
+              `<label class="${checkboxLabelClass}"><input type="checkbox" class="${checkboxInputClass}" $2><span>$4</span></label>`);
+        };
+
+        const baseFields = mapHTML(`
+          <label>Full Name *</label>
+          <input type="text" name="name" required>
+
+          <label>Work Email *</label>
+          <input type="email" name="email" required>
+
+          <label>Company Name</label>
+          <input type="text" name="company_name">
+
+          <label>Role / Designation *</label>
+          <input type="text" name="role_designation" required>
+        `);
+
+        const formsObj = {
+          "1hour": mapHTML(`
+            <label>Session Focus *</label>
+            <select name="session_intent" required>
+              <option value="">Select</option>
+              <option>Validate AI approach</option>
+              <option>Architecture decision</option>
+              <option>Tool/stack selection</option>
+              <option>Specific technical issue</option>
+            </select>
+            <label>Problem *</label>
+            <textarea name="problem" minlength="150" required placeholder="Describe your challenge in detail..."></textarea>
+            <label>Stage *</label>
+            <select name="stage" required>
+              <option value="">Select</option>
+              <option>Idea</option>
+              <option>Early build</option>
+              <option>Existing system</option>
+              <option>Scaling</option>
+            </select>
+            <label>Expected Outcome *</label>
+            <textarea name="outcome" required placeholder="What defines a successful session?"></textarea>
+            <label>
+              <input type="checkbox" required>
+              I confirm this is a focused query, not broad consulting
+            </label>
+          `),
+          "3hour": mapHTML(`
+            <label>Engagement Type *</label>
+            <select name="engagement_type" required>
+              <option value="">Select</option>
+              <option>AI system design</option>
+              <option>Architecture review</option>
+              <option>System evaluation</option>
+              <option>Performance issues</option>
+              <option>Automation design</option>
+            </select>
+            <label>Problem Description *</label>
+            <textarea name="problem" minlength="250" required placeholder="Please provide deep context..."></textarea>
+            <label>System State *</label>
+            <select name="system_state" required>
+              <option value="">Select</option>
+              <option>Idea</option>
+              <option>MVP</option>
+              <option>Production</option>
+              <option>Scaling</option>
+            </select>
+            <label>Complexity *</label>
+            <select name="complexity" required>
+              <option value="">Select</option>
+              <option>Single feature</option>
+              <option>Product</option>
+              <option>Platform</option>
+            </select>
+            <label>Key Decisions *</label>
+            <textarea name="decisions" required placeholder="List exactly what decisions must be made."></textarea>
+            <label>
+              <input type="checkbox" required>
+              I understand this is not full system design
+            </label>
+          `),
+          "1day": mapHTML(`
+            <label>Have you worked with us before? *</label>
+            <select name="prior_work" required>
+              <option value="">Select</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+            <label>Context *</label>
+            <textarea name="context" required></textarea>
+            <label>Problem Scope *</label>
+            <textarea name="scope" minlength="300" required></textarea>
+            <label>System Complexity *</label>
+            <select name="complexity" required>
+              <option value="">Select</option>
+              <option>Advanced</option>
+              <option>Multi-system</option>
+              <option>Multi-region</option>
+              <option>Enterprise</option>
+            </select>
+            <label>Objective *</label>
+            <textarea name="objective" required></textarea>
+            <label>
+              <input type="checkbox" required>
+              I understand approval is required
+            </label>
+          `),
+          "discuss": mapHTML(`
+            <label>Situation *</label>
+            <select name="situation" required>
+              <option value="">Select</option>
+              <option>Build AI product</option>
+              <option>Fix existing system</option>
+              <option>Explore AI</option>
+              <option>Not sure</option>
+            </select>
+            <label>Description *</label>
+            <textarea name="description" minlength="200" required></textarea>
+            <label>Stage *</label>
+            <select name="stage" required>
+              <option value="">Select</option>
+              <option>Idea</option>
+              <option>Planning</option>
+              <option>Building</option>
+              <option>Live</option>
+            </select>
+            <label>Scope *</label>
+            <select name="scope" required>
+              <option value="">Select</option>
+              <option>Small</option>
+              <option>Product</option>
+              <option>Platform</option>
+            </select>
+            <label>Urgency *</label>
+            <select name="urgency" required>
+              <option value="">Select</option>
+              <option>Immediate</option>
+              <option>2-4 weeks</option>
+              <option>Exploring</option>
+            </select>
+          `)
+        };
+        let redirectUrl = window.location.origin + "/confirm.html?session=" + session;
+
+        this.innerHTML = `
+          <form action="https://api.web3forms.com/submit" method="POST" class="mt-4 relative">
+            <input type="hidden" name="access_key" value="46096084-aca6-4527-ba17-4d8b952dead2">
+            <input type="hidden" name="subject" value="Consulting Setup Request - ${session}">
+            <input type="hidden" name="from_name" value="Consulting Profile Flow">
+            <input type="hidden" name="redirect" value="${redirectUrl}">
+            <input type="checkbox" name="botcheck" class="hidden">
+
+            <div class="max-h-[55vh] overflow-y-auto pr-3 pb-2 form-scroll-area">
+              ${baseFields}
+              ${formsObj[session] || formsObj["discuss"]}
+              ${mapHTML('<label>Reference Link / Repo</label><input type="url" name="reference" placeholder="https://...">')}
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-border">
+              <button type="submit" class="w-full btn-hero text-base py-3">Submit Request <i data-lucide="arrow-right" class="w-4 h-4 ml-1 inline"></i></button>
+            </div>
+          </form>
+        `;
+        
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }
+    }
+    customElements.define("consulting-form", ConsultingForm);
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

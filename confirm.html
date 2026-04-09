@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Submitted | FAZAL K. / ADVISORY</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        container: {
+          center: true,
+          padding: "2rem",
+          screens: {
+            "2xl": "1400px",
+          },
+        },
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "system-ui", "sans-serif"],
+            serif: ["Playfair Display", "Georgia", "serif"],
+          },
+          colors: {
+            border: "hsl(var(--border))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            card: {
+              DEFAULT: "hsl(var(--card))",
+              foreground: "hsl(var(--card-foreground))",
+            },
+            muted: {
+              DEFAULT: "hsl(var(--muted))",
+              foreground: "hsl(var(--muted-foreground))",
+            },
+            secondary: {
+              DEFAULT: "hsl(var(--secondary))",
+              foreground: "hsl(var(--secondary-foreground))",
+            },
+            gold: {
+              DEFAULT: "hsl(var(--gold))",
+              light: "hsl(var(--gold-light))",
+              dark: "hsl(var(--gold-dark))",
+            },
+          },
+          animation: {
+            "fade-in-up": "fade-in-up 0.7s ease-out forwards",
+          },
+          keyframes: {
+            "fade-in-up": {
+              from: { opacity: "0", transform: "translateY(24px)" },
+              to: { opacity: "1", transform: "translateY(0)" },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+    @layer base {
+      :root {
+        --background: 220 20% 7%;
+        --foreground: 40 20% 92%;
+        --card: 220 18% 10%;
+        --card-foreground: 40 20% 92%;
+        --secondary: 220 15% 15%;
+        --secondary-foreground: 40 20% 85%;
+        --muted: 220 15% 13%;
+        --muted-foreground: 220 10% 55%;
+        --border: 220 15% 18%;
+        --gold: 40 65% 55%;
+        --gold-light: 40 70% 70%;
+        --gold-dark: 40 55% 40%;
+      }
+      
+      body {
+        @apply bg-background text-foreground font-sans antialiased;
+      }
+      
+      h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+      }
+    }
+
+    .btn-hero {
+      background-color: hsl(var(--gold));
+      color: #0e121a;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .btn-hero:hover {
+      background-color: hsl(var(--gold-light));
+      transform: translateY(-2px);
+    }
+    .btn-hero-outline {
+      background-color: transparent;
+      color: hsl(var(--foreground));
+      border: 1px solid hsl(var(--border));
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .btn-hero-outline:hover {
+      border-color: hsl(var(--gold));
+      color: hsl(var(--gold));
+    }
+  </style>
+
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background">
+
+  <!-- Navigation -->
+  <header class="absolute top-0 left-0 right-0 z-50 py-8">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="text-sm font-bold tracking-[0.2em] text-foreground uppercase flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-gold glow-gold"></div>
+        FAZAL K. <span class="text-muted-foreground font-normal">/ ADVISORY</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Success Card -->
+  <main class="relative z-10 w-full max-w-2xl px-6 animate-fade-in-up py-24">
+    <div class="bg-card/0 border-none rounded-2xl md:p-14 text-center">
+      
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/10 border border-gold/20 mb-8 mx-auto">
+        <i data-lucide="check-circle-2" class="w-10 h-10 text-gold"></i>
+      </div>
+
+      <h1 class="text-3xl md:text-4xl font-bold text-foreground mb-4 font-serif" id="success-heading">
+        Your request has been submitted
+      </h1>
+      
+      <p class="text-lg text-foreground/80 mb-10 max-w-xl mx-auto leading-relaxed" id="success-subheading">
+        We've received your details and will review your request to ensure the session is well-scoped and valuable.
+      </p>
+
+      <div class="bg-card border border-border/50 rounded-xl p-8 mb-10 text-left w-full max-w-lg mx-auto shadow-sm">
+        <h3 class="text-[11px] font-bold text-gold tracking-[0.2em] uppercase mb-6 border-b border-border/50 pb-4">What Happens Next</h3>
+        
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+            <span class="text-sm text-foreground/90 leading-relaxed">Your request will be reviewed based on scope, clarity, and fit.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+            <span class="text-sm text-foreground/90 leading-relaxed">If approved, you'll receive a session recommendation along with a private booking link.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
+            <span class="text-sm text-foreground/90 leading-relaxed">If required, we may suggest a different engagement to better match your needs.</span>
+          </li>
+        </ul>
+
+        <div class="flex items-center justify-between p-4 bg-background rounded-lg border border-border/50 mb-6">
+          <div class="flex items-center gap-3">
+            <i data-lucide="clock" class="w-4 h-4 text-gold flex-shrink-0"></i>
+            <span class="text-sm font-semibold text-foreground">Response time</span>
+          </div>
+          <span class="text-sm text-muted-foreground font-mono">Within 12–24 hours</span>
+        </div>
+
+        <div class="p-4 bg-gold/5 border border-gold/10 rounded-lg">
+          <p class="text-xs text-gold/80 leading-relaxed font-medium">
+            Each session is intentionally structured and limited in scope to ensure meaningful outcomes. This review process helps us maintain that quality.
+          </p>
+        </div>
+      </div>
+
+      <div id="event-details" class="mb-10 text-center hidden">
+        <p class="text-xs text-muted-foreground uppercase tracking-widest mb-2 font-semibold">Requested Engagement</p>
+        <p class="text-lg text-foreground font-serif" id="display-event-name"></p>
+        <p class="text-sm text-gold mt-1" id="display-duration"></p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        <a href="index.html" class="btn-hero text-base">
+          Back to Home
+          <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Session Meta mappings
+    const sessionMeta = {
+      "1hour": { title: "Strategic Clarity Session", duration: "1 Hour" },
+      "3hour": { title: "Architecture Decision Intensive", duration: "3 Hours" },
+      "1day": { title: "AI Architecture Blueprint", duration: "1 Full Day" },
+      "discuss": { title: "Consulting Inquiry", duration: "Evaluation" }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionParam = urlParams.get('session'); 
+
+      if (sessionParam) {
+        document.getElementById('event-details').classList.remove('hidden');
+        const meta = sessionMeta[sessionParam] || { title: "Consulting Inquiry" };
+        
+        document.getElementById('display-event-name').textContent = meta.title;
+
+        if (meta.duration) {
+          document.getElementById('display-duration').textContent = "(" + meta.duration + ")";
+        }
+      }
+    });
+
+  </script>
+</body>
+</html>
