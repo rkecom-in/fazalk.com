@@ -199,10 +199,10 @@
           Discuss Your Case
           <i data-lucide="message-square" class="ml-1 w-5 h-5"></i>
         </button>
-        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('session-1hr').scrollIntoView({behavior: 'smooth', block: 'start'})">
           Request 1 Hour
         </button>
-        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('session-3hr').scrollIntoView({behavior: 'smooth', block: 'start'})">
           Request 3 Hour
         </button>
       </div>
@@ -698,7 +698,7 @@
 
       <div class="grid lg:grid-cols-3 gap-8 text-left">
         <!-- 1 Hour -->
-        <div class="relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+        <div id="session-1hr" class="scroll-mt-12 relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
           <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold/20 to-transparent"></div>
           <div class="p-8 flex flex-col flex-1">
             <div class="flex items-center justify-between mb-6">
@@ -759,7 +759,7 @@
         </div>
 
         <!-- 3 Hours -->
-        <div class="relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+        <div id="session-3hr" class="scroll-mt-12 relative flex flex-col rounded-2xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 overflow-hidden group">
           <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold/50 to-transparent"></div>
           <div class="p-8 flex flex-col flex-1">
             <div class="flex items-center justify-between mb-6">
@@ -905,10 +905,10 @@
           Discuss Your Case
           <i data-lucide="message-square" class="ml-1 w-5 h-5"></i>
         </button>
-        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('session-1hr').scrollIntoView({behavior: 'smooth', block: 'start'})">
           Request 1 Hour
         </button>
-        <button class="btn-hero-outline text-base" onclick="document.getElementById('book').scrollIntoView({behavior: 'smooth'})">
+        <button class="btn-hero-outline text-base" onclick="document.getElementById('session-3hr').scrollIntoView({behavior: 'smooth', block: 'start'})">
           Request 3 Hour
         </button>
       </div>
