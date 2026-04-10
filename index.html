@@ -110,6 +110,27 @@
       .glow-gold {
         box-shadow: 0 0 40px -10px hsl(40 65% 55% / 0.3);
       }
+
+      /* Scroll Reveal Styles - Only active when JS is ready */
+      .js-ready .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+      }
+      
+      .js-ready .reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          transition: none;
+          opacity: 1;
+          transform: none;
+        }
+      }
     }
 
     .btn-hero {
@@ -232,7 +253,7 @@
   </section>
 
   <!-- What We Solve -->
-  <section class="py-24 bg-background">
+  <section class="py-24 bg-background reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-4xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4">What We Solve</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -275,7 +296,7 @@
   </section>
 
   <!-- Core Offerings -->
-  <section class="py-24 bg-card/30">
+  <section class="py-24 bg-card/30 reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-6xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Core Offerings</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-16 text-center">
@@ -339,7 +360,7 @@
   </section>
 
   <!-- Sample Deliverables -->
-  <section class="py-24 bg-background">
+  <section class="py-24 bg-background reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-6xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Proof of Work</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
@@ -552,7 +573,7 @@
   </section>
 
   <!-- Fractional CTO -->
-  <section class="py-24 bg-card/30">
+  <section class="py-24 bg-card/30 reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-4xl">
       <div class="rounded-xl border border-gold/20 bg-card p-10 md:p-14 glow-gold">
         <div class="flex items-center gap-3 mb-6">
@@ -608,7 +629,7 @@
   </section>
 
   <!-- How We Work -->
-  <section class="py-20 bg-background">
+  <section class="py-20 bg-background reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-4xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Process</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">How We Work</h2>
@@ -637,7 +658,7 @@
   </section>
 
   <!-- Why Us -->
-  <section class="py-20 bg-card/30">
+  <section class="py-20 bg-card/30 reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-4xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Why Us</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">The Difference</h2>
@@ -663,11 +684,11 @@
   </section>
 
   <!-- Who We Work With -->
-  <section class="py-20 bg-background">
+  <section class="py-20 bg-background reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-4xl text-center">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">Clients</p>
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center font-serif">Who We Work With</h2>
-      <div class="grid sm:grid-cols-2 gap-5 text-left">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 text-left">
         <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
           <i data-lucide="building-2" class="w-5 h-5 text-gold flex-shrink-0"></i>
           <span class="text-foreground/90">GCC Software & IT Companies</span>
@@ -684,12 +705,20 @@
           <i data-lucide="users" class="w-5 h-5 text-gold flex-shrink-0"></i>
           <span class="text-foreground/90">Founders Building AI Products</span>
         </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="network" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">IT Resellers & System Integrators</span>
+        </div>
+        <div class="flex items-center gap-4 p-5 rounded-xl bg-card border border-border/50">
+          <i data-lucide="shopping-cart" class="w-5 h-5 text-gold flex-shrink-0"></i>
+          <span class="text-foreground/90">SME Platform & Marketplace Businesses</span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Book a Session -->
-  <section id="book" class="py-20 md:py-28 bg-card/30">
+  <section id="book" class="py-20 md:py-28 bg-card/30 reveal" data-reveal>
     <div class="container mx-auto px-6 max-w-6xl">
       <p class="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">
         Request a Session
@@ -916,9 +945,9 @@
             </div>
             
             <div class="mt-auto">
-              <button class="w-full btn-hero text-base" onclick="document.getElementById('modal-1day-intake').showModal()">
-                Request 1 Full Day
-                <i data-lucide="arrow-right" class="ml-1 w-5 h-5"></i>
+              <button disabled class="w-full text-base px-8 py-4 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed opacity-40 bg-secondary text-muted-foreground border border-border/30 select-none" tabindex="-1" aria-disabled="true">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+                By Invitation Only
               </button>
             </div>
           </div>
@@ -929,7 +958,7 @@
   </section>
 
   <!-- Final CTA -->
-  <section class="py-24 bg-card/30 relative overflow-hidden">
+  <section class="py-24 bg-card/30 relative overflow-hidden reveal" data-reveal>
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-gold/5 to-transparent"></div>
     <div class="relative container mx-auto px-6 max-w-3xl text-center">
       <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-6">
@@ -1232,6 +1261,31 @@
       }
     }
     customElements.define("consulting-form", ConsultingForm);
+
+    // Robust Scroll Reveal Implementation
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add class to signal JS is ready for animations
+      document.body.classList.add('js-ready');
+
+      const revealElements = document.querySelectorAll('[data-reveal]');
+      
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { entry.target.classList.toggle('revealed', entry.isIntersecting); });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px' // Trigger slightly before entering to reduce "blank" feeling
+      });
+
+      revealElements.forEach(el => revealObserver.observe(el));
+      
+      // Immediate reveal for elements already in viewport
+      setTimeout(() => {
+        revealElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight) el.classList.add('revealed');
+        });
+      }, 100);
+    });
 
     // Initialize Lucide Icons
     lucide.createIcons();
