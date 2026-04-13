@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Risk Cost Estimator — Fazal K. Advisory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --gold:#c8a84b; --gold-dim:#8a6f2e; --gold-faint:rgba(200,168,75,0.07);
+  --gold-faint2:rgba(200,168,75,0.13); --gold-border:rgba(200,168,75,0.22);
+  --bg:#070707; --bg2:#0f0f0f; --bg3:#151515; --bg4:#1b1b1b;
+  --border:rgba(255,255,255,0.055); --border2:rgba(255,255,255,0.1);
+  --text:#e2dbd0; --text-dim:#7a7268; --text-muted:#38342e;
+  --red:rgba(200,90,75,0.85); --red-bg:rgba(200,90,75,0.08);
+  --green:rgba(74,158,107,0.9); --green-bg:rgba(74,158,107,0.08);
+}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:3rem 1.25rem 4rem;
+}
+
+.widget { width:100%; max-width:720px; }
+
+/* ── HEADER ── */
+.header { text-align:center; margin-bottom:2.5rem; }
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:0.625rem;
+  font-size:9px; letter-spacing:0.22em; color:var(--gold);
+  text-transform:uppercase; margin-bottom:1.25rem; opacity:0.75;
+}
+
+.eyebrow-line { width:20px; height:1px; background:var(--gold); opacity:0.4; }
+
+.title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,5vw,40px);
+  font-weight:600; color:#f0ebe0; line-height:1.12; margin-bottom:0.875rem;
+}
+
+.title em { font-style:italic; color:var(--gold); }
+
+.subtitle {
+  font-size:13.5px; color:var(--text-dim); line-height:1.75;
+  max-width:480px; margin:0 auto; font-weight:300;
+}
+
+/* ── CALCULATOR BODY ── */
+.calc-body {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+
+.calc-toolbar {
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  padding:0.625rem 1.375rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.toolbar-label { font-size:9px; letter-spacing:0.18em; color:var(--gold); text-transform:uppercase; opacity:0.65; }
+.toolbar-note { font-size:10px; color:var(--text-muted); letter-spacing:0.04em; }
+
+/* ── SLIDERS ── */
+.sliders { padding:1.75rem 1.5rem 1.25rem; }
+
+.slider-group {
+  margin-bottom:1.75rem;
+  padding-bottom:1.75rem;
+  border-bottom:1px solid var(--border);
+}
+
+.slider-group:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+
+.slider-top {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; gap:1rem; margin-bottom:1rem;
+}
+
+.slider-info { flex:1; }
+
+.slider-label {
+  font-size:13px; font-weight:500; color:var(--text);
+  margin-bottom:0.3rem; line-height:1.4;
+}
+
+.slider-desc { font-size:11.5px; color:var(--text-muted); line-height:1.5; font-weight:300; }
+
+.slider-val-wrap { text-align:right; flex-shrink:0; }
+
+.slider-val {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px; font-weight:600;
+  color:var(--gold); line-height:1; display:block;
+}
+
+.slider-val-label { font-size:9.5px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; }
+
+.slider-track {
+  position:relative; height:3px;
+  background:var(--border2); border-radius:2px;
+}
+
+input[type=range] {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:3px;
+  background:transparent; outline:none; cursor:pointer;
+  position:relative; z-index:1;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  width:18px; height:18px;
+  border-radius:50%;
+  background:var(--gold);
+  border:2px solid var(--bg2);
+  cursor:pointer;
+  transition:transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform:scale(1.2);
+  box-shadow:0 0 0 6px var(--gold-faint);
+}
+
+input[type=range]::-moz-range-thumb {
+  width:18px; height:18px; border-radius:50%;
+  background:var(--gold); border:2px solid var(--bg2);
+  cursor:pointer;
+}
+
+.slider-fill {
+  position:absolute; top:0; left:0; height:100%;
+  background:var(--gold); border-radius:2px;
+  pointer-events:none; opacity:0.6;
+}
+
+.slider-ticks {
+  display:flex; justify-content:space-between;
+  margin-top:0.5rem;
+}
+
+.tick { font-size:9.5px; color:var(--text-muted); }
+
+/* ── RESULT PANEL ── */
+.result-panel {
+  background:var(--bg3);
+  border-top:1px solid var(--border);
+  padding:1.5rem;
+}
+
+.result-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:0.875rem;
+  margin-bottom:1.5rem;
+}
+
+.result-card {
+  background:var(--bg4);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:1rem 1.125rem;
+  transition:border-color 0.3s ease;
+}
+
+.result-card.highlight {
+  border-color:var(--gold-border);
+  background:var(--gold-faint);
+}
+
+.rc-label {
+  font-size:9px; letter-spacing:0.14em;
+  color:var(--text-muted); text-transform:uppercase;
+  margin-bottom:0.5rem;
+}
+
+.rc-value {
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px; font-weight:700; line-height:1.1;
+  color:var(--text);
+  transition:color 0.3s ease;
+}
+
+.rc-value.danger { color:var(--red); }
+.rc-value.gold { color:var(--gold); }
+
+.rc-sub { font-size:10px; color:var(--text-muted); margin-top:0.3rem; line-height:1.4; }
+
+/* ── RATIO BAR ── */
+.ratio-section { margin-bottom:1.5rem; }
+
+.ratio-label {
+  display:flex; justify-content:space-between;
+  margin-bottom:0.625rem;
+}
+
+.ratio-text { font-size:11.5px; color:var(--text-dim); }
+.ratio-pct { font-size:11.5px; color:var(--gold); font-weight:500; font-family:'DM Mono',monospace; }
+
+.ratio-track {
+  height:6px; background:var(--border2);
+  border-radius:3px; overflow:hidden; position:relative;
+}
+
+.ratio-fill-cost {
+  position:absolute; top:0; left:0; height:100%;
+  background:rgba(200,90,75,0.6); border-radius:3px;
+  transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.ratio-fill-fee {
+  position:absolute; top:0; left:0; height:100%;
+  background:var(--gold); border-radius:3px;
+  transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+  opacity:0.7;
+}
+
+.ratio-legend {
+  display:flex; gap:1.25rem; margin-top:0.5rem;
+}
+
+.ratio-legend-item {
+  display:flex; align-items:center; gap:0.375rem;
+  font-size:10px; color:var(--text-muted);
+}
+
+.ratio-dot {
+  width:8px; height:3px; border-radius:1px;
+}
+
+/* ── INSIGHT BOX ── */
+.insight {
+  background:var(--bg4);
+  border-left:2px solid var(--gold-dim);
+  border-radius:0 2px 2px 0;
+  padding:1rem 1.125rem;
+  margin-bottom:1.5rem;
+}
+
+.insight-label {
+  font-size:8.5px; letter-spacing:0.14em;
+  color:var(--gold); text-transform:uppercase;
+  opacity:0.65; margin-bottom:0.4rem;
+}
+
+.insight-text {
+  font-size:13px; color:var(--text-dim);
+  line-height:1.7; font-weight:300;
+}
+
+.insight-text strong { color:var(--text); font-weight:500; }
+
+/* ── CTA ── */
+.cta-row {
+  display:flex; gap:0.75rem; flex-wrap:wrap;
+}
+
+.cta-primary {
+  flex:1; min-width:180px;
+  background:var(--gold); color:#070707;
+  border:none; padding:1rem 1.5rem;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; border-radius:2px;
+  transition:all 0.2s; text-decoration:none;
+  text-align:center; display:flex;
+  align-items:center; justify-content:center;
+}
+
+.cta-primary:hover { background:#d4b55c; transform:translateY(-1px); }
+
+.cta-secondary {
+  flex:1; min-width:150px;
+  background:transparent; color:var(--text-dim);
+  border:1px solid var(--border);
+  padding:1rem 1.5rem;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px; letter-spacing:0.08em;
+  text-transform:uppercase; cursor:pointer;
+  border-radius:2px; transition:all 0.2s; text-align:center;
+}
+
+.cta-secondary:hover {
+  border-color:var(--gold-border); color:var(--text);
+  background:var(--gold-faint);
+}
+
+/* ── BREAKDOWN ── */
+.breakdown {
+  margin-top:1.5rem;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  overflow:hidden;
+}
+
+.breakdown-header {
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  padding:0.75rem 1.25rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.breakdown-title { font-size:9px; letter-spacing:0.16em; color:var(--gold); text-transform:uppercase; opacity:0.65; }
+
+.breakdown-toggle {
+  background:transparent; border:none;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px; color:var(--text-muted);
+  cursor:pointer; letter-spacing:0.08em;
+  text-transform:uppercase;
+  transition:color 0.2s;
+}
+
+.breakdown-toggle:hover { color:var(--text-dim); }
+
+.breakdown-body { padding:1.25rem 1.5rem; display:none; }
+.breakdown-body.open { display:block; }
+
+.breakdown-row {
+  display:flex; justify-content:space-between;
+  align-items:baseline; padding:0.625rem 0;
+  border-bottom:1px solid var(--border);
+  font-size:12.5px;
+}
+
+.breakdown-row:last-child { border-bottom:none; }
+
+.br-label { color:var(--text-dim); font-weight:300; }
+
+.br-val {
+  font-family:'DM Mono',monospace; font-size:12px;
+  color:var(--text); font-weight:400;
+}
+
+.br-val.sub { color:var(--text-muted); }
+.br-val.total { color:var(--red); font-size:13px; }
+.br-val.fee { color:var(--gold); }
+
+.br-divider {
+  height:1px; background:var(--border2); margin:0.625rem 0;
+}
+
+.footer-note {
+  text-align:center; margin-top:1.75rem;
+  font-size:11px; color:var(--text-muted); line-height:1.6;
+}
+
+.footer-note a { color:var(--gold-dim); text-decoration:none; }
+.footer-note a:hover { color:var(--gold); }
+
+@media(max-width:580px) {
+  .result-grid { grid-template-columns:1fr 1fr; }
+  .result-grid .result-card:last-child { grid-column:1/-1; }
+  .slider-top { flex-direction:column; gap:0.5rem; }
+  .slider-val-wrap { text-align:left; }
+}
+</style>
+</head>
+<body>
+<div class="widget">
+
+  <div class="header">
+    <div class="eyebrow"><div class="eyebrow-line"></div>Fazal K. / Advisory<div class="eyebrow-line"></div></div>
+    <h1 class="title">What does a wrong<br><em>architecture decision</em> cost?</h1>
+    <p class="subtitle">Adjust the sliders to match your team. See the real cost of an architecture mistake at your scale — then compare it to the cost of getting it right before you build.</p>
+  </div>
+
+  <div class="calc-body">
+    <div class="calc-toolbar">
+      <span class="toolbar-label">Architecture risk cost estimator</span>
+      <span class="toolbar-note">Based on industry data from failed AI builds</span>
+    </div>
+
+    <div class="sliders">
+
+      <!-- TEAM SIZE -->
+      <div class="slider-group">
+        <div class="slider-top">
+          <div class="slider-info">
+            <div class="slider-label">Engineering team size</div>
+            <div class="slider-desc">Developers actively working on the AI or cloud system</div>
+          </div>
+          <div class="slider-val-wrap">
+            <span class="slider-val" id="teamVal">5</span>
+            <span class="slider-val-label">engineers</span>
+          </div>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill" id="teamFill"></div>
+          <input type="range" id="teamSlider" min="1" max="20" value="5" step="1" oninput="update()">
+        </div>
+        <div class="slider-ticks">
+          <span class="tick">1</span>
+          <span class="tick">5</span>
+          <span class="tick">10</span>
+          <span class="tick">15</span>
+          <span class="tick">20</span>
+        </div>
+      </div>
+
+      <!-- DAILY RATE -->
+      <div class="slider-group">
+        <div class="slider-top">
+          <div class="slider-info">
+            <div class="slider-label">Average all-in daily cost per engineer</div>
+            <div class="slider-desc">Salary, benefits, tools, and overhead (USD). GCC/India teams typically $200–$600/day.</div>
+          </div>
+          <div class="slider-val-wrap">
+            <span class="slider-val" id="rateVal">$400</span>
+            <span class="slider-val-label">per day</span>
+          </div>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill" id="rateFill"></div>
+          <input type="range" id="rateSlider" min="100" max="1200" value="400" step="50" oninput="update()">
+        </div>
+        <div class="slider-ticks">
+          <span class="tick">$100</span>
+          <span class="tick">$400</span>
+          <span class="tick">$700</span>
+          <span class="tick">$1,000</span>
+          <span class="tick">$1,200</span>
+        </div>
+      </div>
+
+      <!-- BUILD DURATION -->
+      <div class="slider-group">
+        <div class="slider-top">
+          <div class="slider-info">
+            <div class="slider-label">Planned build duration</div>
+            <div class="slider-desc">How many months of active development before the system is expected to be live</div>
+          </div>
+          <div class="slider-val-wrap">
+            <span class="slider-val" id="monthsVal">4</span>
+            <span class="slider-val-label">months</span>
+          </div>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill" id="monthsFill"></div>
+          <input type="range" id="monthsSlider" min="1" max="18" value="4" step="1" oninput="update()">
+        </div>
+        <div class="slider-ticks">
+          <span class="tick">1mo</span>
+          <span class="tick">3mo</span>
+          <span class="tick">6mo</span>
+          <span class="tick">12mo</span>
+          <span class="tick">18mo</span>
+        </div>
+      </div>
+
+      <!-- ARCHITECTURE RISK -->
+      <div class="slider-group">
+        <div class="slider-top">
+          <div class="slider-info">
+            <div class="slider-label">Architecture decision certainty</div>
+            <div class="slider-desc">How confident are you in your core architecture decisions right now?</div>
+          </div>
+          <div class="slider-val-wrap">
+            <span class="slider-val" id="riskVal">50%</span>
+            <span class="slider-val-label">confident</span>
+          </div>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill" id="riskFill"></div>
+          <input type="range" id="riskSlider" min="10" max="95" value="50" step="5" oninput="update()">
+        </div>
+        <div class="slider-ticks">
+          <span class="tick">Guessing</span>
+          <span class="tick">Uncertain</span>
+          <span class="tick">Fairly sure</span>
+          <span class="tick">Confident</span>
+          <span class="tick">Certain</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RESULTS -->
+    <div class="result-panel">
+
+      <div class="result-grid">
+        <div class="result-card">
+          <div class="rc-label">Total build investment</div>
+          <div class="rc-value" id="totalBuild">$208K</div>
+          <div class="rc-sub">Team cost over planned build</div>
+        </div>
+        <div class="result-card">
+          <div class="rc-label">Architecture risk exposure</div>
+          <div class="rc-value danger" id="riskExposure">$104K</div>
+          <div class="rc-sub" id="riskSubLabel">At 50% confidence level</div>
+        </div>
+        <div class="result-card highlight">
+          <div class="rc-label">Advisory fee (recommended)</div>
+          <div class="rc-value gold" id="advisoryFee">$1,200</div>
+          <div class="rc-sub" id="feeSubLabel">3-hour Architecture Intensive</div>
+        </div>
+      </div>
+
+      <!-- RATIO BAR -->
+      <div class="ratio-section">
+        <div class="ratio-label">
+          <span class="ratio-text">Advisory fee as a percentage of your risk exposure</span>
+          <span class="ratio-pct" id="ratioPct">1.2%</span>
+        </div>
+        <div class="ratio-track">
+          <div class="ratio-fill-cost" id="costFill" style="width:100%"></div>
+          <div class="ratio-fill-fee" id="feeFill" style="width:1.2%"></div>
+        </div>
+        <div class="ratio-legend">
+          <div class="ratio-legend-item">
+            <div class="ratio-dot" style="background:rgba(200,90,75,0.6)"></div>
+            <span>Risk exposure</span>
+          </div>
+          <div class="ratio-legend-item">
+            <div class="ratio-dot" style="background:var(--gold); opacity:0.7"></div>
+            <span>Advisory fee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSIGHT -->
+      <div class="insight">
+        <div class="insight-label">The calculation</div>
+        <div class="insight-text" id="insightText">
+          At your team size and confidence level, <strong>getting the architecture wrong will cost roughly $104K</strong> in rework, delayed delivery, and wasted engineering time. The advisory fee to prevent that is <strong>$1,200</strong> — 1.2% of the risk. That is the return on getting it right before you build.
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-row">
+        <a class="cta-primary" href="https://fazalk.com" target="_blank" id="mainCta">Get the architecture right →</a>
+        <button class="cta-secondary" onclick="toggleBreakdown()">See the full breakdown</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="breakdown" id="breakdownPanel">
+    <div class="breakdown-header">
+      <span class="breakdown-title">Cost breakdown methodology</span>
+      <button class="breakdown-toggle" onclick="toggleBreakdown()" id="breakdownToggle">Show breakdown ↓</button>
+    </div>
+    <div class="breakdown-body" id="breakdownBody">
+      <div class="breakdown-row">
+        <span class="br-label">Team size</span>
+        <span class="br-val sub" id="bdTeam">5 engineers</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Daily cost per engineer</span>
+        <span class="br-val sub" id="bdRate">$400/day</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Build duration</span>
+        <span class="br-val sub" id="bdMonths">4 months (84 working days)</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Total team cost</span>
+        <span class="br-val sub" id="bdTotal">$168,000</span>
+      </div>
+      <div class="br-divider"></div>
+      <div class="breakdown-row">
+        <span class="br-label">Architecture confidence level</span>
+        <span class="br-val sub" id="bdConfidence">50%</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Rework multiplier applied</span>
+        <span class="br-val sub" id="bdMultiplier">1.4× (industry benchmark for mid-confidence builds)</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Estimated rework cost</span>
+        <span class="br-val total" id="bdRisk">$84,000</span>
+      </div>
+      <div class="br-divider"></div>
+      <div class="breakdown-row">
+        <span class="br-label">Recommended engagement</span>
+        <span class="br-val fee" id="bdEngagement">Architecture Decision Intensive</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Advisory fee</span>
+        <span class="br-val fee" id="bdFee">$1,200</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="br-label">Fee as % of rework risk</span>
+        <span class="br-val fee" id="bdRatioBd">1.4%</span>
+      </div>
+      <div class="br-divider"></div>
+      <div class="breakdown-row" style="padding-top:0.5rem">
+        <span class="br-label" style="font-size:11px; color:var(--text-muted); font-style:italic; line-height:1.5; flex:1">
+          Rework cost is estimated as: (team cost) × (1 − confidence%) × rework multiplier. Rework multiplier ranges from 1.2× (high confidence) to 2.5× (low confidence), based on software engineering project recovery benchmarks. This is a directional model, not a precise prediction.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    Estimates are directional models based on industry benchmarks for AI and cloud builds.<br>
+    <a href="https://fazalk.com" target="_blank">fazalk.com</a> · <a href="https://linkedin.com/in/fazalk1980" target="_blank">linkedin.com/in/fazalk1980</a>
+  </p>
+
+</div>
+
+<script>
+const ENGAGEMENTS = [
+  { name:'Strategic Clarity Session', fee:350, hours:'1 hour', threshold:40000 },
+  { name:'Architecture Decision Intensive', fee:1200, hours:'3 hours', threshold:150000 },
+  { name:'AI Architecture Blueprint', fee:3000, hours:'1 full day', threshold:Infinity }
+];
+
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtFull(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function getReworkMultiplier(confidence) {
+  if (confidence >= 90) return 1.1;
+  if (confidence >= 75) return 1.2;
+  if (confidence >= 60) return 1.4;
+  if (confidence >= 45) return 1.7;
+  if (confidence >= 30) return 2.1;
+  return 2.5;
+}
+
+function getEngagement(riskExposure) {
+  for (const e of ENGAGEMENTS) {
+    if (riskExposure <= e.threshold) return e;
+  }
+  return ENGAGEMENTS[2];
+}
+
+function getRiskLabel(confidence) {
+  if (confidence >= 85) return 'Low risk — you likely have solid foundations';
+  if (confidence >= 65) return 'Moderate risk — some key decisions still open';
+  if (confidence >= 45) return 'Significant risk — architecture gaps present';
+  if (confidence >= 25) return 'High risk — major decisions unresolved';
+  return 'Critical risk — architecture largely undefined';
+}
+
+function updateSliderFill(sliderId, fillId) {
+  const slider = document.getElementById(sliderId);
+  const fill = document.getElementById(fillId);
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const pct = ((val - min) / (max - min)) * 100;
+  fill.style.width = pct + '%';
+}
+
+function update() {
+  const team = parseInt(document.getElementById('teamSlider').value);
+  const rate = parseInt(document.getElementById('rateSlider').value);
+  const months = parseInt(document.getElementById('monthsSlider').value);
+  const confidence = parseInt(document.getElementById('riskSlider').value);
+
+  updateSliderFill('teamSlider', 'teamFill');
+  updateSliderFill('rateSlider', 'rateFill');
+  updateSliderFill('monthsSlider', 'monthsFill');
+  updateSliderFill('riskSlider', 'riskFill');
+
+  document.getElementById('teamVal').textContent = team;
+  document.getElementById('rateVal').textContent = '$' + rate.toLocaleString();
+  document.getElementById('monthsVal').textContent = months;
+  document.getElementById('riskVal').textContent = confidence + '%';
+
+  const workingDays = Math.round(months * 21);
+  const totalBuild = team * rate * workingDays;
+  const reworkMultiplier = getReworkMultiplier(confidence);
+  const riskFactor = (1 - confidence / 100);
+  const riskExposure = totalBuild * riskFactor * reworkMultiplier;
+
+  const engagement = getEngagement(riskExposure);
+  const fee = engagement.fee;
+  const ratioPct = riskExposure > 0 ? (fee / riskExposure * 100) : 0;
+
+  document.getElementById('totalBuild').textContent = fmt(totalBuild);
+  document.getElementById('riskExposure').textContent = fmt(riskExposure);
+  document.getElementById('riskSubLabel').textContent = getRiskLabel(confidence);
+  document.getElementById('advisoryFee').textContent = '$' + fee.toLocaleString();
+  document.getElementById('feeSubLabel').textContent = engagement.name + ' · ' + engagement.hours;
+  document.getElementById('ratioPct').textContent = ratioPct.toFixed(1) + '%';
+
+  const barPct = Math.min(ratioPct, 100);
+  document.getElementById('feeFill').style.width = barPct + '%';
+
+  const insightConfWord = confidence >= 75 ? 'relatively confident' : confidence >= 50 ? 'somewhat uncertain' : confidence >= 30 ? 'uncertain' : 'largely uncertain';
+  const saving = riskExposure - fee;
+  document.getElementById('insightText').innerHTML =
+    `With <strong>${team} engineers</strong> building over <strong>${months} month${months>1?'s':''}</strong> at your confidence level, an architecture mistake could cost <strong>${fmt(riskExposure)} in rework</strong>. The ${engagement.name} costs <strong>$${fee.toLocaleString()}</strong> — that is <strong>${ratioPct.toFixed(1)}%</strong> of your exposure, and saves you an estimated <strong>${fmt(saving)}</strong> if it prevents a rebuild.`;
+
+  const ctaEl = document.getElementById('mainCta');
+  ctaEl.textContent = `Book the ${engagement.name} →`;
+
+  document.getElementById('bdTeam').textContent = team + ' engineer' + (team>1?'s':'');
+  document.getElementById('bdRate').textContent = '$' + rate.toLocaleString() + '/day';
+  document.getElementById('bdMonths').textContent = months + ' month' + (months>1?'s':'') + ' (' + workingDays + ' working days)';
+  document.getElementById('bdTotal').textContent = fmtFull(totalBuild);
+  document.getElementById('bdConfidence').textContent = confidence + '%';
+
+  let mLabel;
+  if (reworkMultiplier <= 1.2) mLabel = reworkMultiplier + '× (low rework risk — high confidence build)';
+  else if (reworkMultiplier <= 1.5) mLabel = reworkMultiplier + '× (moderate rework — some gaps present)';
+  else if (reworkMultiplier <= 2.0) mLabel = reworkMultiplier + '× (significant rework expected)';
+  else mLabel = reworkMultiplier + '× (high rework risk — major gaps)';
+
+  document.getElementById('bdMultiplier').textContent = mLabel;
+  document.getElementById('bdRisk').textContent = fmtFull(riskExposure);
+  document.getElementById('bdEngagement').textContent = engagement.name;
+  document.getElementById('bdFee').textContent = '$' + fee.toLocaleString();
+  document.getElementById('bdRatioBd').textContent = ratioPct.toFixed(1) + '%';
+}
+
+function toggleBreakdown() {
+  const body = document.getElementById('breakdownBody');
+  const toggle = document.getElementById('breakdownToggle');
+  const isOpen = body.classList.toggle('open');
+  toggle.textContent = isOpen ? 'Hide breakdown ↑' : 'Show breakdown ↓';
+}
+
+update();
+</script>
+</body>
+</html>

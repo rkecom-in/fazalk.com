@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Assessment — Fazal K. Advisory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --gold:#c8a84b; --gold-dim:#8a6f2e; --gold-faint:rgba(200,168,75,0.07);
+  --gold-faint2:rgba(200,168,75,0.13); --gold-border:rgba(200,168,75,0.22);
+  --bg:#080808; --bg2:#0f0f0f; --bg3:#151515; --bg4:#1b1b1b;
+  --border:rgba(255,255,255,0.055); --border2:rgba(255,255,255,0.1);
+  --text:#e2dbd0; --text-dim:#7a7268; --text-muted:#38342e;
+  --risk-low:#4a9e6b; --risk-med:#c8a84b; --risk-high:#c86b4b;
+  --risk-low-bg:rgba(74,158,107,0.08); --risk-med-bg:rgba(200,168,75,0.08); --risk-high-bg:rgba(200,107,75,0.08);
+}
+
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh; display:flex;
+  align-items:flex-start; justify-content:center;
+  padding:3rem 1.25rem 4rem;
+}
+
+.container { width:100%; max-width:680px; }
+
+/* HEADER */
+.header { text-align:center; margin-bottom:2.5rem; }
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:0.5rem;
+  font-size:9px; letter-spacing:0.22em; color:var(--gold);
+  text-transform:uppercase; margin-bottom:1.25rem; opacity:0.75;
+}
+
+.eyebrow-line { width:20px; height:1px; background:var(--gold); opacity:0.4; }
+
+.title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,5vw,40px);
+  font-weight:600; color:#f0ebe0;
+  line-height:1.12; margin-bottom:0.875rem;
+}
+
+.title em { font-style:italic; color:var(--gold); }
+
+.subtitle {
+  font-size:13.5px; color:var(--text-dim);
+  line-height:1.75; max-width:460px;
+  margin:0 auto; font-weight:300;
+}
+
+/* PHASE INDICATOR */
+.phase-bar {
+  display:flex; align-items:center; gap:0;
+  margin-bottom:1.75rem;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:2px; overflow:hidden;
+}
+
+.phase {
+  flex:1; padding:0.625rem 1rem;
+  font-size:9.5px; letter-spacing:0.12em;
+  text-transform:uppercase; text-align:center;
+  color:var(--text-muted);
+  border-right:1px solid var(--border);
+  transition:all 0.3s ease;
+}
+
+.phase:last-child { border-right:none; }
+
+.phase.active {
+  color:var(--gold); background:var(--gold-faint);
+}
+
+.phase.done {
+  color:var(--gold-dim);
+}
+
+/* PROGRESS */
+.progress-wrap { margin-bottom:1.75rem; }
+
+.progress-meta {
+  display:flex; justify-content:space-between;
+  margin-bottom:0.5rem;
+}
+
+.progress-label { font-size:10px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; }
+.progress-count { font-size:10px; color:var(--gold-dim); }
+
+.progress-track { height:1px; background:var(--border); position:relative; overflow:hidden; }
+
+.progress-fill {
+  height:100%; background:var(--gold); width:0%;
+  transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.steps-row { display:flex; gap:0.375rem; margin-top:0.625rem; }
+
+.step-dot {
+  flex:1; height:2px; background:var(--border);
+  border-radius:1px; transition:background 0.3s;
+  max-width:80px;
+}
+
+.step-dot.done { background:var(--gold-dim); }
+.step-dot.active { background:var(--gold); }
+
+/* QUESTION CARD */
+.q-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:2px; overflow:hidden; margin-bottom:1rem;
+  opacity:0; transform:translateY(8px);
+  transition:opacity 0.3s ease, transform 0.3s ease;
+}
+
+.q-card.visible { opacity:1; transform:translateY(0); }
+
+.q-head {
+  background:var(--bg3); border-bottom:1px solid var(--border);
+  padding:0.75rem 1.25rem;
+  display:flex; align-items:center; gap:0.875rem;
+}
+
+.q-num { font-size:9px; letter-spacing:0.16em; color:var(--gold); text-transform:uppercase; opacity:0.65; }
+.q-cat { font-size:9px; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; }
+
+.q-body { padding:1.375rem 1.25rem 1.25rem; }
+
+.q-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:19px; font-weight:500; color:#eee8de;
+  line-height:1.4; margin-bottom:1.25rem;
+}
+
+.options { display:flex; flex-direction:column; gap:0.4rem; }
+
+.opt-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-dim); font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:300; padding:0.8rem 1rem;
+  text-align:left; cursor:pointer; border-radius:1px;
+  transition:all 0.18s; line-height:1.45;
+  display:flex; gap:0.75rem; align-items:flex-start;
+}
+
+.opt-btn:hover { border-color:var(--gold-border); color:var(--text); background:var(--gold-faint); }
+
+.opt-btn.selected {
+  border-color:var(--gold); color:var(--text);
+  background:var(--gold-faint2);
+}
+
+.opt-idx {
+  font-size:9.5px; color:var(--text-muted);
+  min-width:14px; padding-top:2px;
+  transition:color 0.18s;
+}
+
+.opt-btn.selected .opt-idx, .opt-btn:hover .opt-idx { color:var(--gold-dim); }
+
+/* NAV */
+.nav-row { display:flex; gap:0.75rem; }
+
+.nav-btn {
+  padding:0.875rem 1.5rem; font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:500; letter-spacing:0.1em;
+  text-transform:uppercase; border-radius:1px; cursor:pointer;
+  transition:all 0.2s; border:none;
+}
+
+.nav-back {
+  background:transparent; color:var(--text-dim);
+  border:1px solid var(--border) !important;
+  flex:0 0 auto; padding:0.875rem 1.125rem;
+}
+
+.nav-back:hover { border-color:var(--gold-border) !important; color:var(--text); }
+
+.nav-next { flex:1; background:var(--gold); color:#080808; }
+.nav-next:hover:not(:disabled) { background:#d4b55c; transform:translateY(-1px); }
+.nav-next:disabled { opacity:0.28; cursor:not-allowed; transform:none; }
+
+/* SITUATION INPUT (phase 2) */
+.situation-wrap {
+  display:none; margin-bottom:1.5rem;
+}
+
+.situation-wrap.active { display:block; }
+
+.sit-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:2px; padding:1.375rem 1.25rem;
+  margin-bottom:1rem;
+  opacity:0; transform:translateY(8px);
+  transition:opacity 0.35s ease, transform 0.35s ease;
+}
+
+.sit-card.visible { opacity:1; transform:translateY(0); }
+
+.sit-label {
+  font-size:9px; letter-spacing:0.16em; color:var(--gold);
+  text-transform:uppercase; opacity:0.65; margin-bottom:0.375rem; display:block;
+}
+
+.sit-heading {
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px; font-weight:500; color:#eee8de;
+  line-height:1.4; margin-bottom:1rem;
+}
+
+.risk-summary {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:0.375rem; margin-bottom:1.25rem;
+}
+
+.rs-dim { text-align:center; }
+.rs-label { font-size:8px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.3rem; line-height:1.3; }
+.rs-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:0.25rem; }
+.rs-fill { height:100%; border-radius:2px; width:0%; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.rs-val { font-size:9px; color:var(--text-muted); }
+
+.sit-optional {
+  font-size:11.5px; color:var(--text-muted); margin-bottom:0.5rem;
+  font-style:italic;
+}
+
+textarea {
+  width:100%; background:var(--bg3); border:1px solid var(--border);
+  outline:none; color:var(--text);
+  font-family:'DM Sans',sans-serif; font-size:13.5px;
+  font-weight:300; line-height:1.65; resize:none;
+  min-height:90px; caret-color:var(--gold);
+  border-radius:1px; padding:0.875rem 1rem;
+  transition:border-color 0.2s;
+}
+
+textarea:focus { border-color:var(--gold-border); }
+textarea::placeholder { color:var(--text-muted); }
+
+.char-note { font-size:10px; color:var(--text-muted); margin-top:0.375rem; text-align:right; }
+
+/* LOADING */
+.loading-state {
+  display:none; text-align:center; padding:3rem 1.5rem;
+  background:var(--bg2); border:1px solid var(--border); border-radius:2px;
+}
+
+.loading-state.active { display:block; }
+
+.loading-label { font-size:9.5px; letter-spacing:0.18em; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.75rem; }
+
+.loading-orb {
+  width:44px; height:44px; border:1px solid var(--gold-border);
+  border-top-color:var(--gold); border-radius:50%;
+  margin:0 auto 1.75rem; animation:spin 1.1s linear infinite;
+}
+
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.loading-steps { max-width:260px; margin:0 auto; }
+
+.ls { font-size:11.5px; color:var(--text-muted); opacity:0; transition:opacity 0.5s; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
+.ls.vis { opacity:1; }
+.ls-dot { width:4px; height:4px; background:var(--gold-dim); border-radius:50%; flex-shrink:0; }
+
+/* RESULT */
+.result-panel { display:none; }
+.result-panel.active { display:block; animation:fadeUp 0.4s ease; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.result-header {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:2px 2px 0 0; border-bottom:none;
+  padding:1rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.result-eyebrow { font-size:9px; letter-spacing:0.18em; color:var(--gold); text-transform:uppercase; opacity:0.7; }
+
+.risk-badge {
+  font-size:10px; font-weight:500; padding:0.28rem 0.875rem;
+  border-radius:1px; letter-spacing:0.08em; text-transform:uppercase;
+}
+
+.rb-low { background:var(--risk-low-bg); color:var(--risk-low); border:1px solid rgba(74,158,107,0.25); }
+.rb-medium { background:var(--risk-med-bg); color:var(--risk-med); border:1px solid rgba(200,168,75,0.3); }
+.rb-high { background:var(--risk-high-bg); color:var(--risk-high); border:1px solid rgba(200,107,75,0.25); }
+
+.result-scores {
+  background:var(--bg3); border:1px solid var(--border);
+  border-top:none; border-bottom:none;
+  padding:1rem 1.5rem;
+}
+
+.score-row { display:grid; grid-template-columns:repeat(5,1fr); gap:0.375rem; }
+
+.sc-dim { text-align:center; }
+.sc-label { font-size:7.5px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.35rem; line-height:1.3; }
+.sc-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:0.25rem; }
+.sc-fill { height:100%; border-radius:2px; width:0%; transition:width 0.9s cubic-bezier(0.4,0,0.2,1); }
+.sc-val { font-size:9px; color:var(--text-muted); }
+
+.result-body {
+  background:var(--bg2); border:1px solid var(--border);
+  border-top:none; border-radius:0 0 2px 2px; padding:1.5rem;
+}
+
+.result-headline {
+  font-family:'Cormorant Garamond',serif;
+  font-size:21px; font-weight:600; color:#f0ebe0;
+  line-height:1.3; margin-bottom:1rem;
+}
+
+.result-analysis {
+  font-size:13.5px; color:var(--text-dim);
+  line-height:1.8; font-weight:300;
+  margin-bottom:1.5rem; white-space:pre-wrap;
+}
+
+.result-divider { height:1px; background:var(--border); margin-bottom:1.5rem; }
+
+.result-blocks {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:0.75rem; margin-bottom:1.5rem;
+}
+
+.rb-block {
+  background:var(--bg3); border:1px solid var(--border);
+  padding:0.875rem 1rem; border-radius:1px;
+}
+
+.rbb-label { font-size:8.5px; letter-spacing:0.14em; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.375rem; }
+.rbb-value { font-size:13px; color:var(--text); line-height:1.5; }
+.rbb-value.gold { color:var(--gold); }
+
+/* ENGAGEMENT RECOMMENDATION BOX */
+.engagement-box {
+  background:var(--gold-faint2);
+  border:1px solid var(--gold-border);
+  border-radius:1px; padding:1.125rem 1.25rem;
+  margin-bottom:1.5rem;
+}
+
+.eb-label { font-size:8.5px; letter-spacing:0.14em; color:var(--gold); text-transform:uppercase; opacity:0.7; margin-bottom:0.5rem; }
+
+.eb-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px; font-weight:600; color:#f0ebe0;
+  margin-bottom:0.375rem;
+}
+
+.eb-meta { font-size:11.5px; color:var(--gold-dim); margin-bottom:0.625rem; }
+
+.eb-reason { font-size:13px; color:var(--text-dim); line-height:1.65; font-weight:300; }
+
+.result-actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
+
+.act-primary {
+  flex:1; min-width:180px; background:var(--gold); color:#080808;
+  border:none; padding:1rem 1.5rem; font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:500; letter-spacing:0.1em;
+  text-transform:uppercase; cursor:pointer; border-radius:1px;
+  transition:all 0.2s; text-decoration:none; text-align:center;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.act-primary:hover { background:#d4b55c; transform:translateY(-1px); }
+
+.act-secondary {
+  flex:1; min-width:140px; background:transparent;
+  color:var(--text-dim); border:1px solid var(--border);
+  padding:1rem 1.5rem; font-family:'DM Sans',sans-serif;
+  font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+  cursor:pointer; border-radius:1px; transition:all 0.2s; text-align:center;
+}
+
+.act-secondary:hover { border-color:var(--gold-border); color:var(--text); background:var(--gold-faint); }
+
+.error-msg {
+  display:none; background:rgba(200,107,75,0.06);
+  border:1px solid rgba(200,107,75,0.22);
+  color:#d4907a; padding:0.875rem 1.125rem;
+  font-size:12.5px; border-radius:1px; margin-top:1rem; line-height:1.6;
+}
+
+.error-msg.active { display:block; }
+
+.footer-note { text-align:center; margin-top:1.75rem; font-size:11px; color:var(--text-muted); line-height:1.6; }
+.footer-note a { color:var(--gold-dim); text-decoration:none; }
+.footer-note a:hover { color:var(--gold); }
+
+@media(max-width:520px) {
+  .result-blocks { grid-template-columns:1fr; }
+  .risk-summary, .score-row { grid-template-columns:repeat(5,1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="eyebrow"><div class="eyebrow-line"></div>Fazal K. / Advisory<div class="eyebrow-line"></div></div>
+    <h1 class="title">Assess your architecture.<br><em>Get the right engagement.</em></h1>
+    <p class="subtitle">5 questions to identify your risk profile. Then a single AI-powered recommendation — the exact engagement, the exact reason, specific to your situation.</p>
+  </div>
+
+  <!-- PHASE BAR -->
+  <div class="phase-bar">
+    <div class="phase active" id="phase1label">01 — Risk Assessment</div>
+    <div class="phase" id="phase2label">02 — Your Situation</div>
+    <div class="phase" id="phase3label">03 — Recommendation</div>
+  </div>
+
+  <!-- PHASE 1: QUESTIONS -->
+  <div id="phase1">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Assessment progress</span>
+        <span class="progress-count" id="progressCount">Question 1 of 5</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="steps-row">
+        <div class="step-dot active" id="d0"></div>
+        <div class="step-dot" id="d1"></div>
+        <div class="step-dot" id="d2"></div>
+        <div class="step-dot" id="d3"></div>
+        <div class="step-dot" id="d4"></div>
+      </div>
+    </div>
+
+    <div class="q-card" id="qCard">
+      <div class="q-head">
+        <span class="q-num" id="qNum">Question 01</span>
+        <span class="q-cat" id="qCat"></span>
+      </div>
+      <div class="q-body">
+        <div class="q-text" id="qText"></div>
+        <div class="options" id="optContainer"></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn nav-back" id="backBtn" onclick="goBack()" style="display:none">← Back</button>
+      <button class="nav-btn nav-next" id="nextBtn" onclick="goNext()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- PHASE 2: SITUATION -->
+  <div class="situation-wrap" id="phase2">
+    <div class="sit-card" id="sitCard">
+      <span class="sit-label">Phase 2 of 3 — Your situation</span>
+      <div class="sit-heading">Your risk profile is ready. Add context to sharpen the recommendation.</div>
+
+      <div class="risk-summary" id="riskSummary"></div>
+
+      <div class="sit-optional">Optional — describe your specific situation for a more tailored recommendation</div>
+      <textarea id="situationText"
+        placeholder="e.g. We are building an AI-powered search product for an enterprise client. 4 engineers, 3 months budget, debating RAG vs fine-tuning. Haven't finalised the cloud provider yet..."
+        maxlength="500"
+        oninput="updateSituationChar(this)"></textarea>
+      <div class="char-note" id="charNote">0 / 500</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn nav-back" onclick="backToQuestions()">← Back</button>
+      <button class="nav-btn nav-next" onclick="submitAssessment()">Generate my recommendation →</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loadingState">
+    <div class="loading-label">Generating your assessment</div>
+    <div class="loading-orb"></div>
+    <div class="loading-steps">
+      <div class="ls" id="ls0"><div class="ls-dot"></div>Analysing your risk profile</div>
+      <div class="ls" id="ls1"><div class="ls-dot"></div>Scoring five architecture dimensions</div>
+      <div class="ls" id="ls2"><div class="ls-dot"></div>Reading your situation context</div>
+      <div class="ls" id="ls3"><div class="ls-dot"></div>Matching to the right engagement</div>
+      <div class="ls" id="ls4"><div class="ls-dot"></div>Preparing your report</div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-panel" id="resultPanel">
+    <div class="result-header">
+      <span class="result-eyebrow">Architecture risk assessment</span>
+      <span class="risk-badge" id="riskBadge"></span>
+    </div>
+    <div class="result-scores"><div class="score-row" id="scoreRow"></div></div>
+    <div class="result-body">
+      <div class="result-headline" id="resultHeadline"></div>
+      <div class="result-analysis" id="resultAnalysis"></div>
+      <div class="result-divider"></div>
+      <div class="engagement-box">
+        <div class="eb-label">Recommended engagement</div>
+        <div class="eb-name" id="ebName"></div>
+        <div class="eb-meta" id="ebMeta"></div>
+        <div class="eb-reason" id="ebReason"></div>
+      </div>
+      <div class="result-blocks" id="resultBlocks"></div>
+      <div class="result-actions">
+        <a class="act-primary" href="https://fazalk.com" target="_blank" id="resultCta">Book this session →</a>
+        <button class="act-secondary" onclick="restart()">Retake assessment</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <p class="footer-note">
+    Powered by Claude AI · Assessment takes under 2 minutes · Results are advisory indicators.<br>
+    <a href="https://fazalk.com" target="_blank">fazalk.com</a> · <a href="https://linkedin.com/in/fazalk1980" target="_blank">linkedin.com/in/fazalk1980</a>
+  </p>
+
+</div>
+<script>
+const QUESTIONS = [
+  { category:'Build Stage', text:'Where are you in the build process right now?',
+    options:[
+      { label:'We have an idea and are deciding what to build', risk:1 },
+      { label:'We have a rough design but development has not started', risk:2 },
+      { label:'We are actively building — some components are live', risk:3 },
+      { label:'We have a live system that is underperforming or expensive', risk:4 }
+    ]},
+  { category:'Technical Leadership', text:'Who is making the core architecture decisions on your team?',
+    options:[
+      { label:'A CTO or senior architect with AI/cloud production experience', risk:1 },
+      { label:'A senior developer who is learning as we build', risk:2 },
+      { label:'Decisions are made by the founder or product team', risk:3 },
+      { label:'We are relying on a vendor or agency to decide for us', risk:4 }
+    ]},
+  { category:'Decision Clarity', text:'How clearly defined are your core architecture decisions right now?',
+    options:[
+      { label:'All major decisions are documented and agreed', risk:1 },
+      { label:'Most decisions are made but a few key gaps remain', risk:2 },
+      { label:'Rough direction only — significant unknowns still open', risk:3 },
+      { label:'We are building without a clear architecture plan', risk:4 }
+    ]},
+  { category:'Risk Exposure', text:'What is the cost of getting the architecture wrong at this stage?',
+    options:[
+      { label:'Low — we can pivot quickly, limited investment committed', risk:1 },
+      { label:'Moderate — a few months of work and some budget at stake', risk:2 },
+      { label:'High — significant engineering time and budget committed', risk:3 },
+      { label:'Critical — a wrong call would set us back 6+ months', risk:4 }
+    ]},
+  { category:'Primary Challenge', text:'What is your single biggest architecture concern right now?',
+    options:[
+      { label:'Choosing the right AI approach — LLM, RAG, fine-tuning, or agentic', risk:2 },
+      { label:'Cloud infrastructure — scalability, cost, and reliability at production', risk:2 },
+      { label:'Existing system is broken — high cost, latency, or poor output quality', risk:4 },
+      { label:'We do not know what we do not know — need an expert second opinion', risk:3 }
+    ]}
+];
+
+const DIM_LABELS = ['Stage','Leadership','Clarity','Exposure','Challenge'];
+
+const SYSTEM_PROMPT = `You are the advisory assessment AI for Fazal Khan's CTO-level architecture practice (fazalk.com).
+
+You receive structured data from a 5-question risk assessment plus an optional free-text situation description. Generate a personalised advisory report.
+
+ENGAGEMENTS:
+1. Strategic Clarity Session — 1 hour, $350. For one specific decision that needs a clear answer fast.
+2. Architecture Decision Intensive — 3 hours, $1,200. For interconnected decisions, system audits, or technical roadmaps. This is the most common entry point.
+3. AI Architecture Blueprint — 1 full day, $3,000. By invitation only. Only recommend for clearly major new platform launches or serious architectural overhauls.
+4. Discuss Your Case — free. For genuine ambiguity where the scope is unclear.
+
+RISK LEVELS: Low = total 5–9, Medium = 10–14, High = 15–20.
+
+RULES:
+- Be specific. Reference what the person actually said — their stage, their team, their challenge.
+- Do not be generic. Name the exact risk pattern you see.
+- Lean toward the 1-hour when uncertain between 1h and 3h.
+- Only recommend the Blueprint for unmistakably major situations.
+- If they gave a situation description, use it to make the analysis sharper and more specific.
+
+Respond ONLY with valid JSON, no markdown, no preamble:
+{
+  "riskLevel": "Low"|"Medium"|"High",
+  "overallScore": number,
+  "dimensionScores": { "Stage": n, "Leadership": n, "Clarity": n, "Exposure": n, "Challenge": n },
+  "headline": "One sharp sentence naming their specific situation (max 14 words)",
+  "analysis": "Three focused paragraphs. Para 1: the specific risk pattern in their answers. Para 2: what is at stake if not addressed. Para 3: what resolving it looks like. Be direct and specific. No padding.",
+  "topRisk": "The single most critical risk in one sentence",
+  "recommendedEngagement": "Strategic Clarity Session"|"Architecture Decision Intensive"|"AI Architecture Blueprint"|"Discuss Your Case",
+  "engagementFee": "$350 · 1 hour"|"$1,200 · 3 hours"|"$3,000 · 1 full day"|"Free",
+  "engagementReason": "One sentence — why this specific engagement fits their specific answers",
+  "nextStep": "One clear action the person should take right now (besides booking)"
+}`;
+
+let current = 0;
+let answers = [];
+
+function init() { renderQ(0); }
+
+function renderQ(idx) {
+  const q = QUESTIONS[idx];
+  const card = document.getElementById('qCard');
+  card.classList.remove('visible');
+  setTimeout(() => {
+    document.getElementById('qNum').textContent = 'Question ' + String(idx+1).padStart(2,'0');
+    document.getElementById('qCat').textContent = q.category;
+    document.getElementById('qText').textContent = q.text;
+    const c = document.getElementById('optContainer');
+    c.innerHTML = '';
+    q.options.forEach((o,i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn' + (answers[idx]===i?' selected':'');
+      btn.innerHTML = `<span class="opt-idx">${String.fromCharCode(65+i)}</span><span>${o.label}</span>`;
+      btn.onclick = () => selectOpt(i);
+      c.appendChild(btn);
+    });
+    updateProgress(idx);
+    document.getElementById('backBtn').style.display = idx>0?'block':'none';
+    document.getElementById('nextBtn').disabled = answers[idx]===undefined;
+    document.getElementById('nextBtn').textContent = idx===QUESTIONS.length-1 ? 'Continue to Step 2 →' : 'Continue →';
+    card.classList.add('visible');
+  }, 140);
+}
+
+function selectOpt(i) {
+  answers[current] = i;
+  document.querySelectorAll('.opt-btn').forEach((b,j) => b.classList.toggle('selected', j===i));
+  document.getElementById('nextBtn').disabled = false;
+  if (current < QUESTIONS.length-1) setTimeout(()=>goNext(), 340);
+}
+
+function goNext() {
+  if (answers[current]===undefined) return;
+  if (current===QUESTIONS.length-1) { goToPhase2(); return; }
+  current++;
+  renderQ(current);
+}
+
+function goBack() {
+  if (current===0) return;
+  current--;
+  renderQ(current);
+}
+
+function updateProgress(idx) {
+  const pct = Math.round((idx/QUESTIONS.length)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressCount').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
+  for (let i=0; i<5; i++) {
+    const d = document.getElementById('d'+i);
+    d.className = 'step-dot'+(i<idx?' done':i===idx?' active':'');
+  }
+}
+
+function goToPhase2() {
+  document.getElementById('phase1').style.display = 'none';
+  document.getElementById('phase1label').className = 'phase done';
+  document.getElementById('phase2label').className = 'phase active';
+  document.getElementById('phase2').classList.add('active');
+
+  const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0);
+  const colors = ['rgba(200,168,75,0.7)','rgba(74,130,158,0.7)','rgba(107,158,74,0.7)','rgba(200,100,75,0.7)','rgba(200,168,75,0.5)'];
+  const rs = document.getElementById('riskSummary');
+  rs.innerHTML = DIM_LABELS.map((l,i) => {
+    const pct = Math.round((scores[i]/4)*100);
+    return `<div class="rs-dim">
+      <div class="rs-label">${l}</div>
+      <div class="rs-bar"><div class="rs-fill" data-pct="${pct}" style="background:${colors[i]}"></div></div>
+      <div class="rs-val">${scores[i]}/4</div>
+    </div>`;
+  }).join('');
+
+  setTimeout(() => {
+    document.getElementById('sitCard').classList.add('visible');
+    rs.querySelectorAll('.rs-fill').forEach(el => {
+      el.style.transition = 'width 0.7s cubic-bezier(0.4,0,0.2,1)';
+      el.style.width = el.dataset.pct+'%';
+    });
+  }, 50);
+}
+
+function backToQuestions() {
+  document.getElementById('phase2').classList.remove('active');
+  document.getElementById('phase1').style.display = 'block';
+  document.getElementById('phase1label').className = 'phase active';
+  document.getElementById('phase2label').className = 'phase';
+  document.getElementById('sitCard').classList.remove('visible');
+  renderQ(current);
+}
+
+function updateSituationChar(ta) {
+  document.getElementById('charNote').textContent = ta.value.length + ' / 500';
+}
+
+async function submitAssessment() {
+  document.getElementById('phase2').classList.remove('active');
+  document.getElementById('phase2label').className = 'phase done';
+  document.getElementById('phase3label').className = 'phase active';
+  document.getElementById('loadingState').classList.add('active');
+  document.getElementById('errorMsg').classList.remove('active');
+
+  [0,550,1150,1800,2500].forEach((d,i) => setTimeout(()=>document.getElementById('ls'+i).classList.add('vis'), d));
+
+  const situation = document.getElementById('situationText').value.trim();
+  const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk||0);
+  const totalRisk = scores.reduce((a,b)=>a+b,0);
+
+  const userMsg = `Assessment answers:
+${QUESTIONS.map((q,i)=>`Q${i+1} [${q.category}]: "${q.text}"
+Answer: "${q.options[answers[i]]?.label}" (risk: ${scores[i]}/4)`).join('\n\n')}
+
+Total risk score: ${totalRisk}/20
+${situation ? `\nFounder's situation (their words):\n"${situation}"` : '\nNo situation description provided.'}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        system:SYSTEM_PROMPT,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+
+    if (!resp.ok) { const e=await resp.json(); throw new Error(e.error?.message||`API ${resp.status}`); }
+    const data = await resp.json();
+    const json = JSON.parse(data.content[0].text.trim());
+    await new Promise(r=>setTimeout(r,600));
+    document.getElementById('loadingState').classList.remove('active');
+    renderResult(json);
+  } catch(err) {
+    document.getElementById('loadingState').classList.remove('active');
+    document.getElementById('phase3label').className = 'phase';
+    document.getElementById('phase2label').className = 'phase active';
+    document.getElementById('phase2').classList.add('active');
+    const e = document.getElementById('errorMsg');
+    e.textContent = err.message.includes('401')
+      ? 'API key required. Add your Anthropic API key server-side to deploy this widget.'
+      : `Something went wrong: ${err.message}. Please try again.`;
+    e.classList.add('active');
+  }
+}
+
+function renderResult(json) {
+  const rc = { Low:{cls:'rb-low',c:'rgba(74,158,107,0.7)'}, Medium:{cls:'rb-medium',c:'rgba(200,168,75,0.7)'}, High:{cls:'rb-high',c:'rgba(200,107,75,0.7)'} };
+  const r = rc[json.riskLevel]||rc.Medium;
+
+  const badge = document.getElementById('riskBadge');
+  badge.textContent = json.riskLevel+' Risk · '+json.overallScore+'/20';
+  badge.className = 'risk-badge '+r.cls;
+
+  const dims = json.dimensionScores;
+  const sr = document.getElementById('scoreRow');
+  sr.innerHTML = DIM_LABELS.map(l => {
+    const v = dims[l]||0;
+    const pct = Math.round((v/4)*100);
+    return `<div class="sc-dim">
+      <div class="sc-label">${l}</div>
+      <div class="sc-bar"><div class="sc-fill" data-pct="${pct}" style="background:${r.c}"></div></div>
+      <div class="sc-val">${v}/4</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('resultHeadline').textContent = json.headline;
+  document.getElementById('resultAnalysis').textContent = json.analysis;
+  document.getElementById('ebName').textContent = json.recommendedEngagement;
+  document.getElementById('ebMeta').textContent = json.engagementFee;
+  document.getElementById('ebReason').textContent = json.engagementReason;
+
+  const blocks = [
+    {label:'Primary risk', value:json.topRisk},
+    {label:'Immediate next step', value:json.nextStep}
+  ];
+  document.getElementById('resultBlocks').innerHTML = blocks.map(b=>
+    `<div class="rb-block"><div class="rbb-label">${b.label}</div><div class="rbb-value">${b.value}</div></div>`
+  ).join('');
+
+  const links = {
+    'Strategic Clarity Session':'https://fazalk.com/#request-1hour',
+    'Architecture Decision Intensive':'https://fazalk.com/#request-3hour',
+    'AI Architecture Blueprint':'https://fazalk.com/#request-1day',
+    'Discuss Your Case':'https://fazalk.com/#discuss'
+  };
+  const cta = document.getElementById('resultCta');
+  cta.textContent = 'Book: '+json.recommendedEngagement+' →';
+  cta.href = links[json.recommendedEngagement]||'https://fazalk.com';
+
+  const panel = document.getElementById('resultPanel');
+  panel.classList.add('active');
+  setTimeout(()=>{
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>{
+      sr.querySelectorAll('.sc-fill').forEach(el=>{
+        el.style.transition='width 0.9s cubic-bezier(0.4,0,0.2,1)';
+        el.style.width=el.dataset.pct+'%';
+      });
+    }, 200);
+  }, 50);
+}
+
+function restart() {
+  current=0; answers=[];
+  document.getElementById('resultPanel').classList.remove('active');
+  document.getElementById('errorMsg').classList.remove('active');
+  document.getElementById('phase2').classList.remove('active');
+  document.getElementById('phase1').style.display='block';
+  document.getElementById('phase1label').className='phase active';
+  document.getElementById('phase2label').className='phase';
+  document.getElementById('phase3label').className='phase';
+  document.getElementById('situationText').value='';
+  document.getElementById('charNote').textContent='0 / 500';
+  document.querySelectorAll('.ls').forEach(el=>el.classList.remove('vis'));
+  renderQ(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+init();
+</script>
+</body>
+</html>

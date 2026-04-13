@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask an Architecture Question — Fazal K. Advisory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #c8a84b;
+  --gold-dim: #8a6f2e;
+  --gold-faint: rgba(200,168,75,0.06);
+  --gold-faint2: rgba(200,168,75,0.12);
+  --gold-border: rgba(200,168,75,0.2);
+  --bg: #080808;
+  --bg2: #0f0f0f;
+  --bg3: #141414;
+  --bg4: #191919;
+  --border: rgba(255,255,255,0.055);
+  --border2: rgba(255,255,255,0.1);
+  --text: #e2dbd0;
+  --text-dim: #7a7268;
+  --text-muted: #383430;
+  --user-bg: #141414;
+  --ai-bg: #0c0c0c;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.25rem 4rem;
+}
+
+.widget {
+  width: 100%;
+  max-width: 700px;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  opacity: 0.75;
+}
+
+.eyebrow-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 600;
+  color: #f0ebe0;
+  line-height: 1.12;
+  margin-bottom: 0.875rem;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.subtitle {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  max-width: 460px;
+  margin: 0 auto 0.875rem;
+  font-weight: 300;
+}
+
+.quota-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.quota-pips {
+  display: flex;
+  gap: 3px;
+}
+
+.pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--gold-dim);
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+.pip.used {
+  background: var(--text-muted);
+  opacity: 0.4;
+}
+
+/* ── CHAT WINDOW ── */
+.chat-window {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1px;
+}
+
+.chat-toolbar {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar-label {
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.clear-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+.clear-btn:hover {
+  border-color: var(--border2);
+  color: var(--text-dim);
+}
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4a9e6b;
+}
+
+.status-dot.thinking {
+  background: var(--gold);
+  animation: blink 0.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* ── MESSAGES ── */
+.messages {
+  min-height: 120px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.messages::-webkit-scrollbar { width: 3px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.message {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  animation: msgIn 0.3s ease;
+  position: relative;
+}
+
+.message:last-child { border-bottom: none; }
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.625rem;
+}
+
+.msg-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.msg-avatar.user {
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  color: var(--text-dim);
+}
+
+.msg-avatar.ai {
+  background: var(--gold-faint2);
+  border: 1px solid var(--gold-border);
+  color: var(--gold);
+}
+
+.msg-name {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.message.user-msg {
+  background: var(--user-bg);
+}
+
+.message.ai-msg {
+  background: var(--ai-bg);
+}
+
+.msg-body {
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--text-dim);
+  font-weight: 300;
+  padding-left: 30px;
+}
+
+.msg-body.user-text {
+  font-style: italic;
+  color: #a09888;
+}
+
+.msg-body p { margin-bottom: 0.875rem; }
+.msg-body p:last-child { margin-bottom: 0; }
+
+.msg-body strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.msg-body code {
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: var(--gold);
+}
+
+/* Callout box inside AI response */
+.msg-callout {
+  background: var(--bg3);
+  border-left: 2px solid var(--gold-dim);
+  padding: 0.75rem 1rem;
+  margin: 0.875rem 0;
+  border-radius: 0 2px 2px 0;
+}
+
+.callout-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.375rem;
+  opacity: 0.7;
+}
+
+.callout-text {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* CTA nudge */
+.msg-nudge {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nudge-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.nudge-btn {
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--gold-dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nudge-btn:hover {
+  background: var(--gold-faint);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: none;
+  padding: 1rem 1.5rem;
+  background: var(--ai-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.typing-indicator.active { display: block; }
+
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-left: 30px;
+}
+
+.typing-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--gold-dim);
+  border-radius: 50%;
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.empty-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: #6a6058;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.empty-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── INPUT AREA ── */
+.input-area {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.65;
+  resize: none;
+  min-height: 44px;
+  max-height: 120px;
+  caret-color: var(--gold);
+  padding-top: 4px;
+}
+
+textarea::placeholder { color: var(--text-muted); }
+
+.send-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background: var(--gold);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  align-self: flex-end;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #d4b55c;
+  transform: translateY(-1px);
+}
+
+.send-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.send-icon {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: #080808;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── SUGGESTED QUESTIONS ── */
+.suggestions {
+  margin-top: 1.5rem;
+}
+
+.sugg-label {
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.625rem;
+}
+
+.sugg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.sugg-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  line-height: 1.45;
+}
+
+.sugg-btn:hover:not(:disabled) {
+  border-color: var(--gold-border);
+  color: var(--text);
+  background: var(--gold-faint);
+}
+
+.sugg-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── EXHAUSTED STATE ── */
+.exhausted-banner {
+  display: none;
+  background: var(--gold-faint);
+  border: 1px solid var(--gold-border);
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.exhausted-banner.active { display: flex; }
+
+.exhausted-text {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.exhausted-text strong { color: var(--gold); font-weight: 500; }
+
+.exhausted-cta {
+  background: var(--gold);
+  color: #080808;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.exhausted-cta:hover { background: #d4b55c; }
+
+.footer-note {
+  text-align: center;
+  margin-top: 1.75rem;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.footer-note a { color: var(--gold-dim); text-decoration: none; }
+.footer-note a:hover { color: var(--gold); }
+
+/* Streaming cursor */
+.stream-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: var(--gold);
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.7s ease-in-out infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (max-width: 540px) {
+  .sugg-grid { grid-template-columns: 1fr; }
+  .msg-nudge { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="widget">
+
+  <div class="header">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      Fazal K. / Advisory — Live Demo
+    </div>
+    <h1 class="title">Ask a real<br><em>architecture question.</em></h1>
+    <p class="subtitle">Type any AI or cloud architecture question and get a response at the depth and quality of the actual advisory. No sign-up. No pitch. Just the thinking.</p>
+    <div class="quota-note">
+      <div class="quota-pips">
+        <div class="pip" id="pip0"></div>
+        <div class="pip" id="pip1"></div>
+        <div class="pip" id="pip2"></div>
+      </div>
+      <span id="quotaText">3 free questions per session</span>
+    </div>
+  </div>
+
+  <div class="chat-window">
+    <div class="chat-toolbar">
+      <span class="toolbar-label">Architecture Q&A</span>
+      <div class="toolbar-right">
+        <button class="clear-btn" onclick="clearChat()">Clear</button>
+        <div class="status-dot" id="statusDot"></div>
+      </div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-title">What would you like to understand?</div>
+        <div class="empty-sub">Ask about LLMs, RAG, vector databases, cloud architecture,<br>agentic systems, or any production AI decision.</div>
+      </div>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="msg-meta">
+        <div class="msg-avatar ai">FK</div>
+        <span class="msg-name">Fazal K.</span>
+      </div>
+      <div class="typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="inputArea" class="input-area">
+    <textarea
+      id="questionInput"
+      placeholder="Ask any architecture question — LLM selection, RAG vs fine-tuning, cloud migration, agentic systems..."
+      rows="1"
+      oninput="handleInput(this)"
+      onkeydown="handleKey(event)"
+    ></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendQuestion()" disabled>
+      <svg class="send-icon" viewBox="0 0 24 24">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+
+  <div class="exhausted-banner" id="exhaustedBanner">
+    <div class="exhausted-text">You have used your 3 free questions. <strong>Book a session</strong> to continue with a focused, in-depth engagement on your specific system.</div>
+    <a class="exhausted-cta" href="https://fazalk.com" target="_blank">Book a session →</a>
+  </div>
+
+  <div class="suggestions" id="suggestions">
+    <div class="sugg-label">Try asking</div>
+    <div class="sugg-grid">
+      <button class="sugg-btn" onclick="useQuestion(this)">Should I use RAG or fine-tuning for my enterprise search product?</button>
+      <button class="sugg-btn" onclick="useQuestion(this)">What causes LLM hallucination and how do I fix it in production?</button>
+      <button class="sugg-btn" onclick="useQuestion(this)">How do I decide between AWS and Azure for a new AI platform?</button>
+      <button class="sugg-btn" onclick="useQuestion(this)">What is the right architecture for a multi-tenant SaaS AI product?</button>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    Powered by Claude AI · Advisory-grade responses, not generic AI output.<br>
+    <a href="https://fazalk.com" target="_blank">fazalk.com</a> · <a href="https://linkedin.com/in/fazalk1980" target="_blank">linkedin.com/in/fazalk1980</a>
+  </p>
+
+</div>
+
+<script>
+const MAX_QUESTIONS = 3;
+let questionsUsed = 0;
+let isThinking = false;
+let history = [];
+
+const SYSTEM_PROMPT = `You are Fazal Khan, a CTO-level AI and cloud architecture advisor with over 25 years building production systems. You are responding to a question on your advisory website (fazalk.com) as a live demonstration of the quality of thinking your engagements provide.
+
+VOICE AND STYLE:
+- Speak as a practitioner who has built these systems, not a consultant who has read about them
+- Be direct and specific. Name the actual trade-offs, not generic advice
+- Use precise technical language where needed, but never jargon for its own sake
+- No bullet-point dumps. Write in clear, structured paragraphs
+- Be honest about uncertainty — if a question cannot be answered without knowing more about the system, say so and explain what you would need to know
+- Optimal length: 200-350 words. Enough to be genuinely useful, short enough to be readable
+- Where relevant, identify the single most important decision or risk in the question
+
+CONSTRAINTS:
+- This is a free demo — be helpful but leave room for depth that only a full engagement can provide
+- Do not give a complete architecture spec. Give the key insight and the critical decision path
+- End with a CALLOUT block (see format below) — a brief, specific note on what a 1-hour or 3-hour session would resolve that you cannot fully address in a short answer
+
+OUTPUT FORMAT:
+Write your response as plain prose paragraphs. At the end, include a callout block in this exact format:
+[CALLOUT: label | text]
+Where label is a short phrase (e.g. "Where a session helps") and text is 1-2 sentences on what deeper engagement would resolve.
+
+Do not use markdown headers. Do not use bullet points. Write as you would speak to a founder in a focused advisory session.`;
+
+function handleInput(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+  document.getElementById('sendBtn').disabled = ta.value.trim().length < 5 || isThinking || questionsUsed >= MAX_QUESTIONS;
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (!document.getElementById('sendBtn').disabled) sendQuestion();
+  }
+}
+
+function useQuestion(btn) {
+  const q = btn.textContent.trim();
+  const input = document.getElementById('questionInput');
+  input.value = q;
+  handleInput(input);
+  input.focus();
+}
+
+function clearChat() {
+  if (isThinking) return;
+  history = [];
+  questionsUsed = 0;
+  updateQuotaUI();
+  const messages = document.getElementById('messages');
+  messages.innerHTML = `<div class="empty-state" id="emptyState">
+    <div class="empty-title">What would you like to understand?</div>
+    <div class="empty-sub">Ask about LLMs, RAG, vector databases, cloud architecture,<br>agentic systems, or any production AI decision.</div>
+  </div>`;
+  document.getElementById('inputArea').style.display = 'flex';
+  document.getElementById('exhaustedBanner').classList.remove('active');
+  document.getElementById('questionInput').value = '';
+  document.getElementById('sendBtn').disabled = true;
+  document.querySelectorAll('.sugg-btn').forEach(b => b.disabled = false);
+  document.getElementById('suggestions').style.display = 'block';
+}
+
+function updateQuotaUI() {
+  for (let i = 0; i < MAX_QUESTIONS; i++) {
+    const pip = document.getElementById(`pip${i}`);
+    pip.classList.toggle('used', i < questionsUsed);
+  }
+  const remaining = MAX_QUESTIONS - questionsUsed;
+  const label = document.getElementById('quotaText');
+  if (remaining === 0) {
+    label.textContent = 'No free questions remaining';
+  } else if (remaining === 1) {
+    label.textContent = '1 free question remaining';
+  } else {
+    label.textContent = `${remaining} free questions remaining`;
+  }
+}
+
+function appendUserMessage(text) {
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) emptyState.remove();
+
+  const messages = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'message user-msg';
+  div.innerHTML = `
+    <div class="msg-meta">
+      <div class="msg-avatar user">You</div>
+      <span class="msg-name">Visitor</span>
+    </div>
+    <div class="msg-body user-text">${escapeHtml(text)}</div>`;
+  messages.appendChild(div);
+  scrollToBottom();
+}
+
+function appendAIMessage(rawText, isLast) {
+  const messages = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'message ai-msg';
+
+  const parsed = parseResponse(rawText, isLast);
+
+  div.innerHTML = `
+    <div class="msg-meta">
+      <div class="msg-avatar ai">FK</div>
+      <span class="msg-name">Fazal K.</span>
+    </div>
+    <div class="msg-body" id="aiBody">${parsed.body}</div>`;
+  messages.appendChild(div);
+
+  if (parsed.callout) {
+    const calloutEl = document.createElement('div');
+    calloutEl.className = 'msg-callout';
+    calloutEl.innerHTML = `<div class="callout-label">${escapeHtml(parsed.callout.label)}</div>
+      <div class="callout-text">${escapeHtml(parsed.callout.text)}</div>`;
+    div.querySelector('.msg-body').appendChild(calloutEl);
+  }
+
+  if (isLast && questionsUsed >= MAX_QUESTIONS) {
+    const nudge = document.createElement('div');
+    nudge.className = 'msg-nudge';
+    nudge.innerHTML = `<span class="nudge-text">You have used all 3 free questions. A full session goes much deeper.</span>
+      <a class="nudge-btn" href="https://fazalk.com" target="_blank">Book a session →</a>`;
+    div.querySelector('.msg-body').appendChild(nudge);
+  }
+
+  scrollToBottom();
+  return div;
+}
+
+function parseResponse(text, isLast) {
+  const calloutMatch = text.match(/\[CALLOUT:\s*([^|]+)\|\s*([^\]]+)\]/);
+  let body = text;
+  let callout = null;
+
+  if (calloutMatch) {
+    body = text.replace(calloutMatch[0], '').trim();
+    callout = { label: calloutMatch[1].trim(), text: calloutMatch[2].trim() };
+  }
+
+  body = body
+    .split('\n\n')
+    .filter(p => p.trim())
+    .map(p => `<p>${escapeHtml(p.trim()).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>')}</p>`)
+    .join('');
+
+  return { body, callout };
+}
+
+function createStreamingMessage() {
+  const messages = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'message ai-msg';
+  div.id = 'streamingMsg';
+  div.innerHTML = `
+    <div class="msg-meta">
+      <div class="msg-avatar ai">FK</div>
+      <span class="msg-name">Fazal K.</span>
+    </div>
+    <div class="msg-body" id="streamBody"><span class="stream-cursor"></span></div>`;
+  messages.appendChild(div);
+  scrollToBottom();
+  return div;
+}
+
+function updateStreamingMessage(text) {
+  const body = document.getElementById('streamBody');
+  if (!body) return;
+  const cleanText = text.replace(/\[CALLOUT:.*$/s, '').trim();
+  const paragraphs = cleanText.split('\n\n').filter(p => p.trim());
+  const htmlParts = paragraphs.map(p =>
+    `<p>${escapeHtml(p.trim()).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>')}</p>`
+  ).join('');
+  body.innerHTML = htmlParts + '<span class="stream-cursor"></span>';
+  scrollToBottom();
+}
+
+function finalizeStreamingMessage(fullText) {
+  const msg = document.getElementById('streamingMsg');
+  if (!msg) return;
+  msg.removeAttribute('id');
+
+  const parsed = parseResponse(fullText, true);
+  const body = msg.querySelector('.msg-body');
+  body.innerHTML = parsed.body;
+
+  if (parsed.callout) {
+    const calloutEl = document.createElement('div');
+    calloutEl.className = 'msg-callout';
+    calloutEl.innerHTML = `<div class="callout-label">${escapeHtml(parsed.callout.label)}</div>
+      <div class="callout-text">${escapeHtml(parsed.callout.text)}</div>`;
+    body.appendChild(calloutEl);
+  }
+
+  if (questionsUsed >= MAX_QUESTIONS) {
+    const nudge = document.createElement('div');
+    nudge.className = 'msg-nudge';
+    nudge.innerHTML = `<span class="nudge-text">You have used all 3 free questions. A full session goes much deeper.</span>
+      <a class="nudge-btn" href="https://fazalk.com" target="_blank">Book a session →</a>`;
+    body.appendChild(nudge);
+  }
+
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  const messages = document.getElementById('messages');
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function setThinking(val) {
+  isThinking = val;
+  document.getElementById('sendBtn').disabled = val || questionsUsed >= MAX_QUESTIONS;
+  document.getElementById('statusDot').className = val ? 'status-dot thinking' : 'status-dot';
+  document.getElementById('typingIndicator').className = val ? 'typing-indicator active' : 'typing-indicator';
+  document.querySelectorAll('.sugg-btn').forEach(b => b.disabled = val || questionsUsed >= MAX_QUESTIONS);
+}
+
+async function sendQuestion() {
+  const input = document.getElementById('questionInput');
+  const question = input.value.trim();
+  if (!question || isThinking || questionsUsed >= MAX_QUESTIONS) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('sendBtn').disabled = true;
+
+  questionsUsed++;
+  updateQuotaUI();
+
+  appendUserMessage(question);
+  history.push({ role: 'user', content: question });
+
+  setThinking(true);
+
+  await new Promise(r => setTimeout(r, 600));
+  document.getElementById('typingIndicator').className = 'typing-indicator';
+  const streamDiv = createStreamingMessage();
+  setThinking(false);
+
+  let fullText = '';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'interleaved-thinking-2025-05-14'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        stream: true,
+        system: SYSTEM_PROMPT,
+        messages: history
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error?.message || `API error ${resp.status}`);
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') break;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText += evt.delta.text;
+            updateStreamingMessage(fullText);
+          }
+        } catch {}
+      }
+    }
+
+    history.push({ role: 'assistant', content: fullText });
+    finalizeStreamingMessage(fullText);
+
+    if (questionsUsed >= MAX_QUESTIONS) {
+      document.getElementById('inputArea').style.display = 'none';
+      document.getElementById('exhaustedBanner').classList.add('active');
+      document.getElementById('suggestions').style.display = 'none';
+    }
+
+  } catch (err) {
+    const streamMsg = document.getElementById('streamingMsg');
+    if (streamMsg) streamMsg.remove();
+
+    const messages = document.getElementById('messages');
+    const errDiv = document.createElement('div');
+    errDiv.className = 'message ai-msg';
+
+    let errText = '';
+    if (err.message.includes('401') || err.message.includes('authentication')) {
+      errText = 'API key required. To deploy this widget on fazalk.com, add your Anthropic API key server-side.';
+    } else {
+      errText = `Something went wrong: ${err.message}`;
+    }
+
+    errDiv.innerHTML = `
+      <div class="msg-meta">
+        <div class="msg-avatar ai">FK</div>
+        <span class="msg-name">System</span>
+      </div>
+      <div class="msg-body" style="color: var(--text-muted); font-style: italic;">${escapeHtml(errText)}</div>`;
+    messages.appendChild(errDiv);
+    scrollToBottom();
+    questionsUsed--;
+    updateQuotaUI();
+  }
+
+  document.getElementById('sendBtn').disabled = questionsUsed >= MAX_QUESTIONS;
+}
+</script>
+</body>
+</html>

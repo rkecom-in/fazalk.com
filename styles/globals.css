@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 40 20% 92%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 40 20% 92%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 40 20% 92%;
+
+    --primary: 40 65% 55%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 40 20% 85%;
+
+    --muted: 220 15% 13%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 40 65% 55%;
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 40 65% 55%;
+
+    --radius: 0.5rem;
+
+    --gold: 40 65% 55%;
+    --gold-light: 40 70% 70%;
+    --gold-dark: 40 55% 40%;
+    --navy: 220 20% 7%;
+    --navy-light: 220 18% 12%;
+    --navy-lighter: 220 15% 18%;
+    --warm-white: 40 20% 92%;
+    --warm-gray: 220 10% 55%;
+
+    --gradient-gold: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%));
+    --gradient-navy: linear-gradient(180deg, hsl(220 20% 7%), hsl(220 18% 12%));
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 12%), hsl(220 15% 9%));
+    --shadow-gold: 0 4px 30px -4px hsl(40 65% 55% / 0.15);
+    --shadow-card: 0 8px 40px -12px hsl(0 0% 0% / 0.5);
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 40 20% 92%;
+    --sidebar-primary: 40 65% 55%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 40 20% 92%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 40 65% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-gradient-gold {
+    border-image: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%)) 1;
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 40px -10px hsl(40 65% 55% / 0.3);
+  }
+}

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Decision Map — Fazal K. Advisory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --gold:#c8a84b; --gold-dim:#8a6f2e; --gold-faint:rgba(200,168,75,0.07);
+  --gold-faint2:rgba(200,168,75,0.13); --gold-border:rgba(200,168,75,0.22);
+  --bg:#070707; --bg2:#0e0e0e; --bg3:#141414; --bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.055); --border2:rgba(255,255,255,0.1);
+  --text:#e2dbd0; --text-dim:#7a7268; --text-muted:#38342e;
+  --node-ai:rgba(200,168,75,0.12); --node-cloud:rgba(74,130,158,0.12);
+  --node-data:rgba(107,158,74,0.12); --node-risk:rgba(200,100,75,0.12);
+  --node-ai-b:rgba(200,168,75,0.35); --node-cloud-b:rgba(74,130,158,0.35);
+  --node-data-b:rgba(107,158,74,0.35); --node-risk-b:rgba(200,100,75,0.35);
+}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:3rem 1.25rem 4rem;
+}
+
+.widget { width:100%; max-width:820px; }
+
+.header { text-align:center; margin-bottom:2.25rem; }
+
+.eyebrow {
+  font-size:9px; letter-spacing:0.22em; color:var(--gold);
+  text-transform:uppercase; margin-bottom:1.25rem; opacity:0.75;
+  display:inline-flex; align-items:center; gap:0.5rem;
+}
+
+.eyebrow-line { width:24px; height:1px; background:var(--gold); opacity:0.4; }
+
+.title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4.5vw,38px);
+  font-weight:600; color:#f0ebe0; line-height:1.12; margin-bottom:0.875rem;
+}
+
+.title em { font-style:italic; color:var(--gold); }
+
+.subtitle {
+  font-size:13px; color:var(--text-dim); line-height:1.75;
+  max-width:480px; margin:0 auto; font-weight:300;
+}
+
+/* ── MAP CONTAINER ── */
+.map-wrap {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+  margin-bottom:1px;
+}
+
+.map-toolbar {
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  padding:0.625rem 1.25rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.toolbar-left { display:flex; align-items:center; gap:0.875rem; }
+.toolbar-label { font-size:9px; letter-spacing:0.16em; color:var(--gold); text-transform:uppercase; opacity:0.65; }
+
+.legend { display:flex; gap:0.875rem; }
+
+.legend-item { display:flex; align-items:center; gap:0.35rem; font-size:9.5px; color:var(--text-muted); }
+
+.legend-dot {
+  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+}
+
+.ld-ai { background:rgba(200,168,75,0.7); }
+.ld-cloud { background:rgba(74,130,158,0.7); }
+.ld-data { background:rgba(107,158,74,0.7); }
+.ld-risk { background:rgba(200,100,75,0.7); }
+
+.zoom-hint { font-size:9px; color:var(--text-muted); letter-spacing:0.06em; }
+
+/* SVG canvas */
+.map-canvas {
+  width:100%;
+  height:520px;
+  display:block;
+  cursor:default;
+  overflow:visible;
+}
+
+/* ── TOOLTIP ── */
+.tooltip {
+  position:absolute;
+  background:var(--bg3);
+  border:1px solid var(--gold-border);
+  border-radius:2px;
+  padding:0.875rem 1rem;
+  max-width:240px;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity 0.18s ease, transform 0.18s ease;
+  z-index:10;
+}
+
+.tooltip.visible { opacity:1; transform:translateY(0); }
+
+.tooltip-category {
+  font-size:8.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gold); opacity:0.65; margin-bottom:0.375rem;
+}
+
+.tooltip-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px; font-weight:600; color:#f0ebe0;
+  line-height:1.3; margin-bottom:0.5rem;
+}
+
+.tooltip-body {
+  font-size:11.5px; color:var(--text-dim);
+  line-height:1.65; font-weight:300;
+}
+
+.tooltip-principle {
+  margin-top:0.625rem;
+  padding-top:0.5rem;
+  border-top:1px solid var(--border);
+  font-size:10px;
+  color:var(--gold-dim);
+  letter-spacing:0.04em;
+  font-style:italic;
+  line-height:1.5;
+}
+
+/* ── INFO PANEL ── */
+.info-panel {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:none;
+  border-radius:0 0 3px 3px;
+  padding:1.25rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.info-text {
+  font-size:12.5px; color:var(--text-dim);
+  line-height:1.65; font-weight:300; flex:1; min-width:200px;
+}
+
+.info-text strong { color:var(--text); font-weight:500; }
+
+.info-cta {
+  background:transparent;
+  border:1px solid var(--gold-border);
+  color:var(--gold-dim);
+  font-family:'DM Sans',sans-serif;
+  font-size:11px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.625rem 1.25rem;
+  cursor:pointer; border-radius:1px;
+  transition:all 0.2s;
+  text-decoration:none;
+  display:inline-flex; align-items:center;
+  white-space:nowrap;
+}
+
+.info-cta:hover {
+  background:var(--gold-faint);
+  color:var(--gold);
+  border-color:var(--gold);
+}
+
+/* ── CATEGORY LEGEND BELOW MAP ── */
+.categories {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0.5rem; margin-top:1.5rem;
+}
+
+.cat-card {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:0.75rem 0.875rem;
+  cursor:default;
+  transition:border-color 0.2s, background 0.2s;
+}
+
+.cat-card:hover { border-color:var(--border2); }
+
+.cat-dot {
+  width:8px; height:8px; border-radius:50%;
+  margin-bottom:0.5rem;
+}
+
+.cat-name { font-size:11px; font-weight:500; color:var(--text); margin-bottom:0.25rem; }
+.cat-desc { font-size:10px; color:var(--text-muted); line-height:1.5; }
+
+.footer-note {
+  text-align:center; margin-top:1.75rem;
+  font-size:11px; color:var(--text-muted); line-height:1.6;
+}
+
+.footer-note a { color:var(--gold-dim); text-decoration:none; }
+.footer-note a:hover { color:var(--gold); }
+
+@media(max-width:580px){
+  .categories { grid-template-columns:1fr 1fr; }
+  .legend { display:none; }
+  .map-canvas { height:400px; }
+}
+</style>
+</head>
+<body>
+<div class="widget">
+
+  <div class="header">
+    <div class="eyebrow"><div class="eyebrow-line"></div>Fazal K. / Advisory<div class="eyebrow-line"></div></div>
+    <h1 class="title">The architecture<br><em>decision space.</em></h1>
+    <p class="subtitle">Every AI and cloud system navigates the same decision tree. Hover any node to see the principle behind it. Click to explore the decision depth.</p>
+  </div>
+
+  <div class="map-wrap" id="mapWrap">
+    <div class="map-toolbar">
+      <div class="toolbar-left">
+        <span class="toolbar-label">Architecture decision map</span>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot ld-ai"></div>AI Layer</div>
+          <div class="legend-item"><div class="legend-dot ld-cloud"></div>Cloud</div>
+          <div class="legend-item"><div class="legend-dot ld-data"></div>Data</div>
+          <div class="legend-item"><div class="legend-dot ld-risk"></div>Risk</div>
+        </div>
+      </div>
+      <span class="zoom-hint">Hover nodes to explore</span>
+    </div>
+
+    <svg class="map-canvas" id="mapSvg" viewBox="0 0 820 520" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arr-gold" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="rgba(200,168,75,0.4)"/>
+        </marker>
+        <marker id="arr-dim" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="rgba(255,255,255,0.1)"/>
+        </marker>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- EDGES drawn first so nodes sit on top -->
+      <g id="edges"></g>
+      <!-- NODES -->
+      <g id="nodes"></g>
+      <!-- PULSE RINGS -->
+      <g id="pulses"></g>
+    </svg>
+
+    <div class="tooltip" id="tooltip">
+      <div class="tooltip-category" id="ttCat"></div>
+      <div class="tooltip-title" id="ttTitle"></div>
+      <div class="tooltip-body" id="ttBody"></div>
+      <div class="tooltip-principle" id="ttPrinciple"></div>
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <div class="info-text" id="infoText">
+      <strong>20+ decisions</strong> shape every AI or cloud system before a line of code is written. Hover any node to see the principle behind the decision — and what goes wrong when it is skipped.
+    </div>
+    <a class="info-cta" href="https://fazalk.com" target="_blank">Get decisions right →</a>
+  </div>
+
+  <div class="categories">
+    <div class="cat-card">
+      <div class="cat-dot" style="background:rgba(200,168,75,0.8)"></div>
+      <div class="cat-name">AI Layer</div>
+      <div class="cat-desc">LLM selection, retrieval, orchestration, and output quality</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-dot" style="background:rgba(74,130,158,0.8)"></div>
+      <div class="cat-name">Cloud</div>
+      <div class="cat-desc">Infrastructure topology, cost, reliability, and scaling</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-dot" style="background:rgba(107,158,74,0.8)"></div>
+      <div class="cat-name">Data</div>
+      <div class="cat-desc">Pipelines, indexing, storage, and entity modeling</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-dot" style="background:rgba(200,100,75,0.8)"></div>
+      <div class="cat-name">Risk</div>
+      <div class="cat-desc">Failure modes, cost traps, latency, and lock-in</div>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    These are the decisions Fazal Khan works through with clients before they build.<br>
+    <a href="https://fazalk.com" target="_blank">fazalk.com</a> · <a href="https://linkedin.com/in/fazalk1980" target="_blank">linkedin.com/in/fazalk1980</a>
+  </p>
+
+</div>
+
+<script>
+const COLORS = {
+  ai:   { fill:'rgba(200,168,75,0.1)',  stroke:'rgba(200,168,75,0.45)',  glow:'rgba(200,168,75,0.6)',  dot:'rgba(200,168,75,0.8)',  hover:'rgba(200,168,75,0.18)' },
+  cloud:{ fill:'rgba(74,130,158,0.1)', stroke:'rgba(74,130,158,0.45)', glow:'rgba(74,130,158,0.6)', dot:'rgba(74,130,158,0.8)', hover:'rgba(74,130,158,0.18)' },
+  data: { fill:'rgba(107,158,74,0.1)', stroke:'rgba(107,158,74,0.45)', glow:'rgba(107,158,74,0.6)', dot:'rgba(107,158,74,0.8)', hover:'rgba(107,158,74,0.18)' },
+  risk: { fill:'rgba(200,100,75,0.1)', stroke:'rgba(200,100,75,0.45)', glow:'rgba(200,100,75,0.6)', dot:'rgba(200,100,75,0.8)', hover:'rgba(200,100,75,0.18)' }
+};
+
+const NODES = [
+  // ── ROOT ──
+  { id:'root', x:410, y:58, r:32, type:'root', cat:'ai',
+    label:'Architecture\nDecision', short:'Start',
+    category:'Foundation',
+    title:'The Architecture Decision',
+    body:'Before any code is written, a set of fundamental decisions determines whether the system will survive production — or collapse under real load, real cost, and real edge cases.',
+    principle:'Getting the architecture right is not a phase. It is the phase.' },
+
+  // ── LAYER 1 ──
+  { id:'ai_layer', x:180, y:160, r:26, type:'l1', cat:'ai',
+    label:'AI Layer', short:'AI',
+    category:'AI Layer',
+    title:'AI System Design',
+    body:'The AI layer is where most systems fail first. LLM selection, retrieval strategy, context management, and output validation are interconnected decisions — changing one forces changes in all others.',
+    principle:'The model is the least important part of an AI system. The architecture around it is everything.' },
+
+  { id:'cloud', x:410, y:160, r:26, type:'l1', cat:'cloud',
+    label:'Cloud\nInfra', short:'Cloud',
+    category:'Cloud',
+    title:'Cloud Infrastructure',
+    body:'Cloud decisions made early become load-bearing walls. Provider choice, service topology, networking, and cost architecture lock in at the design stage — not at deployment.',
+    principle:'A cloud architecture that works in staging and collapses under production load was never a real architecture.' },
+
+  { id:'data', x:640, y:160, r:26, type:'l1', cat:'data',
+    label:'Data\nLayer', short:'Data',
+    category:'Data',
+    title:'Data Architecture',
+    body:'Data pipelines, storage design, and indexing strategy determine query performance, cost, and the quality of everything the AI layer produces. Weak data architecture produces correct-looking but wrong answers.',
+    principle:'Garbage in, confident garbage out.' },
+
+  // ── AI CHILDREN ──
+  { id:'llm', x:70, y:275, r:21, type:'l2', cat:'ai',
+    label:'LLM\nSelect', short:'LLM',
+    category:'AI · Model Selection',
+    title:'LLM Selection',
+    body:'GPT, Claude, Gemini, Mistral, or open-source — the choice is not about capability benchmarks. It is about latency requirements, cost per token at scale, context window size, and data residency constraints.',
+    principle:'Pick the smallest model that meets your production requirements, not the best one on a leaderboard.' },
+
+  { id:'rag', x:175, y:275, r:21, type:'l2', cat:'ai',
+    label:'RAG vs\nFine-tune', short:'RAG',
+    category:'AI · Retrieval Strategy',
+    title:'RAG vs Fine-tuning',
+    body:'RAG is the correct default for most enterprise use cases: it is updatable, auditable, and does not bake stale knowledge into weights. Fine-tuning is for style and format adaptation — not for injecting facts.',
+    principle:'If you are fine-tuning to inject knowledge, you are solving the wrong problem.' },
+
+  { id:'context', x:280, y:275, r:21, type:'l2', cat:'ai',
+    label:'Context\nMgmt', short:'Ctx',
+    category:'AI · Context Management',
+    title:'Context Window Management',
+    body:'Token budgeting, context compression, and retrieval filtering determine both output quality and infrastructure cost. A system with no context strategy degrades and becomes expensive as usage grows.',
+    principle:'Context is a finite resource. Treat it like memory, not an infinite scroll.' },
+
+  // ── CLOUD CHILDREN ──
+  { id:'provider', x:370, y:275, r:21, type:'l2', cat:'cloud',
+    label:'Provider\nChoice', short:'Provider',
+    category:'Cloud · Provider',
+    title:'Provider Architecture',
+    body:'AWS, Azure, and GCP are not interchangeable. AI service availability, data residency, existing enterprise agreements, and specific managed service quality differ significantly across providers for AI workloads.',
+    principle:'Pick the provider whose managed services match your stack, not the one with the best marketing.' },
+
+  { id:'scale', x:450, y:275, r:21, type:'l2', cat:'cloud',
+    label:'Scale\nStrategy', short:'Scale',
+    category:'Cloud · Scaling',
+    title:'Scaling Architecture',
+    body:'Horizontal vs vertical scaling, auto-scaling triggers, and cold start management for AI inference are non-trivial. Most AI systems underestimate GPU/CPU burst requirements and design for average load, not peak.',
+    principle:'Design for your worst traffic day. You will have one sooner than you expect.' },
+
+  // ── DATA CHILDREN ──
+  { id:'pipeline', x:570, y:275, r:21, type:'l2', cat:'data',
+    label:'Pipeline\nDesign', short:'Pipe',
+    category:'Data · Pipeline',
+    title:'Data Pipeline Architecture',
+    body:'Ingestion, transformation, and indexing pipelines determine how fresh and how accurate the AI layer inputs are. Real-time vs batch vs hybrid decisions here affect both cost and output quality.',
+    principle:'A pipeline that breaks quietly is more dangerous than one that breaks loudly.' },
+
+  { id:'vector', x:660, y:275, r:21, type:'l2', cat:'data',
+    label:'Vector\nStore', short:'Vec',
+    category:'Data · Storage',
+    title:'Vector Database Selection',
+    body:'Pinecone, Weaviate, Qdrant, pgvector — the choice depends on query volume, embedding dimensions, metadata filtering requirements, and whether you need multi-tenancy. Most teams over-engineer this choice.',
+    principle:'pgvector solves 80% of use cases. Do not buy a specialised database until you have a problem it uniquely solves.' },
+
+  { id:'entity', x:750, y:275, r:21, type:'l2', cat:'data',
+    label:'Entity\nModel', short:'Entity',
+    category:'Data · Modelling',
+    title:'Entity & Schema Design',
+    body:'How you model your domain entities — products, users, documents, transactions — directly affects retrieval accuracy, join performance, and the ability to attribute AI outputs to source data.',
+    principle:'A weak data model produces confident but structurally incorrect answers at scale.' },
+
+  // ── RISK LAYER ──
+  { id:'cost', x:100, y:390, r:19, type:'l3', cat:'risk',
+    label:'Cost\nTrap', short:'Cost',
+    category:'Risk · Cost',
+    title:'Runaway Infrastructure Cost',
+    body:'The most common AI system failure is not technical — it is financial. Over-provisioned models, unfiltered context, unnecessary re-embeddings, and no token budgets turn a working system into an unviable one.',
+    principle:'Cost at scale is an architecture problem, not a billing problem.' },
+
+  { id:'latency', x:200, y:390, r:19, type:'l3', cat:'risk',
+    label:'Latency\nRisk', short:'Lat',
+    category:'Risk · Performance',
+    title:'Latency Under Production Load',
+    body:'3-6 second LLM response times are acceptable in a prototype. They destroy user experience in a product. Streaming, caching, pre-computation, and retrieval filtering are architectural choices that must be made early.',
+    principle:'If streaming is not in the design from day one, it is a retrofit — and retrofits are expensive.' },
+
+  { id:'halluc', x:310, y:390, r:19, type:'l3', cat:'risk',
+    label:'Hallucin-\nation', short:'Hall',
+    category:'Risk · Output Quality',
+    title:'Hallucination Risk',
+    body:'Hallucination is not a model problem — it is an architecture problem. Systems without a proper retrieval layer, source grounding, and output validation will hallucinate under any model.',
+    principle:'If your system cannot point to the source of its answer, it does not have a source.' },
+
+  { id:'lockin', x:420, y:390, r:19, type:'l3', cat:'risk',
+    label:'Vendor\nLock-in', short:'Lock',
+    category:'Risk · Architecture',
+    title:'Vendor Lock-in',
+    body:'Deep integration with a single cloud provider\'s proprietary AI services, embedding APIs, or orchestration frameworks creates lock-in that increases cost and reduces negotiating power at renewal.',
+    principle:'Abstract your AI provider. It should be replaceable in a day, not a quarter.' },
+
+  { id:'observe', x:520, y:390, r:19, type:'l3', cat:'risk',
+    label:'Observ-\nability', short:'Obs',
+    category:'Risk · Operations',
+    title:'Observability Gap',
+    body:'AI systems without tracing, token cost monitoring, latency percentile tracking, and output quality scoring are flying blind. Production AI systems degrade silently without proper instrumentation.',
+    principle:'You cannot fix what you cannot measure. Instrument from day one.' },
+
+  { id:'security', x:620, y:390, r:19, type:'l3', cat:'risk',
+    label:'Security\nSurface', short:'Sec',
+    category:'Risk · Security',
+    title:'Security Architecture',
+    body:'Prompt injection, data exfiltration via context, PII leakage in embeddings, and API key exposure in client-side code are AI-specific security vectors that traditional AppSec frameworks do not cover.',
+    principle:'Every LLM call is a potential injection surface. Treat it like user input.' },
+
+  { id:'multitenant', x:720, y:390, r:19, type:'l3', cat:'risk',
+    label:'Multi-\ntenant', short:'MT',
+    category:'Risk · Architecture',
+    title:'Multi-tenancy Isolation',
+    body:'SaaS platforms using a shared LLM and shared vector store must implement strict tenant isolation at the retrieval layer. A retrieval boundary failure exposes one tenant\'s data to another.',
+    principle:'Tenant isolation is not a feature. It is a foundational architecture constraint.' },
+
+  // ── LEAF: DECISION OUTCOMES ──
+  { id:'outcome_good', x:210, y:475, r:13, type:'leaf', cat:'ai',
+    label:'Sound\nArch', short:'',
+    category:'Outcome · Architecture',
+    title:'Sound Architecture',
+    body:'A system designed with explicit decisions at each layer: predictable cost, maintainable codebase, clear failure modes, and the ability to evolve without a full rebuild.',
+    principle:'A sound architecture is not one that never breaks. It is one that breaks predictably.' },
+
+  { id:'outcome_bad', x:610, y:475, r:13, type:'leaf', cat:'risk',
+    label:'Costly\nRebuild', short:'',
+    category:'Outcome · Risk',
+    title:'Costly Rebuild',
+    body:'Systems built without explicit architecture decisions tend to reach a point where accumulated technical debt and wrong foundational choices force a partial or full rebuild — at 3-5× the original build cost.',
+    principle:'Every deferred architecture decision becomes a future rebuild ticket.' },
+];
+
+const EDGES = [
+  { from:'root', to:'ai_layer', w:1.5 },
+  { from:'root', to:'cloud', w:1.5 },
+  { from:'root', to:'data', w:1.5 },
+  { from:'ai_layer', to:'llm', w:1 },
+  { from:'ai_layer', to:'rag', w:1 },
+  { from:'ai_layer', to:'context', w:1 },
+  { from:'cloud', to:'provider', w:1 },
+  { from:'cloud', to:'scale', w:1 },
+  { from:'data', to:'pipeline', w:1 },
+  { from:'data', to:'vector', w:1 },
+  { from:'data', to:'entity', w:1 },
+  { from:'llm', to:'cost', w:0.8 },
+  { from:'context', to:'latency', w:0.8 },
+  { from:'rag', to:'halluc', w:0.8 },
+  { from:'provider', to:'lockin', w:0.8 },
+  { from:'scale', to:'observe', w:0.8 },
+  { from:'pipeline', to:'security', w:0.8 },
+  { from:'vector', to:'multitenant', w:0.8 },
+  { from:'cost', to:'outcome_bad', w:0.6 },
+  { from:'multitenant', to:'outcome_bad', w:0.6 },
+  { from:'rag', to:'outcome_good', w:0.6 },
+  { from:'context', to:'outcome_good', w:0.6 },
+];
+
+const nodeMap = {};
+NODES.forEach(n => nodeMap[n.id] = n);
+
+const svg = document.getElementById('mapSvg');
+const edgesG = document.getElementById('edges');
+const nodesG = document.getElementById('nodes');
+const pulsesG = document.getElementById('pulses');
+const tooltip = document.getElementById('tooltip');
+const infoText = document.getElementById('infoText');
+
+let activeNode = null;
+let animFrames = [];
+
+function getCenter(id) {
+  const n = nodeMap[id];
+  return { x: n.x, y: n.y };
+}
+
+function midPoint(p1, p2, curvature=0.15) {
+  const mx = (p1.x + p2.x)/2;
+  const my = (p1.y + p2.y)/2;
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const len = Math.sqrt(dx*dx+dy*dy);
+  const nx = -dy/len; const ny = dx/len;
+  return { cx: mx + nx*len*curvature, cy: my + ny*len*curvature };
+}
+
+function buildPath(fromN, toN) {
+  const r1 = fromN.r, r2 = toN.r;
+  const dx = toN.x - fromN.x;
+  const dy = toN.y - fromN.y;
+  const len = Math.sqrt(dx*dx+dy*dy);
+  const sx = fromN.x + (dx/len)*r1;
+  const sy = fromN.y + (dy/len)*r1;
+  const ex = toN.x - (dx/len)*(r2+5);
+  const ey = toN.y - (dy/len)*(r2+5);
+  const mid = midPoint({x:sx,y:sy},{x:ex,y:ey}, 0.12);
+  return `M${sx},${sy} Q${mid.cx},${mid.cy} ${ex},${ey}`;
+}
+
+function drawEdges() {
+  EDGES.forEach(e => {
+    const f = nodeMap[e.from]; const t = nodeMap[e.to];
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', buildPath(f,t));
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke', e.w > 1 ? 'rgba(200,168,75,0.2)' : 'rgba(255,255,255,0.06)');
+    path.setAttribute('stroke-width', e.w);
+    path.setAttribute('marker-end', e.w > 1 ? 'url(#arr-gold)' : 'url(#arr-dim)');
+    path.setAttribute('data-from', e.from);
+    path.setAttribute('data-to', e.to);
+    path.setAttribute('class','edge-path');
+    const len = path.getTotalLength ? 200 : 200;
+    path.style.strokeDasharray = '200';
+    path.style.strokeDashoffset = '200';
+    path.style.transition = 'none';
+    edgesG.appendChild(path);
+    setTimeout(() => {
+      path.style.transition = 'stroke-dashoffset 0.8s ease';
+      path.style.strokeDashoffset = '0';
+    }, 100 + NODES.findIndex(n=>n.id===e.from)*60);
+  });
+}
+
+function drawNodes() {
+  NODES.forEach((n, idx) => {
+    const c = COLORS[n.cat];
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','node-group');
+    g.setAttribute('data-id', n.id);
+    g.style.cursor = 'pointer';
+    g.style.opacity = '0';
+    g.style.transition = 'opacity 0.4s ease';
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', n.x); circle.setAttribute('cy', n.y); circle.setAttribute('r', n.r);
+    circle.setAttribute('fill', c.fill);
+    circle.setAttribute('stroke', c.stroke);
+    circle.setAttribute('stroke-width', n.type==='root' ? 1.5 : 1);
+    circle.setAttribute('class','node-circle');
+
+    const lines = n.label.split('\n');
+    const textG = document.createElementNS('http://www.w3.org/2000/svg','g');
+    lines.forEach((line,i) => {
+      const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x', n.x);
+      const offset = lines.length===1 ? 0 : (i===0 ? -6 : 6);
+      txt.setAttribute('y', n.y + offset + 3);
+      txt.setAttribute('text-anchor','middle');
+      txt.setAttribute('dominant-baseline','middle');
+      txt.setAttribute('fill', n.type==='root' ? '#f0ebe0' : '#a09888');
+      const fs = n.type==='root' ? 9 : n.type==='l1' ? 8.5 : n.type==='l2' ? 7.5 : n.type==='l3' ? 7 : 6.5;
+      txt.setAttribute('font-size', fs);
+      txt.setAttribute('font-family','DM Sans,sans-serif');
+      txt.setAttribute('pointer-events','none');
+      txt.textContent = line;
+      textG.appendChild(txt);
+    });
+
+    g.appendChild(circle);
+    g.appendChild(textG);
+    nodesG.appendChild(g);
+
+    setTimeout(() => { g.style.opacity = '1'; }, 200 + idx * 55);
+
+    g.addEventListener('mouseenter', (e) => onNodeEnter(n, g, e));
+    g.addEventListener('mouseleave', () => onNodeLeave(n, g));
+    g.addEventListener('click', () => onNodeClick(n));
+  });
+
+  addPulse('root', 0);
+  addPulse('ai_layer', 1200);
+  addPulse('cloud', 1800);
+  addPulse('data', 2400);
+}
+
+function addPulse(id, delay) {
+  const n = nodeMap[id];
+  const c = COLORS[n.cat];
+  const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx', n.x); circle.setAttribute('cy', n.y);
+  circle.setAttribute('r', n.r); circle.setAttribute('fill','none');
+  circle.setAttribute('stroke', c.glow); circle.setAttribute('stroke-width','1');
+  circle.setAttribute('opacity','0');
+  pulsesG.appendChild(circle);
+
+  function doPulse() {
+    let start = null;
+    const dur = 1800;
+    function step(ts) {
+      if (!start) start = ts;
+      const t = (ts - start) / dur;
+      if (t > 1) {
+        circle.setAttribute('opacity','0');
+        setTimeout(doPulse, 2200 + Math.random()*2000);
+        return;
+      }
+      const r = n.r + t * 22;
+      const op = (1-t) * 0.55;
+      circle.setAttribute('r', r);
+      circle.setAttribute('opacity', op);
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  setTimeout(doPulse, delay);
+}
+
+function onNodeEnter(n, g, evt) {
+  const c = COLORS[n.cat];
+  const circle = g.querySelector('.node-circle');
+  circle.setAttribute('fill', c.hover);
+  circle.setAttribute('stroke', c.glow);
+  circle.setAttribute('stroke-width','1.5');
+  g.querySelectorAll('text').forEach(t => t.setAttribute('fill','#f0ebe0'));
+
+  highlightConnected(n.id, true);
+
+  document.getElementById('ttCat').textContent = n.category;
+  document.getElementById('ttTitle').textContent = n.title;
+  document.getElementById('ttBody').textContent = n.body;
+  document.getElementById('ttPrinciple').textContent = '"' + n.principle + '"';
+
+  positionTooltip(n, evt);
+  tooltip.classList.add('visible');
+
+  infoText.innerHTML = `<strong>${n.title}</strong> — ${n.body.substring(0,100)}...`;
+}
+
+function onNodeLeave(n, g) {
+  const c = COLORS[n.cat];
+  const circle = g.querySelector('.node-circle');
+  circle.setAttribute('fill', c.fill);
+  circle.setAttribute('stroke', c.stroke);
+  circle.setAttribute('stroke-width', n.type==='root' ? 1.5 : 1);
+  g.querySelectorAll('text').forEach(t => {
+    t.setAttribute('fill', n.type==='root' ? '#f0ebe0' : '#a09888');
+  });
+
+  highlightConnected(n.id, false);
+  tooltip.classList.remove('visible');
+  infoText.innerHTML = `<strong>20+ decisions</strong> shape every AI or cloud system before a line of code is written. Hover any node to see the principle behind the decision.`;
+}
+
+function onNodeClick(n) {
+  infoText.innerHTML = `<strong>${n.title}:</strong> ${n.body} <em style="color:var(--gold-dim);font-style:italic;"> — "${n.principle}"</em>`;
+}
+
+function highlightConnected(id, on) {
+  document.querySelectorAll('.edge-path').forEach(path => {
+    const f = path.getAttribute('data-from');
+    const t = path.getAttribute('data-to');
+    if (f===id || t===id) {
+      path.setAttribute('stroke', on ? 'rgba(200,168,75,0.55)' : (path.getAttribute('stroke-width')>1 ? 'rgba(200,168,75,0.2)' : 'rgba(255,255,255,0.06)'));
+      path.setAttribute('stroke-width', on ? 1.8 : parseFloat(path.getAttribute('stroke-width')));
+    } else {
+      path.style.opacity = on ? '0.3' : '1';
+    }
+  });
+  document.querySelectorAll('.node-group').forEach(g => {
+    if (g.getAttribute('data-id') !== id) {
+      const connected = EDGES.some(e => (e.from===id && e.to===g.getAttribute('data-id')) || (e.to===id && e.from===g.getAttribute('data-id')));
+      g.style.opacity = on ? (connected ? '1' : '0.35') : '1';
+    }
+  });
+}
+
+function positionTooltip(n, evt) {
+  const wrap = document.getElementById('mapWrap');
+  const rect = wrap.getBoundingClientRect();
+  const svgRect = document.getElementById('mapSvg').getBoundingClientRect();
+  const scaleX = svgRect.width / 820;
+  const scaleY = svgRect.height / 520;
+  const px = svgRect.left - rect.left + n.x * scaleX;
+  const py = svgRect.top - rect.top + n.y * scaleY;
+  const tw = 240; const th = 160;
+  let left = px + 16;
+  let top = py - 20;
+  if (left + tw > rect.width - 10) left = px - tw - 16;
+  if (top + th > rect.height - 10) top = py - th;
+  if (top < 5) top = 5;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+
+function init() {
+  drawEdges();
+  drawNodes();
+}
+
+init();
+</script>
+</body>
+</html>
