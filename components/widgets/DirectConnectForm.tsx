@@ -169,7 +169,7 @@ export default function DirectConnectForm({ onComplete, sessionContext }: { onCo
             ) : (
               <>
                 {c.submit}
-                <ArrowRight className={`w-5 h-5 opacity-80 ${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'}`} />
+                <ArrowRight className="ms-2 w-5 h-5 opacity-80 rtl:rotate-180" />
               </>
             )}
           </Button>

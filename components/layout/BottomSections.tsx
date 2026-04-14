@@ -82,20 +82,21 @@ const BottomSections = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-border/50">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto pt-6 border-t border-border/50 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">{session.duration}</p>
                       <p className="text-lg font-bold text-foreground">{session.price}</p>
                     </div>
                     <Button 
                       variant="heroOutline"
+                      className="w-full sm:w-auto"
                       onClick={() => {
                         setSelectedSession(session.title);
                         setIsConnectOpen(true);
                       }}
                     >
                       {t.bookingSessions.bookLabelPrefix}
-                      <ArrowRight className="ms-2 w-4 h-4 opacity-70" />
+                      <ArrowRight className="ms-2 w-4 h-4 opacity-70 rtl:rotate-180" />
                     </Button>
                   </div>
                 </div>
@@ -149,7 +150,7 @@ const BottomSections = () => {
           </p>
           <div className="mt-6 mb-4">
             <a href="https://in.linkedin.com/in/fazalk1980" target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-gold transition-colors inline-flex items-center gap-1">
-              {t.footer.linkedinLabel} <span aria-hidden="true">&rarr;</span>
+              {t.footer.linkedinLabel} <span aria-hidden="true" className="rtl:rotate-180 inline-block">→</span>
             </a>
           </div>
           <div className="flex justify-center gap-6 mb-4">

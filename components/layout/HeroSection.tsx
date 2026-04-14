@@ -34,13 +34,13 @@ const HeroSection = () => {
           <a href="#sessions">
             <Button variant="hero" size="xl">
               {s.cta1}
-              <ArrowRight className="ms-1" />
+              <ArrowRight className="ms-1 rtl:rotate-180" />
             </Button>
           </a>
           <a href="#assessment">
             <Button variant="heroOutline" size="xl" className="w-full sm:w-auto">
               {s.cta2}
-              <ArrowRight className="ms-1 w-5 h-5 opacity-70" />
+              <ArrowRight className="ms-1 w-5 h-5 opacity-70 rtl:rotate-180" />
             </Button>
           </a>
         </div>

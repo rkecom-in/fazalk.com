@@ -353,7 +353,7 @@ export default function AssessmentTriage() {
                 <span className="text-[10px] tracking-widest text-muted-foreground uppercase">{QUESTIONS[current].category}</span>
               </div>
               <div className="p-6 md:p-8">
-                <div className="font-serif text-2xl font-medium text-foreground leading-snug mb-8">
+                <div className="font-serif text-xl md:text-2xl font-medium text-foreground leading-snug mb-8">
                   {QUESTIONS[current].text}
                 </div>
                 <div className="flex flex-col gap-3">
@@ -370,14 +370,14 @@ export default function AssessmentTriage() {
             {/* Nav */}
             <div className="flex gap-3">
               {current > 0 && (
-                <Button variant="outline" onClick={goBack} className="uppercase tracking-widest text-xs px-6">
-                  &larr; {language === 'ar' ? 'رجوع' : 'Back'}
+                <Button variant="outline" onClick={goBack} className="uppercase tracking-widest text-xs px-4 sm:px-6 shrink-0">
+                  {language === 'ar' ? '→' : '←'} {language === 'ar' ? 'رجوع' : 'Back'}
                 </Button>
               )}
-              <Button onClick={() => goNext()} disabled={answers[current]===undefined} variant="hero" className="flex-1 uppercase tracking-widest text-xs py-6">
+              <Button onClick={() => goNext()} disabled={answers[current]===undefined} variant="hero" className="flex-1 uppercase tracking-widest text-xs py-6 text-center leading-tight">
                 {current === QUESTIONS.length-1
-                  ? (language === 'ar' ? 'احصل على توصيتي →' : 'Get My Recommendation →')
-                  : (language === 'ar' ? 'متابعة →' : 'Continue →')}
+                  ? (language === 'ar' ? 'احصل على توصيتي ←' : 'Get My Recommendation →')
+                  : (language === 'ar' ? 'متابعة ←' : 'Continue →')}
               </Button>
             </div>
           </div>
@@ -480,7 +480,7 @@ export default function AssessmentTriage() {
 
                 <div className="mt-6 flex justify-center">
                   <Button variant="outline" onClick={restart} className="uppercase tracking-widest text-xs px-6">
-                    ← {aw.result.restart}
+                      {language === 'ar' ? '→' : '←'} {aw.result.restart}
                   </Button>
                 </div>
               </div>

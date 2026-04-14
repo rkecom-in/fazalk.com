@@ -104,11 +104,11 @@ const SampleDeliverables = () => {
 
             <div className="border-t border-border pt-5">
               <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">{au.outcomeLabel}</p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
                 {au.stats.map((stat) => (
-                  <div key={stat.label} className="text-center p-3 rounded-lg bg-gold/5 border border-gold/10">
-                    <p className="text-lg font-bold text-gold">{stat.metric}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                  <div key={stat.label} className="text-center p-2 md:p-3 rounded-lg bg-gold/5 border border-gold/10">
+                    <p className="text-base md:text-lg font-bold text-gold">{stat.metric}</p>
+                    <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider leading-tight mt-1">{stat.label}</p>
                   </div>
                 ))}
               </div>

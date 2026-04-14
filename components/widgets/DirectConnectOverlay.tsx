@@ -37,12 +37,12 @@ export default function DirectConnectOverlay({ isOpen, onClose, sessionTitle }: 
       <div className="relative w-full max-w-3xl bg-card border border-border/50 rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-full hover:bg-muted transition-colors z-10 text-muted-foreground hover:text-foreground"
+          className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-muted transition-colors z-10 text-muted-foreground hover:text-foreground"
         >
           <X className="w-5 h-5" />
         </button>
         
-        <div className="p-8 md:p-12">
+        <div className="p-5 md:p-12">
             <DirectConnectForm onComplete={onClose} sessionContext={sessionTitle} />
         </div>
       </div>

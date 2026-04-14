@@ -17,11 +17,11 @@ export default function SiteHeader() {
           {isAr ? (
             <>
               <span className="text-muted-foreground font-normal">الاستشارات /</span>{' '}
-              FAZAL K.
+              <span dir="ltr">FAZAL K.</span>
             </>
           ) : (
             <>
-              FAZAL K.{' '}
+              <span dir="ltr">FAZAL K.</span>{' '}
               <span className="text-muted-foreground font-normal">/ ADVISORY</span>
             </>
           )}
