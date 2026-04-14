@@ -331,13 +331,13 @@ export default function AssessmentTriage() {
             <div className="flex gap-3">
               {current > 0 && (
                 <Button variant="outline" onClick={goBack} className="uppercase tracking-widest text-xs px-6">
-                  &larr; {t.language === 'ar' ? 'رجوع' : 'Back'}
+                  &larr; {language === 'ar' ? 'رجوع' : 'Back'}
                 </Button>
               )}
               <Button onClick={() => goNext()} disabled={answers[current]===undefined} variant="hero" className="flex-1 uppercase tracking-widest text-xs py-6">
                 {current === QUESTIONS.length-1
-                  ? (t.language === 'ar' ? 'احصل على توصيتي →' : 'Get My Recommendation →')
-                  : (t.language === 'ar' ? 'متابعة →' : 'Continue →')}
+                  ? (language === 'ar' ? 'احصل على توصيتي →' : 'Get My Recommendation →')
+                  : (language === 'ar' ? 'متابعة →' : 'Continue →')}
               </Button>
             </div>
           </div>
@@ -386,7 +386,7 @@ export default function AssessmentTriage() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={backToPhase1} className="uppercase tracking-widest text-xs px-6">
-                &larr; {t.language === 'ar' ? 'رجوع' : 'Back'}
+                &larr; {language === 'ar' ? 'رجوع' : 'Back'}
               </Button>
               <Button onClick={submitAssessment} variant="hero" className="flex-1 py-6 uppercase tracking-widest text-xs">
                 {aw.phase2.generate} {'\u2192'}
@@ -404,10 +404,10 @@ export default function AssessmentTriage() {
                 <div className="w-12 h-12 border-2 border-gold/20 border-t-gold rounded-full mx-auto mb-8 animate-spin"/>
                 <div className="max-w-[280px] mx-auto text-left space-y-3">
                   {[aw.phase3.subheading,
-                    t.language === 'ar' ? 'تقييم خمسة أبعاد' : 'Scoring five architecture dimensions',
-                    t.language === 'ar' ? 'قراءة سياقك' : 'Reading your situation context',
-                    t.language === 'ar' ? 'مطابقة الانخراط المناسب' : 'Matching to the right engagement',
-                    t.language === 'ar' ? 'إعداد تقريرك' : 'Preparing your report'
+                    language === 'ar' ? 'تقييم خمسة أبعاد' : 'Scoring five architecture dimensions',
+                    language === 'ar' ? 'قراءة سياقك' : 'Reading your situation context',
+                    language === 'ar' ? 'مطابقة الانخراط المناسب' : 'Matching to the right engagement',
+                    language === 'ar' ? 'إعداد تقريرك' : 'Preparing your report'
                   ].map((s,i) => (
                     <div key={i} id={`ls${i}`} className="text-xs text-muted-foreground flex items-center gap-3 opacity-0 transition-opacity duration-500">
                       <span className="w-1.5 h-1.5 bg-gold/50 rounded-full shrink-0"/>
