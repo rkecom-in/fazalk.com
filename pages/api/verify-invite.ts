@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const isProd = process.env.NODE_ENV === 'production'
   res.setHeader(
     'Set-Cookie',
-    `fazalk-access-token=${token}; Path=/; HttpOnly; SameSite=Strict; ${isProd ? 'Secure;' : ''} Max-Age=31536000`
+    `fazalk-access-token=${token}; Path=/; HttpOnly; SameSite=Strict; ${isProd ? 'Secure;' : ''}`
   )
 
   return res.status(200).json({ success: true })
