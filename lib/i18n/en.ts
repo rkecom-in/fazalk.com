@@ -307,6 +307,10 @@ export const en = {
       restart: "Re-take Assessment",
       errorLabel: "Something went wrong",
       retry: "Please try again.",
+      fallbackHeading: "Assessment Unavailable",
+      fallbackSubheading: "We couldn't generate your recommendation right now.",
+      fallbackText: "Our AI service is temporarily unavailable. Your answers have been noted — share your details below and Fazal will personally review your situation and be in touch with a recommendation.",
+      fallbackContext: "Assessment Follow-up",
     },
   },
   terms: {

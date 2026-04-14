@@ -17,7 +17,7 @@ export default function SiteHeader() {
           {isAr ? (
             <>
               <span className="text-muted-foreground font-normal">الاستشارات /</span>{' '}
-              فضل ك.
+              FAZAL K.
             </>
           ) : (
             <>

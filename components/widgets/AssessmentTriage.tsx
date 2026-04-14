@@ -23,8 +23,8 @@ interface AssessmentResult {
 /* ─── DATA ──────────────────────────────────────────────────────────────── */
 const DIM_LABELS = ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge']
 
-// Questions are now supplied at runtime from the i18n dictionary
-// The risk values must stay fixed — only the display strings are translated
+// Questions are supplied at runtime from the i18n dictionary.
+// The risk values must stay fixed — only the display strings are translated.
 const QUESTION_RISKS = [
   [1, 2, 3, 4],
   [1, 2, 3, 4],
@@ -33,24 +33,63 @@ const QUESTION_RISKS = [
   [2, 2, 3, 4],
 ]
 
-const SYSTEM_PROMPT = `You are the advisory assessment AI for Fazal Khan's CTO-level architecture practice (fazalk.com).
+const SYSTEM_PROMPT = `You are the advisory assessment AI for Fazal K.'s CTO-level architecture consulting practice (fazalk.com).
 
-You receive structured data from a 5-question risk assessment plus an optional free-text situation description. Generate a personalised advisory report.
+ABOUT FAZAL K.
+Fazal K. is a CTO-level AI and cloud architecture consultant with 25+ years of production systems experience. He works with businesses that need senior technical clarity before they build, scale, or invest. He is not a freelance developer — he is a strategic advisor who operates at the architecture and decision-making level. Engagements are intentionally selective and outcome-driven.
 
-ENGAGEMENTS:
-1. Strategic Clarity Session — 1 hour, $350. For one specific decision that needs a clear answer fast.
-2. Architecture Decision Intensive — 3 hours, $1,200. For interconnected decisions, system audits, or technical roadmaps. This is the most common entry point.
-3. AI Architecture Blueprint — 1 full day, $3,000. By invitation only. Only recommend for clearly major new platform launches or serious architectural overhauls.
-4. Discuss Your Case — free. For genuine ambiguity where the scope is unclear.
+WHAT IS OFFERED
+Three core service types, delivered through focused sessions:
 
-RISK LEVELS: Low = total 5–9, Medium = 10–14, High = 15–20.
+1. Architecture Design
+   Full system architecture for AI products, cloud infrastructure, and data pipelines — built around the client's constraints, team, and strategic goals. Clients walk away with an end-to-end technical specification ready for their engineering team to execute.
 
-RULES:
-- Be specific. Reference what the person actually said — their stage, their team, their challenge.
-- Do not be generic. Name the exact risk pattern you see.
-- Lean toward the 1-hour when uncertain between 1h and 3h.
-- Only recommend the Blueprint for unmistakably major situations.
-- If they gave a situation description, use it to make the analysis sharper and more specific.`
+2. Technical Review
+   An independent assessment of an existing architecture to identify risks, inefficiencies, and missed opportunities before they become production problems. Delivered as a structured written report.
+
+3. Technical Due Diligence
+   Rigorous technical evaluation of AI systems, vendor proposals, or existing platforms — before signing a contract, making a hire, or committing to a roadmap. Designed for high-stakes decisions where an expert second opinion is critical.
+
+SESSION OPTIONS
+Two engagement tiers — both are outcome-driven with written deliverables:
+
+A. Strategic Clarity Session — $350/hour (typically 1–2 hours)
+   For leaders who need fast, focused clarity on a specific decision. Ideal for:
+   - Evaluating AI feasibility for a product or workflow
+   - Choosing between build vs. buy for an AI capability
+   - Getting a second opinion on an existing architecture
+   - Understanding LLM, RAG, fine-tuning, or agentic workflow fit
+   Deliverable: Clear recommendation, decision framework, or validated direction — documented in a follow-up summary.
+
+B. Deep Dive Session — $400/hour (typically 3–7 hours)
+   An intensive working session for interconnected architecture decisions, system audits, or full technical strategy. Ideal for:
+   - Designing a full AI system architecture end-to-end
+   - Auditing an underperforming AI system (high cost, poor output, slow latency)
+   - Planning an AWS/Azure migration or optimization
+   - Building a technical roadmap for a new AI product
+   Deliverable: Comprehensive architecture document covering system design, tech stack, data flow, cost estimates, and an execution-ready plan for the engineering team.
+
+WHO THE CLIENTS ARE
+- GCC Software & IT Companies (primary market)
+- SaaS & Platform Businesses building AI features
+- Digital Transformation Firms at a critical architecture decision point
+- Founders building AI products who lack a senior technical co-founder
+- IT Resellers & System Integrators presenting AI proposals to enterprise clients
+- SME Platform & Marketplace Businesses scaling into AI infrastructure
+
+RISK SCORING
+Total score out of 20 across 5 dimensions (each 1–4):
+- Low risk: 5–9 — architecture is on solid footing, specific clarity needed
+- Medium risk: 10–14 — meaningful gaps or fragile decisions requiring structured advisory
+- High risk: 15–20 — significant exposure, wrong decisions already compounding
+
+RULES FOR GENERATING THE REPORT
+- Be specific. Reference exactly what the person said — their stage, their team composition, their primary challenge.
+- Do not be generic. Name the exact risk pattern you see based on their combination of answers.
+- Recommend the Strategic Clarity Session ($350/hr) for lower-stakes decisions or when scope is narrow and well-defined.
+- Recommend the Deep Dive Session ($400/hr) for high-risk profiles, interconnected decisions, full architecture work, or system audits.
+- If they provided a free-text situation description, use it to sharpen and personalise the analysis beyond what the answers alone reveal.
+- The analysis should feel like it was written by a senior technical advisor who has read the answers once and diagnosed a familiar pattern — not by a form processor.`
 
 const ASSESSMENT_TOOL = {
   name: 'generate_assessment',
@@ -71,17 +110,18 @@ const ASSESSMENT_TOOL = {
         },
         required: ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge'],
       },
-      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation (max 14 words).' },
-      analysis:              { type: 'string', description: 'Three focused paragraphs separated by double newlines. Para 1: the specific risk pattern. Para 2: what is at stake. Para 3: what resolving it looks like. Be direct and specific.' },
-      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence.' },
-      recommendedEngagement: { type: 'string', enum: ['Strategic Clarity Session', 'Architecture Decision Intensive', 'AI Architecture Blueprint', 'Discuss Your Case'] },
-      engagementFee:         { type: 'string', enum: ['$350 · 1 hour', '$1,200 · 3 hours', '$3,000 · 1 full day', 'Free'] },
-      engagementReason:      { type: 'string', description: 'One sentence — why this specific engagement fits their specific answers.' },
-      nextStep:              { type: 'string', description: 'One clear action the person should take right now (besides booking).' },
+      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation and risk (max 15 words). Should feel like a diagnosis, not a label.' },
+      analysis:              { type: 'string', description: 'Three focused paragraphs separated by double newlines. Para 1: the specific risk pattern you see in their answers. Para 2: what is concretely at stake if this is not resolved. Para 3: what resolving it looks like and why an outside CTO-level perspective is the right tool. Be direct and specific to their situation.' },
+      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence, specific to their answers.' },
+      recommendedEngagement: { type: 'string', enum: ['Strategic Clarity Session', 'Deep Dive Session'] },
+      engagementFee:         { type: 'string', enum: ['$350 / Hour · 1–2 Hours', '$400 / Hour · 3–7 Hours'] },
+      engagementReason:      { type: 'string', description: 'One to two sentences — why this specific engagement format and depth matches their specific situation and answers.' },
+      nextStep:              { type: 'string', description: 'One clear, concrete action the person should take right now to move forward (besides booking a session).' },
     },
     required: ['riskLevel', 'overallScore', 'dimensionScores', 'headline', 'analysis', 'topRisk', 'recommendedEngagement', 'engagementFee', 'engagementReason', 'nextStep'],
   },
 }
+
 
 /* ─── COMPONENT ─────────────────────────────────────────────────────────── */
 export default function AssessmentTriage() {
@@ -424,23 +464,23 @@ export default function AssessmentTriage() {
                   <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-5">
                     <span className="text-2xl">&#128203;</span>
                   </div>
-                  <div className="text-[10px] tracking-widest text-gold uppercase mb-3">Assessment Unavailable</div>
+                  <div className="text-[10px] tracking-widest text-gold uppercase mb-3">{aw.result.fallbackHeading}</div>
                   <div className="font-serif text-xl font-medium text-foreground mb-3">
-                    We couldn’t generate your recommendation right now.
+                    {aw.result.fallbackSubheading}
                   </div>
                   <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                    Our AI service is temporarily unavailable. Your answers have been noted — share your details below and Fazal will personally review your situation and be in touch with a recommendation.
+                    {aw.result.fallbackText}
                   </p>
                 </div>
 
                 <DirectConnectForm
-                  sessionContext={`Assessment Follow-up (${answers.map((_,i) => i+1).join('/')} answered)`}
+                  sessionContext={`${aw.result.fallbackContext} (${answers.map((_,i) => i+1).join('/')} answered)`}
                   onComplete={restart}
                 />
 
                 <div className="mt-6 flex justify-center">
                   <Button variant="outline" onClick={restart} className="uppercase tracking-widest text-xs px-6">
-                    ← {language === 'ar' ? 'إعادة التقييم' : 'Re-take Assessment'}
+                    ← {aw.result.restart}
                   </Button>
                 </div>
               </div>

@@ -24,7 +24,7 @@ function detectDefaultLanguage(): Language {
 }
 
 export function GlobalUXProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const [language, setLanguageState] = useState<Language>('en');
   const [mounted, setMounted] = useState(false);
 
@@ -33,7 +33,7 @@ export function GlobalUXProvider({ children }: { children: React.ReactNode }) {
     const savedTheme = localStorage.getItem('ux-theme') as Theme | null;
     const savedLang = localStorage.getItem('ux-language') as Language | null;
 
-    setThemeState(savedTheme ?? 'light');
+    setThemeState(savedTheme ?? 'dark');
     setLanguageState(savedLang ?? detectDefaultLanguage());
     setMounted(true);
   }, []);
