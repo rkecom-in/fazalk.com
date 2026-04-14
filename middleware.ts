@@ -40,12 +40,15 @@ export async function middleware(request: NextRequest) {
     if (code && signature) {
       const validCodes = (process.env.INVITE_CODES || '').split(',').map(c => c.trim().toLowerCase());
       if (validCodes.includes(code.toLowerCase())) {
-        const secret = process.env.INVITE_SECRET || 'fallback-secret-for-dev';
-        try {
-          isAuthenticated = await verifySignature(code.toLowerCase(), signature, secret);
-        } catch (e) {
-          isAuthenticated = false;
+        const secret = process.env.INVITE_SECRET;
+        if (secret) {
+          try {
+            isAuthenticated = await verifySignature(code.toLowerCase(), signature, secret);
+          } catch (e) {
+            isAuthenticated = false;
+          }
         }
+        // If INVITE_SECRET is not configured, authentication fails — no insecure fallback
       }
     }
   }

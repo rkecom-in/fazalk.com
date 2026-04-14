@@ -65,29 +65,6 @@ export const en = {
       },
     ],
   },
-  sampleDeliverables: {
-    badge: "What You Receive",
-    headline: "Tangible Outputs, Not Just Advice",
-    subtext: "Every engagement ends with a written artefact — a document you can act on, share with your team, or use to guide development.",
-    deliverables: [
-      {
-        title: "Architecture Decision Record",
-        description: "A structured document capturing the key technical decisions made, the options considered, and the rationale — so your team has context long after the engagement ends.",
-      },
-      {
-        title: "System Design Document",
-        description: "End-to-end technical specification covering components, data flow, API contracts, and infrastructure — ready for an engineering team to execute.",
-      },
-      {
-        title: "AI Implementation Roadmap",
-        description: "A phased plan for AI integration, including model selection guidance, data requirements, infrastructure needs, and milestone definitions.",
-      },
-      {
-        title: "Technical Risk Assessment",
-        description: "An honest evaluation of your current trajectory — what's working, what's fragile, and what needs to change before you scale.",
-      },
-    ],
-  },
 
   clients: {
     badge: "Clients",
