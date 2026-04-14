@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
+import { CheckCircle2 } from 'lucide-react'
+import DirectConnectForm from '@/components/widgets/DirectConnectForm'
 
 /* ─── TYPES ─────────────────────────────────────────────────────────────── */
 interface Question { category: string; text: string; options: { label: string; risk: number }[] }
@@ -20,42 +23,14 @@ interface AssessmentResult {
 /* ─── DATA ──────────────────────────────────────────────────────────────── */
 const DIM_LABELS = ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge']
 
-const QUESTIONS: Question[] = [
-  { category: 'Build Stage', text: 'Where are you in the build process right now?',
-    options: [
-      { label: 'We have an idea and are deciding what to build', risk: 1 },
-      { label: 'We have a rough design but development has not started', risk: 2 },
-      { label: 'We are actively building — some components are live', risk: 3 },
-      { label: 'We have a live system that is underperforming or expensive', risk: 4 },
-    ]},
-  { category: 'Technical Leadership', text: 'Who is making the core architecture decisions on your team?',
-    options: [
-      { label: 'A CTO or senior architect with AI/cloud production experience', risk: 1 },
-      { label: 'A senior developer who is learning as we build', risk: 2 },
-      { label: 'Decisions are made by the founder or product team', risk: 3 },
-      { label: 'We are relying on a vendor or agency to decide for us', risk: 4 },
-    ]},
-  { category: 'Decision Clarity', text: 'How clearly defined are your core architecture decisions right now?',
-    options: [
-      { label: 'All major decisions are documented and agreed', risk: 1 },
-      { label: 'Most decisions are made but a few key gaps remain', risk: 2 },
-      { label: 'Rough direction only — significant unknowns still open', risk: 3 },
-      { label: 'We are building without a clear architecture plan', risk: 4 },
-    ]},
-  { category: 'Risk Exposure', text: 'What is the cost of getting the architecture wrong at this stage?',
-    options: [
-      { label: 'Low — we can pivot quickly, limited investment committed', risk: 1 },
-      { label: 'Moderate — a few months of work and some budget at stake', risk: 2 },
-      { label: 'High — significant engineering time and budget committed', risk: 3 },
-      { label: 'Critical — a wrong call would set us back 6+ months', risk: 4 },
-    ]},
-  { category: 'Primary Challenge', text: 'What is your single biggest architecture concern right now?',
-    options: [
-      { label: 'Choosing the right AI approach — LLM, RAG, fine-tuning, or agentic', risk: 2 },
-      { label: 'Cloud infrastructure — scalability, cost, and reliability at production', risk: 2 },
-      { label: 'Existing system is broken — high cost, latency, or poor output quality', risk: 4 },
-      { label: 'We do not know what we do not know — need an expert second opinion', risk: 3 },
-    ]},
+// Questions are now supplied at runtime from the i18n dictionary
+// The risk values must stay fixed — only the display strings are translated
+const QUESTION_RISKS = [
+  [1, 2, 3, 4],
+  [1, 2, 3, 4],
+  [1, 2, 3, 4],
+  [1, 2, 3, 4],
+  [2, 2, 3, 4],
 ]
 
 const SYSTEM_PROMPT = `You are the advisory assessment AI for Fazal Khan's CTO-level architecture practice (fazalk.com).
@@ -75,24 +50,50 @@ RULES:
 - Do not be generic. Name the exact risk pattern you see.
 - Lean toward the 1-hour when uncertain between 1h and 3h.
 - Only recommend the Blueprint for unmistakably major situations.
-- If they gave a situation description, use it to make the analysis sharper and more specific.
+- If they gave a situation description, use it to make the analysis sharper and more specific.`
 
-Respond ONLY with valid JSON, no markdown, no preamble:
-{
-  "riskLevel": "Low"|"Medium"|"High",
-  "overallScore": number,
-  "dimensionScores": { "Stage": n, "Leadership": n, "Clarity": n, "Exposure": n, "Challenge": n },
-  "headline": "One sharp sentence naming their specific situation (max 14 words)",
-  "analysis": "Three focused paragraphs. Para 1: the specific risk pattern in their answers. Para 2: what is at stake if not addressed. Para 3: what resolving it looks like. Be direct and specific. No padding.",
-  "topRisk": "The single most critical risk in one sentence",
-  "recommendedEngagement": "Strategic Clarity Session"|"Architecture Decision Intensive"|"AI Architecture Blueprint"|"Discuss Your Case",
-  "engagementFee": "$350 · 1 hour"|"$1,200 · 3 hours"|"$3,000 · 1 full day"|"Free",
-  "engagementReason": "One sentence — why this specific engagement fits their specific answers",
-  "nextStep": "One clear action the person should take right now (besides booking)"
-}`
+const ASSESSMENT_TOOL = {
+  name: 'generate_assessment',
+  description: 'Generate a structured advisory assessment report based on the 5-question risk profile.',
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      riskLevel:             { type: 'string', enum: ['Low', 'Medium', 'High'], description: 'Overall risk level based on total score.' },
+      overallScore:          { type: 'number', description: 'Total risk score out of 20.' },
+      dimensionScores: {
+        type: 'object',
+        properties: {
+          Stage:      { type: 'number' },
+          Leadership: { type: 'number' },
+          Clarity:    { type: 'number' },
+          Exposure:   { type: 'number' },
+          Challenge:  { type: 'number' },
+        },
+        required: ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge'],
+      },
+      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation (max 14 words).' },
+      analysis:              { type: 'string', description: 'Three focused paragraphs separated by double newlines. Para 1: the specific risk pattern. Para 2: what is at stake. Para 3: what resolving it looks like. Be direct and specific.' },
+      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence.' },
+      recommendedEngagement: { type: 'string', enum: ['Strategic Clarity Session', 'Architecture Decision Intensive', 'AI Architecture Blueprint', 'Discuss Your Case'] },
+      engagementFee:         { type: 'string', enum: ['$350 · 1 hour', '$1,200 · 3 hours', '$3,000 · 1 full day', 'Free'] },
+      engagementReason:      { type: 'string', description: 'One sentence — why this specific engagement fits their specific answers.' },
+      nextStep:              { type: 'string', description: 'One clear action the person should take right now (besides booking).' },
+    },
+    required: ['riskLevel', 'overallScore', 'dimensionScores', 'headline', 'analysis', 'topRisk', 'recommendedEngagement', 'engagementFee', 'engagementReason', 'nextStep'],
+  },
+}
 
 /* ─── COMPONENT ─────────────────────────────────────────────────────────── */
 export default function AssessmentTriage() {
+  const { t, language } = useGlobalUX()
+  const aw = t.assessmentWidget
+
+  // Build questions from i18n strings, preserving hardcoded risk values
+  const QUESTIONS: Question[] = aw.questions.map((q, qi) => ({
+    category: q.category,
+    text: q.text,
+    options: q.options.map((label, oi) => ({ label, risk: QUESTION_RISKS[qi][oi] })),
+  }))
   const [phase, setPhase]           = useState<1|2|3|4>(1)
   const [current, setCurrent]       = useState(0)
   const [answers, setAnswers]       = useState<number[]>([])
@@ -101,7 +102,7 @@ export default function AssessmentTriage() {
   const [result, setResult]         = useState<AssessmentResult|null>(null)
   const [error, setError]           = useState<string|null>(null)
   const [cardVisible, setCardVisible] = useState(false)
-  const [contact, setContact]       = useState({ name:'', email:'', phone:'' })
+  const [contact, setContact] = useState({ name: '', email: '', phone: '', website: '' })
   const [contactSent, setContactSent]       = useState(false)
   const [contactError, setContactError]     = useState<string|null>(null)
   const [contactLoading, setContactLoading] = useState(false)
@@ -117,16 +118,21 @@ export default function AssessmentTriage() {
   }, [current, phase])
 
   useEffect(() => {
-    if (phase === 2 && riskSummaryRef.current) {
+    if (phase === 2 && cardVisible && riskSummaryRef.current) {
       const fills = riskSummaryRef.current.querySelectorAll<HTMLElement>('.rs-fill')
-      setTimeout(() => {
+      // Give the CSS transition a tick to register, then animate
+      requestAnimationFrame(() => {
         fills.forEach(el => {
           const pct = el.dataset.pct || '0'
           el.style.width = pct + '%'
         })
-      }, 50)
+      })
+    } else if (phase === 2 && !cardVisible && riskSummaryRef.current) {
+      // Reset bars when card hides so they animate in again on show
+      const fills = riskSummaryRef.current.querySelectorAll<HTMLElement>('.rs-fill')
+      fills.forEach(el => { el.style.width = '0%' })
     }
-  }, [phase])
+  }, [phase, cardVisible])
 
   useEffect(() => {
     if (phase === 3 && result && scoreRowRef.current) {
@@ -139,7 +145,7 @@ export default function AssessmentTriage() {
 
   function selectOpt(i: number) {
     const next = [...answers]; next[current] = i; setAnswers(next)
-    if (current < QUESTIONS.length - 1) setTimeout(() => goNext(next), 340)
+    setTimeout(() => goNext(next), 340)
   }
 
   function goNext(ans = answers) {
@@ -171,30 +177,45 @@ export default function AssessmentTriage() {
       }, d)
     })
 
+    const langInstruction = language === 'ar'
+      ? '\n\nIMPORTANT: Write all text field values (headline, analysis, topRisk, engagementReason, nextStep) in Arabic (Modern Standard Arabic). Keep all property names and enum values in English exactly as defined in the tool schema.'
+      : ''
     try {
       const resp = await fetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1200,
-          system: SYSTEM_PROMPT,
+          model: 'claude-haiku-4-5',
+          max_tokens: 1500,
+          system: [
+            {
+              type: 'text',
+              text: SYSTEM_PROMPT + langInstruction,
+              cache_control: { type: 'ephemeral' }
+            }
+          ],
+          tools: [ASSESSMENT_TOOL],
+          tool_choice: { type: 'tool', name: 'generate_assessment' },
           messages: [{ role: 'user', content: userMsg }],
         }),
       })
       if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `API ${resp.status}`) }
       const data = await resp.json()
-      const json: AssessmentResult = JSON.parse(data.content[0].text.trim())
+
+      // With tool_use, Claude always returns a tool_use block with a pre-parsed input object.
+      // No JSON.parse, no regex — the API enforces the schema.
+      const toolBlock = data.content?.find((b: { type: string }) => b.type === 'tool_use')
+      if (!toolBlock?.input) throw new Error('No structured response received from AI.')
+      const json: AssessmentResult = toolBlock.input
+
       await new Promise(r => setTimeout(r, 600))
       setLoading(false)
       setResult(json)
     } catch (err: unknown) {
+      // Log the raw error internally — never expose technical details to clients
+      console.error('[Assessment] AI call failed:', err)
       setLoading(false)
-      setPhase(2)
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      setError(msg.includes('401')
-        ? 'API key required. The assessment service is not yet configured.'
-        : `Something went wrong: ${msg}. Please try again.`)
+      setError('unavailable')
     }
   }
 
@@ -203,14 +224,16 @@ export default function AssessmentTriage() {
     setContactLoading(true); setContactError(null)
     try {
       const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
-      await fetch('/api/notion-lead', {
+      await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers, situation, result, contact }),
+        body: JSON.stringify({ answers, situation, result, contact, source: 'Assessment' }),
       })
       setContactSent(true)
-    } catch {
-      setContactError('Something went wrong. Please try again.')
+    } catch (err) {
+      // Log internally, show a calm reassurance — never expose network errors to clients
+      console.error('[Assessment] Contact submission failed:', err)
+      setContactError('We could not send your details right now. Please try again, or connect with Fazal directly on LinkedIn.')
     } finally {
       setContactLoading(false)
     }
@@ -219,7 +242,7 @@ export default function AssessmentTriage() {
   function restart() {
     setCurrent(0); setAnswers([]); setSituation(''); setPhase(1)
     setResult(null); setError(null); setCardVisible(false)
-    setContact({ name:'', email:'', phone:'' })
+    setContact({ name:'', email:'', phone:'', website:'' })
     setContactSent(false); setContactError(null); setContactSkipped(false)
     document.querySelectorAll('[id^="ls"]').forEach(el => el.classList.remove('opacity-100'))
   }
@@ -243,18 +266,16 @@ export default function AssessmentTriage() {
   }
 
   return (
-    <section id="assessment" className="py-24 bg-background">
-      <div className="container mx-auto px-6 max-w-3xl">
+    <section id="assessment" className="py-20 bg-background mb-10">
+      <div className="container mx-auto px-6 max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-gold/20 bg-gold/5 animate-fade-in">
-            <span className="text-sm font-medium text-gold tracking-widest uppercase">Fazal K. / Advisory</span>
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold font-serif mb-4 text-foreground">
-            Assess your architecture.<br /><span className="text-gradient-gold italic">Get the right engagement.</span>
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">{t.assessment.badge}</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center font-serif">
+            {t.assessment.headline1}<br /><span className="text-gradient-gold italic">{t.assessment.headline2}</span>
           </h2>
-          <p className="text-base text-muted-foreground max-w-[460px] mx-auto">
-            5 questions to identify your risk profile. Then a single AI-powered recommendation — the exact engagement, the exact reason, specific to your situation.
+          <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">
+            {t.assessment.subtext}
           </p>
         </div>
 
@@ -280,13 +301,8 @@ export default function AssessmentTriage() {
                 <span className="text-[10px] tracking-widest text-muted-foreground uppercase">Assessment progress</span>
                 <span className="text-[10px] text-gold/80">Question {current+1} of {QUESTIONS.length}</span>
               </div>
-              <div className="h-0.5 bg-border rounded-full overflow-hidden mb-2">
-                <div className="h-full bg-gold transition-all duration-500" style={{ width: `${Math.round((current/QUESTIONS.length)*100)}%` }}/>
-              </div>
-              <div className="flex gap-1.5">
-                {QUESTIONS.map((_,i) => (
-                  <div key={i} className={`flex-1 h-0.5 rounded-full max-w-[80px] transition-colors duration-300 ${i < current ? 'bg-gold/50' : i === current ? 'bg-gold' : 'bg-border'}`}/>
-                ))}
+              <div className="h-0.5 bg-border rounded-full overflow-hidden">
+                <div className="h-full bg-gold transition-all duration-500" style={{ width: `${Math.round((current / (QUESTIONS.length - 1)) * 100)}%` }}/>
               </div>
             </div>
 
@@ -302,9 +318,9 @@ export default function AssessmentTriage() {
                 </div>
                 <div className="flex flex-col gap-3">
                   {QUESTIONS[current].options.map((o,i) => (
-                    <button key={i} onClick={() => selectOpt(i)} className={`flex items-start gap-4 p-4 rounded-lg text-left transition-all duration-200 border ${answers[current]===i ? 'bg-gold/10 border-gold/50 text-foreground' : 'bg-transparent border-border text-muted-foreground hover:border-gold/30 hover:bg-gold/5'}`}>
-                      <span className="text-xs text-muted-foreground min-w-[16px] pt-0.5">{String.fromCharCode(65+i)}</span>
-                      <span className="text-sm">{o.label}</span>
+                    <button key={i} onClick={() => selectOpt(i)} className={`flex items-start gap-4 p-4 rounded-lg text-left transition-all duration-200 border ${answers[current]===i ? 'bg-gold/10 border-gold/50 text-foreground' : 'bg-transparent border-border text-foreground/80 hover:text-foreground hover:border-gold/30 hover:bg-gold/5'}`}>
+                      <span className="text-xs text-gold/70 min-w-[16px] pt-0.5 font-medium">{String.fromCharCode(65+i)}</span>
+                      <span className="text-sm md:text-base leading-relaxed">{o.label}</span>
                     </button>
                   ))}
                 </div>
@@ -315,23 +331,24 @@ export default function AssessmentTriage() {
             <div className="flex gap-3">
               {current > 0 && (
                 <Button variant="outline" onClick={goBack} className="uppercase tracking-widest text-xs px-6">
-                  &larr; Back
+                  &larr; {t.language === 'ar' ? 'رجوع' : 'Back'}
                 </Button>
               )}
               <Button onClick={() => goNext()} disabled={answers[current]===undefined} variant="hero" className="flex-1 uppercase tracking-widest text-xs py-6">
-                {current === QUESTIONS.length-1 ? 'Continue to Step 2 ' + '\u2192' : 'Continue ' + '\u2192'}
+                {current === QUESTIONS.length-1
+                  ? (t.language === 'ar' ? 'احصل على توصيتي →' : 'Get My Recommendation →')
+                  : (t.language === 'ar' ? 'متابعة →' : 'Continue →')}
               </Button>
             </div>
           </div>
         )}
 
-        {/* ── PHASE 2: SITUATION ──────────────────────────────────────────── */}
         {phase === 2 && (
           <div className="animate-fade-in">
             <div className={`bg-card border border-border rounded-xl p-6 md:p-8 mb-6 transition-all duration-300 ${cardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-              <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">Phase 2 of 3 &mdash; Your situation</span>
+              <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">{aw.phase2.heading}</span>
               <div className="font-serif text-xl font-medium text-foreground leading-snug mb-6">
-                Your risk profile is ready. Add context to sharpen the recommendation.
+                {aw.phase2.subheading}
               </div>
 
               {/* Risk summary bars */}
@@ -350,12 +367,12 @@ export default function AssessmentTriage() {
                 })}
               </div>
 
-              <div className="text-xs text-muted-foreground mb-3 italic">Optional &mdash; describe your specific situation for a more tailored recommendation</div>
+              <div className="text-xs text-muted-foreground mb-3 italic">{aw.phase2.label}</div>
               <textarea
                 value={situation}
                 onChange={e => setSituation(e.target.value)}
                 maxLength={500}
-                placeholder="e.g. We are building an AI-powered search product for an enterprise client. 4 engineers, 3 months budget..."
+                placeholder={aw.phase2.placeholder}
                 className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg p-4 resize-none min-h-[120px] focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
               />
               <div className="text-[10px] text-muted-foreground mt-2 text-right">{situation.length} / 500</div>
@@ -369,10 +386,10 @@ export default function AssessmentTriage() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={backToPhase1} className="uppercase tracking-widest text-xs px-6">
-                &larr; Back
+                &larr; {t.language === 'ar' ? 'رجوع' : 'Back'}
               </Button>
               <Button onClick={submitAssessment} variant="hero" className="flex-1 py-6 uppercase tracking-widest text-xs">
-                Generate my recommendation {'\u2192'}
+                {aw.phase2.generate} {'\u2192'}
               </Button>
             </div>
           </div>
@@ -383,15 +400,48 @@ export default function AssessmentTriage() {
           <div className="animate-fade-in">
             {loading && (
               <div className="text-center py-16 px-6 bg-card border border-border rounded-xl">
-                <div className="text-[10px] tracking-widest text-muted-foreground uppercase mb-8">Generating your assessment</div>
+                <div className="text-[10px] tracking-widest text-muted-foreground uppercase mb-8">{aw.phase3.heading}</div>
                 <div className="w-12 h-12 border-2 border-gold/20 border-t-gold rounded-full mx-auto mb-8 animate-spin"/>
                 <div className="max-w-[280px] mx-auto text-left space-y-3">
-                  {['Analysing your risk profile','Scoring five architecture dimensions','Reading your situation context','Matching to the right engagement','Preparing your report'].map((s,i) => (
+                  {[aw.phase3.subheading,
+                    t.language === 'ar' ? 'تقييم خمسة أبعاد' : 'Scoring five architecture dimensions',
+                    t.language === 'ar' ? 'قراءة سياقك' : 'Reading your situation context',
+                    t.language === 'ar' ? 'مطابقة الانخراط المناسب' : 'Matching to the right engagement',
+                    t.language === 'ar' ? 'إعداد تقريرك' : 'Preparing your report'
+                  ].map((s,i) => (
                     <div key={i} id={`ls${i}`} className="text-xs text-muted-foreground flex items-center gap-3 opacity-0 transition-opacity duration-500">
                       <span className="w-1.5 h-1.5 bg-gold/50 rounded-full shrink-0"/>
                       {s}
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {!loading && !result && error && (
+              <div className="animate-fade-in-up">
+                <div className="bg-card border border-border rounded-xl p-8 mb-6 text-center">
+                  <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-5">
+                    <span className="text-2xl">&#128203;</span>
+                  </div>
+                  <div className="text-[10px] tracking-widest text-gold uppercase mb-3">Assessment Unavailable</div>
+                  <div className="font-serif text-xl font-medium text-foreground mb-3">
+                    We couldn’t generate your recommendation right now.
+                  </div>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+                    Our AI service is temporarily unavailable. Your answers have been noted — share your details below and Fazal will personally review your situation and be in touch with a recommendation.
+                  </p>
+                </div>
+
+                <DirectConnectForm
+                  sessionContext={`Assessment Follow-up (${answers.map((_,i) => i+1).join('/')} answered)`}
+                  onComplete={restart}
+                />
+
+                <div className="mt-6 flex justify-center">
+                  <Button variant="outline" onClick={restart} className="uppercase tracking-widest text-xs px-6">
+                    ← {language === 'ar' ? 'إعادة التقييم' : 'Re-take Assessment'}
+                  </Button>
                 </div>
               </div>
             )}
@@ -436,7 +486,7 @@ export default function AssessmentTriage() {
 
                   {/* Engagement box */}
                   <div className="bg-gold/5 border border-gold/20 rounded-xl p-6 mb-8">
-                    <div className="text-[10px] tracking-widest text-gold uppercase mb-3">Recommended engagement</div>
+                    <div className="text-[10px] tracking-widest text-gold uppercase mb-3">{aw.result.engagementLabel}</div>
                     <div className="font-serif text-xl font-medium text-foreground mb-1">{result.recommendedEngagement}</div>
                     <div className="text-sm text-gold/80 mb-3">{result.engagementFee}</div>
                     <div className="text-sm text-muted-foreground leading-relaxed">{result.engagementReason}</div>
@@ -444,7 +494,7 @@ export default function AssessmentTriage() {
 
                   {/* Summary blocks */}
                   <div className="grid md:grid-cols-2 gap-4 mb-8">
-                    {[{ label:'Primary risk', value:result.topRisk }, { label:'Immediate next step', value:result.nextStep }].map(b => (
+                    {[{ label: aw.result.topRiskLabel, value: result.topRisk }, { label: aw.result.nextStepLabel, value: result.nextStep }].map(b => (
                       <div key={b.label} className="bg-muted/30 border border-border p-5 rounded-lg">
                         <div className="text-[9px] tracking-widest text-muted-foreground uppercase mb-2">{b.label}</div>
                         <div className="text-sm text-foreground leading-relaxed">{b.value}</div>
@@ -454,7 +504,7 @@ export default function AssessmentTriage() {
 
                   <div className="flex">
                     <Button variant="outline" onClick={restart} className="w-full uppercase tracking-widest text-xs py-6">
-                      Retake assessment
+                      {aw.result.restart}
                     </Button>
                   </div>
                 </div>
@@ -473,6 +523,7 @@ export default function AssessmentTriage() {
                             { key:'name' as const, label:'Name', type:'text', placeholder:'Your name', required:true },
                             { key:'email' as const, label:'Email', type:'email', placeholder:'your@email.com', required:true },
                             { key:'phone' as const, label:'Phone', type:'tel', placeholder:'+91 98765 43210 (optional)', required:false },
+                            { key:'website' as const, label:'Corporate Website', type:'url', placeholder:'https://yourcompany.com (optional)', required:false },
                           ].map(f => (
                             <div key={f.key}>
                               <label className="text-[10px] tracking-widest text-muted-foreground uppercase block mb-1.5">
@@ -500,18 +551,19 @@ export default function AssessmentTriage() {
                             onClick={submitContact}
                             disabled={contactLoading || !contact.name.trim() || !contact.email.trim()}
                             variant="hero"
-                            className="w-full sm:flex-1 py-6 uppercase tracking-widest text-xs"
+                            className="w-full py-6 uppercase tracking-widest text-xs"
                           >
                             {contactLoading ? 'Sending…' : 'Send my results to Fazal ' + '\u2192'}
                           </Button>
-                          <button onClick={() => setContactSkipped(true)} className="text-xs text-muted-foreground underline decoration-muted-foreground hover:text-foreground transition-colors">
-                            Skip &mdash; just show me the recommendation
-                          </button>
                         </div>
                       </>
                     ) : (
                       <div className="text-center py-6">
-                        <div className="text-2xl mb-3 text-[#4a9e6b]">&check;</div>
+                        <div className="flex justify-center mb-4">
+                          <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                          </div>
+                        </div>
                         <div className="font-serif text-xl font-medium text-foreground mb-2">Sent.</div>
                         <div className="text-sm text-muted-foreground">Fazal will review your assessment and be in touch.</div>
                       </div>

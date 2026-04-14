@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  /* ── DARK MODE (default) ───────────────────────────────── */
+  :root,
+  .dark {
     --background: 220 20% 7%;
     --foreground: 40 20% 92%;
 
@@ -58,6 +60,101 @@
     --sidebar-border: 220 15% 18%;
     --sidebar-ring: 40 65% 55%;
   }
+
+  /* ── LIGHT MODE — Clean Ivory/Gold ────────────────────── */
+  .light {
+    --background: 40 30% 96%;
+    --foreground: 220 25% 12%;
+
+    --card: 40 25% 99%;
+    --card-foreground: 220 25% 12%;
+
+    --popover: 40 25% 99%;
+    --popover-foreground: 220 25% 12%;
+
+    --primary: 40 60% 42%;
+    --primary-foreground: 40 30% 96%;
+
+    --secondary: 40 20% 90%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 40 15% 91%;
+    --muted-foreground: 220 15% 40%;
+
+    --accent: 40 60% 42%;
+    --accent-foreground: 40 30% 96%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 40 20% 82%;
+    --input: 40 20% 82%;
+    --ring: 40 60% 42%;
+
+    --gold: 40 60% 42%;
+    --gold-light: 40 65% 58%;
+    --gold-dark: 40 50% 30%;
+    --navy: 40 30% 96%;
+    --navy-light: 40 25% 93%;
+    --navy-lighter: 40 20% 88%;
+    --warm-white: 220 25% 12%;
+    --warm-gray: 220 15% 40%;
+
+    --gradient-gold: linear-gradient(135deg, hsl(40 60% 42%), hsl(40 65% 58%));
+    --gradient-navy: linear-gradient(180deg, hsl(40 30% 96%), hsl(40 25% 93%));
+    --gradient-card: linear-gradient(145deg, hsl(40 25% 99%), hsl(40 20% 95%));
+    --shadow-gold: 0 4px 30px -4px hsl(40 60% 42% / 0.2);
+    --shadow-card: 0 8px 40px -12px hsl(220 20% 20% / 0.15);
+
+    --sidebar-background: 40 25% 99%;
+    --sidebar-foreground: 220 25% 12%;
+    --sidebar-primary: 40 60% 42%;
+    --sidebar-primary-foreground: 40 30% 96%;
+    --sidebar-accent: 40 20% 90%;
+    --sidebar-accent-foreground: 220 25% 12%;
+    --sidebar-border: 40 20% 82%;
+    --sidebar-ring: 40 60% 42%;
+  }
+
+  /* ── HIGH CONTRAST — bolder text, sharper colours ─────── */
+
+  /* Dark mode: push text toward pure white, heavier weight */
+  .dark.high-contrast {
+    --foreground: 0 0% 100%;
+    --card-foreground: 0 0% 100%;
+    --muted-foreground: 0 0% 82%;
+    --border: 220 15% 40%;
+  }
+  /* Light mode: push text toward near-black, heavier weight */
+  .light.high-contrast {
+    --foreground: 220 40% 3%;
+    --card-foreground: 220 40% 3%;
+    --muted-foreground: 220 30% 15%;
+    --border: 40 25% 55%;
+  }
+
+  /* Font-weight boost applied in ALL themes when high-contrast is active */
+  .high-contrast p,
+  .high-contrast span,
+  .high-contrast li,
+  .high-contrast a,
+  .high-contrast label,
+  .high-contrast button,
+  .high-contrast [class*="text-muted"] {
+    font-weight: 500;
+  }
+  .high-contrast h1,
+  .high-contrast h2,
+  .high-contrast h3,
+  .high-contrast h4,
+  .high-contrast .font-serif {
+    font-weight: 800;
+  }
+  .high-contrast .font-bold,
+  .high-contrast .font-semibold,
+  .high-contrast .font-medium {
+    font-weight: 900;
+  }
 }
 
 @layer base {
@@ -65,8 +162,19 @@
     @apply border-border;
   }
 
+  /* ── BASE FONT SIZE — the single source of truth for all scaling ─ */
+  html {
+    font-size: 16px; /* normal */
+    scroll-behavior: smooth;
+  }
+  html.text-large {
+    font-size: 18px; /* enlarged — all rem-based sizes scale automatically */
+  }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
+    font-size: 1rem;      /* inherits from html → 16px or 18px */
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4 {
@@ -76,17 +184,17 @@
 
 @layer utilities {
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%));
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .border-gradient-gold {
-    border-image: linear-gradient(135deg, hsl(40 65% 55%), hsl(40 70% 70%)) 1;
+    border-image: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light))) 1;
   }
 
   .glow-gold {
-    box-shadow: 0 0 40px -10px hsl(40 65% 55% / 0.3);
+    box-shadow: 0 0 40px -10px hsl(var(--gold) / 0.3);
   }
 }

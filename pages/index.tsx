@@ -4,8 +4,8 @@ import PositioningStrip from "@/components/layout/PositioningStrip";
 import WhatWeSolve from "@/components/layout/WhatWeSolve";
 import CoreOfferings from "@/components/layout/CoreOfferings";
 import SampleDeliverables from "@/components/layout/SampleDeliverables";
-import FractionalCTO from "@/components/layout/FractionalCTO";
 import BottomSections from "@/components/layout/BottomSections";
+import SiteHeader from "@/components/layout/SiteHeader";
 
 import DecisionMap from '@/components/widgets/DecisionMap'
 import CostEstimator from '@/components/widgets/CostEstimator'
@@ -19,15 +19,12 @@ export default function Home() {
         <meta name="description" content="AI & Cloud Architecture Consulting for High-Stakes Decisions. We design the right AI system, fix what's broken, or get clarity before you commit serious time and money." />
       </Head>
       <main className="min-h-screen bg-background">
+        <SiteHeader />
         <HeroSection />
         <PositioningStrip />
-        <DecisionMap />
         <WhatWeSolve />
         <CoreOfferings />
         <SampleDeliverables />
-        <FractionalCTO />
-        <CostEstimator />
-        <AssessmentTriage />
         <BottomSections />
       </main>
     </>
