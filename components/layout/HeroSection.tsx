@@ -31,13 +31,13 @@ const HeroSection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
-          <a href="#sessions">
-            <Button variant="hero" size="xl">
+          <a href="#sessions" className="w-full sm:w-auto">
+            <Button variant="hero" size="xl" className="w-full sm:w-auto">
               {s.cta1}
               <ArrowRight className="ms-1 rtl:rotate-180" />
             </Button>
           </a>
-          <a href="#assessment">
+          <a href="#assessment" className="w-full sm:w-auto">
             <Button variant="heroOutline" size="xl" className="w-full sm:w-auto">
               {s.cta2}
               <ArrowRight className="ms-1 w-5 h-5 opacity-70 rtl:rotate-180" />
