@@ -145,6 +145,64 @@ function getRiskLevelFromScore(score: number): AssessmentResult['riskLevel'] {
   return 'High'
 }
 
+function buildLocalAssessmentResult({
+  language,
+  questions,
+  answers,
+  scores,
+  situation,
+}: {
+  language: 'en' | 'ar'
+  questions: Question[]
+  answers: number[]
+  scores: number[]
+  situation: string
+}): AssessmentResult {
+  const totalRisk = scores.reduce((a, b) => a + b, 0)
+  const riskLevel = getRiskLevelFromScore(totalRisk)
+  const dimensionScores = Object.fromEntries(DIM_LABELS.map((label, i) => [label, scores[i] || 0]))
+  const stage = questions[0]?.options[answers[0]]?.label || ''
+  const leadership = questions[1]?.options[answers[1]]?.label || ''
+  const clarity = questions[2]?.options[answers[2]]?.label || ''
+  const exposure = questions[3]?.options[answers[3]]?.label || ''
+  const challenge = questions[4]?.options[answers[4]]?.label || ''
+  const context = situation.trim()
+
+  if (language === 'ar') {
+    const headline = riskLevel === 'High'
+      ? 'تعرض معماري عالٍ يحتاج قراراً تقنياً قبل الاستمرار.'
+      : riskLevel === 'Medium'
+        ? 'قرارات معمارية مهمة تحتاج وضوحاً قبل البناء.'
+        : 'أساس جيد يحتاج تحققاً مركزاً قبل التنفيذ.'
+
+    return {
+      riskLevel,
+      overallScore: totalRisk,
+      dimensionScores,
+      headline,
+      analysis: `يشير نمط الإجابات إلى أن المرحلة الحالية هي: ${stage}. القرار التقني يتأثر بواقع القيادة: ${leadership}. أكبر نقطة يجب ضبطها الآن هي ${challenge}، خصوصاً مع مستوى تعرض للمخاطر يعكس: ${exposure}.${context ? ` السياق الإضافي الذي ذكرته هو: ${context}.` : ''}\n\nالتركيز العملي الآن هو تحويل الاتجاه العام إلى قرار معماري مكتوب: ما النمط المناسب، ما القيود، ما الافتراضات التي تحتاج اختباراً، وما الذي لا ينبغي بناؤه بعد. جلسة استشارية مركزة ستقلل احتمال اختيار مسار مكلف أو صعب التصحيح لاحقاً.`,
+      topRisk: `المخاطرة الرئيسية هي اتخاذ قرار حول ${challenge} قبل توثيق القيود والافتراضات المعمارية.`,
+      nextStep: 'اجمع قيود البيانات والمستخدمين وزمن الاستجابة والتكلفة، ثم راجعها في جلسة معمارية قبل أي التزام هندسي إضافي.',
+    }
+  }
+
+  const headline = riskLevel === 'High'
+    ? 'High architecture exposure needs a technical decision before continuing.'
+    : riskLevel === 'Medium'
+      ? 'Important architecture decisions need clarity before build.'
+      : 'Solid footing, with focused validation needed before execution.'
+
+  return {
+    riskLevel,
+    overallScore: totalRisk,
+    dimensionScores,
+    headline,
+    analysis: `Your answers show this current stage: ${stage}. The architecture decision is shaped by your technical leadership model: ${leadership}. The main item to resolve is ${challenge}, especially with risk exposure described as: ${exposure}.${context ? ` Your added context was: ${context}.` : ''}\n\nThe practical focus now is turning a broad direction into a written architecture decision: the right pattern, key constraints, assumptions to test, and what should not be built yet. A focused advisory session should reduce the chance of choosing a costly path that is hard to correct later.`,
+    topRisk: `The primary risk is deciding ${challenge} before documenting the architecture constraints and assumptions.`,
+    nextStep: 'Gather data, user workflow, latency, and cost constraints, then review them in an architecture session before further engineering commitment.',
+  }
+}
+
 
 /* ─── COMPONENT ─────────────────────────────────────────────────────────── */
 export default function AssessmentTriage() {
@@ -228,6 +286,13 @@ export default function AssessmentTriage() {
     setPhase(3); setLoading(true); setError(null)
     const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
     const totalRisk = scores.reduce((a,b) => a+b, 0)
+    const localResult = buildLocalAssessmentResult({
+      language,
+      questions: QUESTIONS,
+      answers,
+      scores,
+      situation,
+    })
     const deterministicResult = {
       riskLevel: getRiskLevelFromScore(totalRisk),
       overallScore: totalRisk,
@@ -269,8 +334,9 @@ export default function AssessmentTriage() {
       if (!resp.ok) {
         const detail = await readAssessmentApiError(resp)
         logAssessmentFailure({ status: resp.status, detail })
+        await new Promise(r => setTimeout(r, 600))
         setLoading(false)
-        setError('unavailable')
+        setResult(localResult)
         return
       }
       const data = await resp.json()
@@ -280,12 +346,18 @@ export default function AssessmentTriage() {
       const toolBlock = data.content?.find((b: { type: string }) => b.type === 'tool_use')
       if (!toolBlock?.input) {
         logAssessmentFailure('No structured response received from AI.')
+        await new Promise(r => setTimeout(r, 600))
         setLoading(false)
-        setError('unavailable')
+        setResult(localResult)
         return
       }
+      const aiInput = toolBlock.input as Partial<AssessmentResult>
       const json: AssessmentResult = {
-        ...toolBlock.input,
+        ...localResult,
+        headline: typeof aiInput.headline === 'string' && aiInput.headline.trim() ? aiInput.headline : localResult.headline,
+        analysis: typeof aiInput.analysis === 'string' && aiInput.analysis.trim() ? aiInput.analysis : localResult.analysis,
+        topRisk: typeof aiInput.topRisk === 'string' && aiInput.topRisk.trim() ? aiInput.topRisk : localResult.topRisk,
+        nextStep: typeof aiInput.nextStep === 'string' && aiInput.nextStep.trim() ? aiInput.nextStep : localResult.nextStep,
         ...deterministicResult,
       }
 
@@ -295,8 +367,9 @@ export default function AssessmentTriage() {
     } catch (err: unknown) {
       // Log internally, but avoid throwing Error objects into the Next dev overlay.
       logAssessmentFailure(err instanceof Error ? err.message : err)
+      await new Promise(r => setTimeout(r, 600))
       setLoading(false)
-      setError('unavailable')
+      setResult(localResult)
     }
   }
 
