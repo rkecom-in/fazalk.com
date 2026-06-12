@@ -1,10 +1,54 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
 import { Sun, Moon, Languages } from 'lucide-react'
+import { getArabicServiceForEnglishSlug, getEnglishServiceForArabicSlug } from '@/lib/seo-services'
 
 export default function SiteHeader() {
-  const { language, t, theme, toggleTheme, toggleLanguage } = useGlobalUX()
+  const router = useRouter()
+  const { language, theme, toggleTheme, toggleLanguage, setLanguage } = useGlobalUX()
   const isAr = language === 'ar'
+  const path = router.asPath.split(/[?#]/)[0]
+
+  useEffect(() => {
+    if (path.startsWith('/ar/') && language !== 'ar') {
+      setLanguage('ar')
+      return
+    }
+
+    if (path.startsWith('/services/') && language !== 'en') {
+      setLanguage('en')
+    }
+  }, [language, path, setLanguage])
+
+  function handleLanguageToggle() {
+    const englishMatch = path.match(/^\/services\/([^/]+)$/)
+    if (englishMatch) {
+      const englishSlug = decodeURIComponent(englishMatch[1])
+      const arabicService = getArabicServiceForEnglishSlug(englishSlug)
+
+      if (arabicService) {
+        setLanguage('ar')
+        void router.push(`/ar/services/${arabicService.slug}`)
+        return
+      }
+    }
+
+    const arabicMatch = path.match(/^\/ar\/services\/([^/]+)$/)
+    if (arabicMatch) {
+      const arabicSlug = decodeURIComponent(arabicMatch[1])
+      const englishService = getEnglishServiceForArabicSlug(arabicSlug)
+
+      if (englishService) {
+        setLanguage('en')
+        void router.push(`/services/${englishService.slug}`)
+        return
+      }
+    }
+
+    toggleLanguage()
+  }
 
   return (
     <header className="absolute top-0 left-0 right-0 z-50 py-6">
@@ -30,7 +74,7 @@ export default function SiteHeader() {
         {/* Global UX Toggles */}
         <div className="flex items-center gap-1">
           <button
-            onClick={toggleLanguage}
+            onClick={handleLanguageToggle}
             className="flex items-center gap-1.5 px-3 h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all font-medium border border-transparent hover:border-border/50"
             title={isAr ? 'English' : 'العربية'}
           >
