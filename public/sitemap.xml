@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://fazalk.com/</loc>
     <lastmod>2026-06-13</lastmod>
@@ -8,24 +8,64 @@
   </url>
   <url>
     <loc>https://fazalk.com/services/ai-architecture-consulting</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/ai-architecture-consulting" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/استشارات-معمارية-الذكاء-الاصطناعي" />
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://fazalk.com/ar/services/استشارات-معمارية-الذكاء-الاصطناعي</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/استشارات-معمارية-الذكاء-الاصطناعي" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/ai-architecture-consulting" />
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://fazalk.com/services/llm-rag-system-design</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/llm-rag-system-design" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/تصميم-أنظمة-llm-rag" />
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://fazalk.com/ar/services/تصميم-أنظمة-llm-rag</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/تصميم-أنظمة-llm-rag" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/llm-rag-system-design" />
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://fazalk.com/services/technical-architecture-review</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/technical-architecture-review" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/مراجعة-المعمارية-التقنية" />
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fazalk.com/ar/services/مراجعة-المعمارية-التقنية</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/مراجعة-المعمارية-التقنية" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/technical-architecture-review" />
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://fazalk.com/services/ai-technical-due-diligence</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/ai-technical-due-diligence" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/العناية-التقنية-للذكاء-الاصطناعي" />
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fazalk.com/ar/services/العناية-التقنية-للذكاء-الاصطناعي</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://fazalk.com/ar/services/العناية-التقنية-للذكاء-الاصطناعي" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://fazalk.com/services/ai-technical-due-diligence" />
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

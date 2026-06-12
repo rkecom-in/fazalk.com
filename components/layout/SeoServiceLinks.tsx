@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { servicePages } from '@/lib/seo-services'
+import { getArabicServiceForEnglishSlug, servicePages } from '@/lib/seo-services'
 import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
 
 const serviceCopyAr: Record<string, { title: string; description: string }> = {
@@ -49,11 +49,14 @@ export default function SeoServiceLinks() {
         <div className="grid md:grid-cols-2 gap-4">
           {servicePages.map(service => {
             const copy = isAr ? serviceCopyAr[service.slug] : service
+            const href = isAr
+              ? `/ar/services/${getArabicServiceForEnglishSlug(service.slug)?.slug || service.slug}`
+              : `/services/${service.slug}`
 
             return (
               <Link
                 key={service.slug}
-                href={`/services/${service.slug}`}
+                href={href}
                 className="group rounded-lg border border-border bg-card p-5 transition-colors hover:border-gold/40"
               >
                 <div className="flex items-start justify-between gap-4">

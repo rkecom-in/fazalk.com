@@ -1,6 +1,7 @@
 import { Shield, Wrench, Cpu, Cloud, MessageSquare } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
 import Link from "next/link";
+import { getArabicServiceForEnglishSlug } from "@/lib/seo-services";
 
 const icons = [Shield, Wrench, Cpu, Cloud, MessageSquare];
 const offeringLinks = [
@@ -10,8 +11,9 @@ const offeringLinks = [
 ];
 
 const CoreOfferings = () => {
-  const { t } = useGlobalUX();
+  const { t, language } = useGlobalUX();
   const s = t.coreOfferings;
+  const isAr = language === 'ar';
 
   return (
     <section className="py-24 bg-card/30">
@@ -26,7 +28,9 @@ const CoreOfferings = () => {
             return (
               <Link
                 key={offering.title}
-                href={offeringLinks[i] || "/#assessment"}
+                href={isAr && offeringLinks[i]?.startsWith('/services/')
+                  ? `/ar/services/${getArabicServiceForEnglishSlug(offeringLinks[i].replace('/services/', ''))?.slug || offeringLinks[i].replace('/services/', '')}`
+                  : offeringLinks[i] || "/#assessment"}
                 className="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]"
               >
                 <div className="flex items-center gap-3 mb-5">

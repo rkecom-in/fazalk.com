@@ -10,6 +10,13 @@
 - Technical Architecture Review: https://fazalk.com/services/technical-architecture-review
 - AI Technical Due Diligence: https://fazalk.com/services/ai-technical-due-diligence
 
+## Arabic URLs
+
+- استشارات معمارية الذكاء الاصطناعي: https://fazalk.com/ar/services/استشارات-معمارية-الذكاء-الاصطناعي
+- تصميم أنظمة LLM وRAG: https://fazalk.com/ar/services/تصميم-أنظمة-llm-rag
+- مراجعة المعمارية التقنية: https://fazalk.com/ar/services/مراجعة-المعمارية-التقنية
+- العناية التقنية الواجبة للذكاء الاصطناعي: https://fazalk.com/ar/services/العناية-التقنية-للذكاء-الاصطناعي
+
 ## What Fazal K. Helps With
 
 - AI system architecture for LLM, RAG, agentic workflow, and AI product platforms
