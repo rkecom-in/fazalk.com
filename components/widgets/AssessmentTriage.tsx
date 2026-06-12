@@ -19,6 +19,7 @@ interface AssessmentResult {
 
 /* ─── DATA ──────────────────────────────────────────────────────────────── */
 const DIM_LABELS = ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge']
+const DIM_LABELS_AR = ['المرحلة', 'القيادة', 'الوضوح', 'التعرض', 'التحدي']
 
 // Questions are supplied at runtime from the i18n dictionary.
 // The risk values must stay fixed — only the display strings are translated.
@@ -92,15 +93,15 @@ const ASSESSMENT_TOOL = {
     type: 'object' as const,
     properties: {
       riskLevel:             { type: 'string', enum: ['Low', 'Medium', 'High'], description: 'Overall risk level based on total score.' },
-      overallScore:          { type: 'number', description: 'Total risk score out of 20.' },
+      overallScore:          { type: 'number', minimum: 5, maximum: 20, description: 'Total risk score out of 20. Use the exact total supplied by the application.' },
       dimensionScores: {
         type: 'object',
         properties: {
-          Stage:      { type: 'number' },
-          Leadership: { type: 'number' },
-          Clarity:    { type: 'number' },
-          Exposure:   { type: 'number' },
-          Challenge:  { type: 'number' },
+          Stage:      { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
+          Leadership: { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
+          Clarity:    { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
+          Exposure:   { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
+          Challenge:  { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
         },
         required: ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge'],
       },
@@ -136,6 +137,12 @@ function logAssessmentFailure(reason: unknown) {
   }
 
   console.error(`[Assessment] AI call failed: ${message}`)
+}
+
+function getRiskLevelFromScore(score: number): AssessmentResult['riskLevel'] {
+  if (score <= 9) return 'Low'
+  if (score <= 14) return 'Medium'
+  return 'High'
 }
 
 
@@ -221,9 +228,14 @@ export default function AssessmentTriage() {
     setPhase(3); setLoading(true); setError(null)
     const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
     const totalRisk = scores.reduce((a,b) => a+b, 0)
+    const deterministicResult = {
+      riskLevel: getRiskLevelFromScore(totalRisk),
+      overallScore: totalRisk,
+      dimensionScores: Object.fromEntries(DIM_LABELS.map((label, i) => [label, scores[i] || 0])),
+    } satisfies Pick<AssessmentResult, 'riskLevel' | 'overallScore' | 'dimensionScores'>
     const userMsg = `Assessment answers:\n${QUESTIONS.map((q,i) =>
       `Q${i+1} [${q.category}]: "${q.text}"\nAnswer: "${q.options[answers[i]]?.label}" (risk: ${scores[i]}/4)`
-    ).join('\n\n')}\n\nTotal risk score: ${totalRisk}/20\n${situation ? `\nFounder's situation (their words):\n"${situation}"` : '\nNo situation description provided.'}`
+    ).join('\n\n')}\n\nUse these exact calculated scores. Do not convert them to percentages:\nRisk level: ${deterministicResult.riskLevel}\nTotal risk score: ${totalRisk}/20\nDimension scores: ${DIM_LABELS.map((label, i) => `${label}: ${scores[i]}/4`).join(', ')}\n${situation ? `\nFounder's situation (their words):\n"${situation}"` : '\nNo situation description provided.'}`
 
     ;[0,550,1150,1800,2500].forEach((d,i) => {
       setTimeout(() => {
@@ -272,7 +284,10 @@ export default function AssessmentTriage() {
         setError('unavailable')
         return
       }
-      const json: AssessmentResult = toolBlock.input
+      const json: AssessmentResult = {
+        ...toolBlock.input,
+        ...deterministicResult,
+      }
 
       await new Promise(r => setTimeout(r, 600))
       setLoading(false)
@@ -338,6 +353,25 @@ export default function AssessmentTriage() {
       default: return 'bg-gold'
     }
   }
+
+  const getRiskDisplay = (level: AssessmentResult['riskLevel']) => {
+    if (language !== 'ar') return `${level} Risk`
+    return `${level === 'Low' ? 'مخاطر منخفضة' : level === 'High' ? 'مخاطر عالية' : 'مخاطر متوسطة'}`
+  }
+
+  const contactFields = language === 'ar'
+    ? [
+        { key:'name' as const, label:'الاسم', type:'text', placeholder:'اسمك', required:true },
+        { key:'email' as const, label:'البريد الإلكتروني', type:'email', placeholder:'your@email.com', required:true },
+        { key:'phone' as const, label:'الهاتف', type:'tel', placeholder:'+91 98765 43210 (اختياري)', required:false },
+        { key:'website' as const, label:'موقع الشركة', type:'url', placeholder:'https://yourcompany.com (اختياري)', required:false },
+      ]
+    : [
+        { key:'name' as const, label:'Name', type:'text', placeholder:'Your name', required:true },
+        { key:'email' as const, label:'Email', type:'email', placeholder:'your@email.com', required:true },
+        { key:'phone' as const, label:'Phone', type:'tel', placeholder:'+91 98765 43210 (optional)', required:false },
+        { key:'website' as const, label:'Corporate Website', type:'url', placeholder:'https://yourcompany.com (optional)', required:false },
+      ]
 
   return (
     <section id="assessment" className="py-20 bg-background mb-10">
@@ -431,7 +465,7 @@ export default function AssessmentTriage() {
                   const pct = Math.round((scores[i]/4)*100)
                   return (
                     <div key={l} className="text-center">
-                      <div className="text-[9px] text-muted-foreground tracking-widest uppercase mb-1.5">{l}</div>
+                      <div className="text-[9px] text-muted-foreground tracking-widest uppercase mb-1.5">{language === 'ar' ? DIM_LABELS_AR[i] : l}</div>
                       <div className="h-1 bg-border rounded-full overflow-hidden mb-1.5">
                         <div className="rs-fill h-full rounded-full bg-gold transition-all duration-700 ease-out" data-pct={pct} style={{ width:'0%' }}/>
                       </div>
@@ -524,9 +558,11 @@ export default function AssessmentTriage() {
               <div className="animate-fade-in-up">
                 {/* Result header */}
                 <div className="bg-card border border-border rounded-t-xl px-6 py-5 flex items-center justify-between border-b-0">
-                  <span className="text-[10px] tracking-widest text-gold uppercase">Architecture risk assessment</span>
+                  <span className="text-[10px] tracking-widest text-gold uppercase">
+                    {language === 'ar' ? 'تقييم المخاطر المعمارية' : 'Architecture risk assessment'}
+                  </span>
                   <span className={`text-[10px] font-semibold px-3 py-1 rounded-full tracking-widest uppercase border ${getRiskClass(result.riskLevel)}`}>
-                    {result.riskLevel} Risk &middot; {result.overallScore}/20
+                    {getRiskDisplay(result.riskLevel)} &middot; {result.overallScore}/20
                   </span>
                 </div>
 
@@ -534,11 +570,14 @@ export default function AssessmentTriage() {
                 <div className="bg-muted/30 border border-border px-6 py-5 border-y-0">
                   <div ref={scoreRowRef} className="grid grid-cols-5 gap-3">
                     {DIM_LABELS.map(l => {
+                      const labelIndex = DIM_LABELS.indexOf(l)
                       const v = result.dimensionScores[l] || 0
                       const pct = Math.round((v/4)*100)
                       return (
                         <div key={l} className="text-center">
-                          <div className="text-[9px] text-muted-foreground tracking-widest uppercase mb-2">{l}</div>
+                          <div className="text-[9px] text-muted-foreground tracking-widest uppercase mb-2">
+                            {language === 'ar' ? DIM_LABELS_AR[labelIndex] : l}
+                          </div>
                           <div className="h-1.5 bg-border rounded-full overflow-hidden mb-1.5">
                             <div className={`sc-fill h-full rounded-full transition-all duration-1000 ease-out ${getRiskFillClass(result.riskLevel)}`} data-pct={pct} style={{ width:'0%' }}/>
                           </div>
@@ -573,19 +612,18 @@ export default function AssessmentTriage() {
                     {!contactSent ? (
                       <>
                         <div className="mb-5">
-                          <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">Request an Architecture Advisory Session</span>
+                          <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">
+                            {language === 'ar' ? 'طلب جلسة استشارية معمارية' : 'Request an Architecture Advisory Session'}
+                          </span>
                           <div className="font-serif text-lg font-medium text-foreground leading-snug">
-                            Leave your details and Fazal will review this assessment before the session.
+                            {language === 'ar'
+                              ? 'اترك بياناتك وسيراجع Fazal هذا التقييم قبل الجلسة.'
+                              : 'Leave your details and Fazal will review this assessment before the session.'}
                           </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
-                          {[
-                            { key:'name' as const, label:'Name', type:'text', placeholder:'Your name', required:true },
-                            { key:'email' as const, label:'Email', type:'email', placeholder:'your@email.com', required:true },
-                            { key:'phone' as const, label:'Phone', type:'tel', placeholder:'+91 98765 43210 (optional)', required:false },
-                            { key:'website' as const, label:'Corporate Website', type:'url', placeholder:'https://yourcompany.com (optional)', required:false },
-                          ].map(f => (
+                          {contactFields.map(f => (
                             <div key={f.key}>
                               <label className="text-[10px] tracking-widest text-muted-foreground uppercase block mb-1.5">
                                 {f.label}{f.required && <span className="text-gold"> *</span>}
@@ -614,7 +652,9 @@ export default function AssessmentTriage() {
                             variant="hero"
                             className="flex-1 py-5 uppercase tracking-widest text-xs"
                           >
-                            {contactLoading ? 'Sending…' : 'Request session ' + '\u2192'}
+                            {contactLoading
+                              ? (language === 'ar' ? 'جارٍ الإرسال…' : 'Sending…')
+                              : (language === 'ar' ? 'طلب الجلسة ←' : 'Request session ' + '\u2192')}
                           </Button>
                           <Button variant="outline" onClick={restart} className="sm:w-auto px-6 py-5 uppercase tracking-widest text-xs">
                             {aw.result.restart}
@@ -628,8 +668,14 @@ export default function AssessmentTriage() {
                             <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                           </div>
                         </div>
-                        <div className="font-serif text-xl font-medium text-foreground mb-2">Request sent.</div>
-                        <div className="text-sm text-muted-foreground mb-5">Fazal will review your assessment and be in touch about the session.</div>
+                        <div className="font-serif text-xl font-medium text-foreground mb-2">
+                          {language === 'ar' ? 'تم إرسال الطلب.' : 'Request sent.'}
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-5">
+                          {language === 'ar'
+                            ? 'سيراجع Fazal تقييمك ويتواصل معك بخصوص الجلسة.'
+                            : 'Fazal will review your assessment and be in touch about the session.'}
+                        </div>
                         <Button variant="outline" onClick={restart} className="px-6 py-5 uppercase tracking-widest text-xs">
                           {aw.result.restart}
                         </Button>
