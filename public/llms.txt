@@ -5,6 +5,7 @@
 ## Core URLs
 
 - Homepage and assessment: https://fazalk.com/
+- Arabic homepage and assessment: https://fazalk.com/ar
 - AI Architecture Consulting: https://fazalk.com/services/ai-architecture-consulting
 - LLM and RAG System Design: https://fazalk.com/services/llm-rag-system-design
 - Technical Architecture Review: https://fazalk.com/services/technical-architecture-review

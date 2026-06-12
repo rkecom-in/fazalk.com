@@ -1,9 +1,11 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import ServicePageContent from '@/components/seo/ServicePageContent'
 import { getArabicServicePage, servicePagesAr, type ServicePage } from '@/lib/seo-services'
+import type { Language } from '@/lib/i18n'
 
 type ArabicServicePageProps = {
   service: ServicePage
+  initialLanguage: Language
 }
 
 export const getStaticPaths: GetStaticPaths = async () => ({
@@ -17,7 +19,7 @@ export const getStaticProps: GetStaticProps<ArabicServicePageProps> = async ({ p
 
   if (!service) return { notFound: true }
 
-  return { props: { service } }
+  return { props: { service, initialLanguage: 'ar' } }
 }
 
 export default function ArabicServiceLandingPage({ service }: ArabicServicePageProps) {

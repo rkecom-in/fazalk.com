@@ -59,8 +59,8 @@ const labels = {
     nextStep: 'الخطوة التالية',
     ctaTitle: 'قيّم المعمارية واطلب الجلسة المناسبة.',
     cta: 'ابدأ التقييم',
-    homeHref: '/',
-    assessmentHref: '/#assessment',
+    homeHref: '/ar',
+    assessmentHref: '/ar#assessment',
   },
 }
 

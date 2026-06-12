@@ -46,7 +46,7 @@ const faqsAr = [
   },
 ]
 
-export { faqsEn as homepageFaqs }
+export { faqsEn as homepageFaqs, faqsAr as homepageFaqsAr }
 
 export default function FaqSection() {
   const { language } = useGlobalUX()

@@ -23,9 +23,15 @@ function detectDefaultLanguage(): Language {
   return lang.startsWith('ar') ? 'ar' : 'en';
 }
 
-export function GlobalUXProvider({ children }: { children: React.ReactNode }) {
+export function GlobalUXProvider({
+  children,
+  initialLanguage,
+}: {
+  children: React.ReactNode
+  initialLanguage?: Language
+}) {
   const [theme, setThemeState] = useState<Theme>('light');
-  const [language, setLanguageState] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>(initialLanguage ?? 'en');
   const [mounted, setMounted] = useState(false);
 
   // Hydrate from localStorage + detect locale on mount
@@ -34,9 +40,9 @@ export function GlobalUXProvider({ children }: { children: React.ReactNode }) {
     const savedLang = localStorage.getItem('ux-language') as Language | null;
 
     setThemeState(savedTheme ?? 'light');
-    setLanguageState(savedLang ?? detectDefaultLanguage());
+    setLanguageState(initialLanguage ?? savedLang ?? detectDefaultLanguage());
     setMounted(true);
-  }, []);
+  }, [initialLanguage]);
 
   // Apply theme to <html>
   useEffect(() => {

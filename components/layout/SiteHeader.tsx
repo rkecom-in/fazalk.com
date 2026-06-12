@@ -12,17 +12,29 @@ export default function SiteHeader() {
   const path = router.asPath.split(/[?#]/)[0]
 
   useEffect(() => {
-    if (path.startsWith('/ar/') && language !== 'ar') {
+    if ((path === '/ar' || path.startsWith('/ar/')) && language !== 'ar') {
       setLanguage('ar')
       return
     }
 
-    if (path.startsWith('/services/') && language !== 'en') {
+    if ((path === '/' || path.startsWith('/services/')) && language !== 'en') {
       setLanguage('en')
     }
   }, [language, path, setLanguage])
 
   function handleLanguageToggle() {
+    if (path === '/') {
+      setLanguage('ar')
+      void router.push('/ar')
+      return
+    }
+
+    if (path === '/ar') {
+      setLanguage('en')
+      void router.push('/')
+      return
+    }
+
     const englishMatch = path.match(/^\/services\/([^/]+)$/)
     if (englishMatch) {
       const englishSlug = decodeURIComponent(englishMatch[1])
@@ -54,7 +66,7 @@ export default function SiteHeader() {
     <header className="absolute top-0 left-0 right-0 z-50 py-6">
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link
-          href="/"
+          href={isAr ? '/ar' : '/'}
           className="text-sm font-bold tracking-[0.2em] text-foreground uppercase flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
           <div className="w-1.5 h-1.5 rounded-full bg-gold glow-gold flex-shrink-0" />

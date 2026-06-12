@@ -8,12 +8,28 @@ import SampleDeliverables from "@/components/layout/SampleDeliverables";
 import BottomSections from "@/components/layout/BottomSections";
 import SiteHeader from "@/components/layout/SiteHeader";
 import FaqSection from "@/components/layout/FaqSection";
+import type { GetStaticProps } from "next";
+import type { Language } from "@/lib/i18n";
 
-export default function Home() {
+type HomeProps = {
+  initialLanguage: Language
+}
+
+export const getStaticProps = (async () => ({
+  props: {
+    initialLanguage: 'en',
+  },
+})) satisfies GetStaticProps<HomeProps>
+
+export default function Home({
+  initialLanguage,
+}: HomeProps) {
+  const isAr = initialLanguage === 'ar'
+
   return (
     <>
-      <HomeSeo />
-      <main className="min-h-screen bg-background">
+      <HomeSeo language={initialLanguage} />
+      <main className="min-h-screen bg-background" lang={initialLanguage} dir={isAr ? 'rtl' : 'ltr'}>
         <SiteHeader />
         <HeroSection />
         <PositioningStrip />
