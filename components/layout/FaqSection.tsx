@@ -1,4 +1,6 @@
-const faqs = [
+import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
+
+const faqsEn = [
   {
     question: 'What does an AI CTO consultant do?',
     answer:
@@ -21,15 +23,46 @@ const faqs = [
   },
 ]
 
-export { faqs as homepageFaqs }
+const faqsAr = [
+  {
+    question: 'ما دور مستشار CTO للذكاء الاصطناعي؟',
+    answer:
+      'يساعد مستشار CTO للذكاء الاصطناعي فرق القيادة والهندسة على اتخاذ قرارات معمارية حول منتجات الذكاء الاصطناعي، وأنظمة LLM، وخطوط RAG، والبنية السحابية، واختيار الموردين، والمخاطر التقنية قبل الالتزام بميزانيات أو بناء كبير.',
+  },
+  {
+    question: 'متى ينبغي طلب تقييم معماري؟',
+    answer:
+      'اطلب التقييم قبل بدء التطوير، أو قبل اختيار مورد ذكاء اصطناعي، أو قبل توسيع نموذج أولي، أو عندما يعاني نظام ذكاء اصطناعي قائم من مشاكل في الدقة أو زمن الاستجابة أو التكلفة أو الاعتمادية أو قابلية الصيانة.',
+  },
+  {
+    question: 'هل يمكنكم مساعدتنا في الاختيار بين LLM وRAG والضبط الدقيق والوكلاء؟',
+    answer:
+      'نعم. تربط العملية الاستشارية بين حالة الاستخدام وشكل البيانات وسير عمل المستخدم وميزانية زمن الاستجابة وهدف الجودة والقيود التشغيلية قبل التوصية بنمط معماري مناسب للذكاء الاصطناعي.',
+  },
+  {
+    question: 'هل تعملون مع شركات البرمجيات وفرق SaaS في الخليج؟',
+    answer:
+      'نعم. يناسب هذا العمل شركات البرمجيات في الخليج، وشركات SaaS، ومتكاملي الأنظمة، وشركات التحول الرقمي، والمؤسسين الذين يبنون أو يراجعون منصات مدعومة بالذكاء الاصطناعي.',
+  },
+]
+
+export { faqsEn as homepageFaqs }
 
 export default function FaqSection() {
+  const { language } = useGlobalUX()
+  const isAr = language === 'ar'
+  const faqs = isAr ? faqsAr : faqsEn
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-6 max-w-5xl">
-        <p className="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">FAQ</p>
+        <p className="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">
+          {isAr ? 'الأسئلة الشائعة' : 'FAQ'}
+        </p>
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center font-serif">
-          AI CTO consulting questions clients ask before starting.
+          {isAr
+            ? 'أسئلة يطرحها العملاء قبل بدء استشارة CTO للذكاء الاصطناعي.'
+            : 'AI CTO consulting questions clients ask before starting.'}
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
           {faqs.map(item => (
