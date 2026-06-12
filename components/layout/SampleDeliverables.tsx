@@ -8,7 +8,6 @@ const SampleDeliverables = () => {
   const s = t.sampleDeliverables;
   const bp = s.blueprintCard;
   const au = s.auditCard;
-  const wf = s.workflowCard;
 
   return (
     <section className="py-24 bg-background">
@@ -113,44 +112,6 @@ const SampleDeliverables = () => {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Workflow Card */}
-        <div className="mt-8 rounded-xl border border-border bg-card p-8 hover:border-gold/20 transition-colors">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-gold/10">
-              <Layers className="w-5 h-5 text-gold" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-foreground font-serif">{wf.title}</h3>
-              <p className="text-xs text-muted-foreground">{wf.extract}</p>
-            </div>
-          </div>
-
-          <p className="text-sm text-muted-foreground mb-6">
-            <span className="text-foreground font-medium">{wf.useCaseLabel}</span>{" "}{wf.useCase}
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {wf.steps.map((step, i) => {
-              const StepIcons = [Database, CheckCircle2, AlertTriangle];
-              const Icon = StepIcons[i % StepIcons.length];
-              return (
-                <div key={step.label} className="p-4 rounded-lg bg-muted/50 border border-border/50">
-                  <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-2">{step.label}</p>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                    <span className="text-sm font-medium text-foreground">{step.action}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{step.output}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="p-3 rounded-lg bg-gold/5 border border-gold/10">
-            <p className="text-sm text-gold font-medium">{wf.outcome}</p>
           </div>
         </div>
       </div>

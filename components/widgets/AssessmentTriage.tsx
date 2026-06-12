@@ -14,9 +14,6 @@ interface AssessmentResult {
   headline: string
   analysis: string
   topRisk: string
-  recommendedEngagement: string
-  engagementFee: string
-  engagementReason: string
   nextStep: string
 }
 
@@ -50,24 +47,20 @@ Three core service types, delivered through focused sessions:
 3. Technical Due Diligence
    Rigorous technical evaluation of AI systems, vendor proposals, or existing platforms — before signing a contract, making a hire, or committing to a roadmap. Designed for high-stakes decisions where an expert second opinion is critical.
 
-SESSION OPTIONS
-Two engagement tiers — both are outcome-driven with written deliverables:
+SESSION OPTION
+One outcome-driven advisory session, requested after the assessment:
 
-A. Strategic Clarity Session — $350/hour (typically 1–2 hours)
-   For leaders who need fast, focused clarity on a specific decision. Ideal for:
+Architecture Advisory Session
+   A focused session scoped around the assessment result. It can be short and tactical when the problem is narrow, or deeper when the answers show interconnected architecture risk. Ideal for:
    - Evaluating AI feasibility for a product or workflow
    - Choosing between build vs. buy for an AI capability
    - Getting a second opinion on an existing architecture
    - Understanding LLM, RAG, fine-tuning, or agentic workflow fit
-   Deliverable: Clear recommendation, decision framework, or validated direction — documented in a follow-up summary.
-
-B. Deep Dive Session — $400/hour (typically 3–7 hours)
-   An intensive working session for interconnected architecture decisions, system audits, or full technical strategy. Ideal for:
    - Designing a full AI system architecture end-to-end
    - Auditing an underperforming AI system (high cost, poor output, slow latency)
    - Planning an AWS/Azure migration or optimization
    - Building a technical roadmap for a new AI product
-   Deliverable: Comprehensive architecture document covering system design, tech stack, data flow, cost estimates, and an execution-ready plan for the engineering team.
+   Deliverable: Clear CTO-level recommendation, decision framework, architecture review, or execution-ready direction depending on the assessed risk.
 
 WHO THE CLIENTS ARE
 - GCC Software & IT Companies (primary market)
@@ -86,9 +79,10 @@ Total score out of 20 across 5 dimensions (each 1–4):
 RULES FOR GENERATING THE REPORT
 - Be specific. Reference exactly what the person said — their stage, their team composition, their primary challenge.
 - Do not be generic. Name the exact risk pattern you see based on their combination of answers.
-- Recommend the Strategic Clarity Session ($350/hr) for lower-stakes decisions or when scope is narrow and well-defined.
-- Recommend the Deep Dive Session ($400/hr) for high-risk profiles, interconnected decisions, full architecture work, or system audits.
 - If they provided a free-text situation description, use it to sharpen and personalise the analysis beyond what the answers alone reveal.
+- Keep the report concise. The client should be able to scan it in under one minute.
+- The analysis must be exactly two short paragraphs, 35-50 words each.
+- The top risk and next step must each be one sentence.
 - The analysis should feel like it was written by a senior technical advisor who has read the answers once and diagnosed a familiar pattern — not by a form processor.`
 
 const ASSESSMENT_TOOL = {
@@ -110,16 +104,38 @@ const ASSESSMENT_TOOL = {
         },
         required: ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge'],
       },
-      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation and risk (max 15 words). Should feel like a diagnosis, not a label.' },
-      analysis:              { type: 'string', description: 'Three focused paragraphs separated by double newlines. Para 1: the specific risk pattern you see in their answers. Para 2: what is concretely at stake if this is not resolved. Para 3: what resolving it looks like and why an outside CTO-level perspective is the right tool. Be direct and specific to their situation.' },
-      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence, specific to their answers.' },
-      recommendedEngagement: { type: 'string', enum: ['Strategic Clarity Session', 'Deep Dive Session'] },
-      engagementFee:         { type: 'string', enum: ['$350 / Hour · 1–2 Hours', '$400 / Hour · 3–7 Hours'] },
-      engagementReason:      { type: 'string', description: 'One to two sentences — why this specific engagement format and depth matches their specific situation and answers.' },
-      nextStep:              { type: 'string', description: 'One clear, concrete action the person should take right now to move forward (besides booking a session).' },
+      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation and risk. Maximum 12 words.' },
+      analysis:              { type: 'string', description: 'Exactly two short paragraphs separated by double newlines. Each paragraph must be 35-50 words. Para 1: the specific risk pattern. Para 2: what resolving it should focus on. Be direct and specific.' },
+      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence, maximum 22 words.' },
+      nextStep:              { type: 'string', description: 'One clear action the person should take now, maximum 28 words.' },
     },
-    required: ['riskLevel', 'overallScore', 'dimensionScores', 'headline', 'analysis', 'topRisk', 'recommendedEngagement', 'engagementFee', 'engagementReason', 'nextStep'],
+    required: ['riskLevel', 'overallScore', 'dimensionScores', 'headline', 'analysis', 'topRisk', 'nextStep'],
   },
+}
+
+async function readAssessmentApiError(resp: Response) {
+  try {
+    return await resp.json()
+  } catch {
+    try {
+      return await resp.text()
+    } catch {
+      return null
+    }
+  }
+}
+
+function logAssessmentFailure(reason: unknown) {
+  let message = typeof reason === 'string' ? reason : ''
+  if (!message) {
+    try {
+      message = JSON.stringify(reason, null, 2)
+    } catch {
+      message = 'Unknown assessment failure.'
+    }
+  }
+
+  console.error(`[Assessment] AI call failed: ${message}`)
 }
 
 
@@ -146,7 +162,6 @@ export default function AssessmentTriage() {
   const [contactSent, setContactSent]       = useState(false)
   const [contactError, setContactError]     = useState<string|null>(null)
   const [contactLoading, setContactLoading] = useState(false)
-  const [contactSkipped, setContactSkipped] = useState(false)
 
   const scoreRowRef = useRef<HTMLDivElement>(null)
   const riskSummaryRef = useRef<HTMLDivElement>(null)
@@ -218,7 +233,7 @@ export default function AssessmentTriage() {
     })
 
     const langInstruction = language === 'ar'
-      ? '\n\nIMPORTANT: Write all text field values (headline, analysis, topRisk, engagementReason, nextStep) in Arabic (Modern Standard Arabic). Keep all property names and enum values in English exactly as defined in the tool schema.'
+      ? '\n\nIMPORTANT: Write all text field values (headline, analysis, topRisk, nextStep) in Arabic (Modern Standard Arabic). Keep all property names and enum values in English exactly as defined in the tool schema.'
       : ''
     try {
       const resp = await fetch('/api/anthropic', {
@@ -226,7 +241,7 @@ export default function AssessmentTriage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5',
-          max_tokens: 1500,
+          max_tokens: 900,
           system: [
             {
               type: 'text',
@@ -239,21 +254,32 @@ export default function AssessmentTriage() {
           messages: [{ role: 'user', content: userMsg }],
         }),
       })
-      if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `API ${resp.status}`) }
+      if (!resp.ok) {
+        const detail = await readAssessmentApiError(resp)
+        logAssessmentFailure({ status: resp.status, detail })
+        setLoading(false)
+        setError('unavailable')
+        return
+      }
       const data = await resp.json()
 
       // With tool_use, Claude always returns a tool_use block with a pre-parsed input object.
       // No JSON.parse, no regex — the API enforces the schema.
       const toolBlock = data.content?.find((b: { type: string }) => b.type === 'tool_use')
-      if (!toolBlock?.input) throw new Error('No structured response received from AI.')
+      if (!toolBlock?.input) {
+        logAssessmentFailure('No structured response received from AI.')
+        setLoading(false)
+        setError('unavailable')
+        return
+      }
       const json: AssessmentResult = toolBlock.input
 
       await new Promise(r => setTimeout(r, 600))
       setLoading(false)
       setResult(json)
     } catch (err: unknown) {
-      // Log the raw error internally — never expose technical details to clients
-      console.error('[Assessment] AI call failed:', err)
+      // Log internally, but avoid throwing Error objects into the Next dev overlay.
+      logAssessmentFailure(err instanceof Error ? err.message : err)
       setLoading(false)
       setError('unavailable')
     }
@@ -264,11 +290,19 @@ export default function AssessmentTriage() {
     setContactLoading(true); setContactError(null)
     try {
       const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
-      await fetch('/api/contact', {
+      const resp = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers, situation, result, contact, source: 'Assessment' }),
+        body: JSON.stringify({
+          answers,
+          situation,
+          result,
+          contact,
+          source: 'Assessment',
+          sourceDetail: 'Architecture Advisory Session',
+        }),
       })
+      if (!resp.ok) throw new Error(`Contact API ${resp.status}`)
       setContactSent(true)
     } catch (err) {
       // Log internally, show a calm reassurance — never expose network errors to clients
@@ -283,7 +317,7 @@ export default function AssessmentTriage() {
     setCurrent(0); setAnswers([]); setSituation(''); setPhase(1)
     setResult(null); setError(null); setCardVisible(false)
     setContact({ name:'', email:'', phone:'', website:'' })
-    setContactSent(false); setContactError(null); setContactSkipped(false)
+    setContactSent(false); setContactError(null)
     document.querySelectorAll('[id^="ls"]').forEach(el => el.classList.remove('opacity-100'))
   }
 
@@ -411,11 +445,11 @@ export default function AssessmentTriage() {
               <textarea
                 value={situation}
                 onChange={e => setSituation(e.target.value)}
-                maxLength={500}
+                maxLength={280}
                 placeholder={aw.phase2.placeholder}
-                className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg p-4 resize-none min-h-[120px] focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
+                className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg p-4 resize-none min-h-[92px] focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
               />
-              <div className="text-[10px] text-muted-foreground mt-2 text-right">{situation.length} / 500</div>
+              <div className="text-[10px] text-muted-foreground mt-2 text-right">{situation.length} / 280</div>
 
               {error && (
                 <div className="bg-destructive/10 border border-destructive/20 text-destructive p-4 text-sm rounded-lg mt-4">
@@ -524,14 +558,6 @@ export default function AssessmentTriage() {
                     {result.analysis}
                   </div>
 
-                  {/* Engagement box */}
-                  <div className="bg-gold/5 border border-gold/20 rounded-xl p-6 mb-8">
-                    <div className="text-[10px] tracking-widest text-gold uppercase mb-3">{aw.result.engagementLabel}</div>
-                    <div className="font-serif text-xl font-medium text-foreground mb-1">{result.recommendedEngagement}</div>
-                    <div className="text-sm text-gold/80 mb-3">{result.engagementFee}</div>
-                    <div className="text-sm text-muted-foreground leading-relaxed">{result.engagementReason}</div>
-                  </div>
-
                   {/* Summary blocks */}
                   <div className="grid md:grid-cols-2 gap-4 mb-8">
                     {[{ label: aw.result.topRiskLabel, value: result.topRisk }, { label: aw.result.nextStepLabel, value: result.nextStep }].map(b => (
@@ -542,23 +568,18 @@ export default function AssessmentTriage() {
                     ))}
                   </div>
 
-                  <div className="flex">
-                    <Button variant="outline" onClick={restart} className="w-full uppercase tracking-widest text-xs py-6">
-                      {aw.result.restart}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* ── PHASE 4: CONTACT CAPTURE ──────────────────────────── */}
-                {!contactSkipped && (
-                  <div className="mt-6 bg-card border border-border rounded-xl p-6 md:p-8 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+                  {/* ── PHASE 4: CONTACT CAPTURE ──────────────────────────── */}
+                  <div className="mt-8 border-t border-border pt-7">
                     {!contactSent ? (
                       <>
-                        <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">Send your results to Fazal</span>
-                        <div className="font-serif text-lg font-medium text-foreground leading-snug mb-6">
-                          Leave your details and Fazal will review your assessment and be in touch.
+                        <div className="mb-5">
+                          <span className="text-[10px] tracking-widest text-gold uppercase block mb-2">Request an Architecture Advisory Session</span>
+                          <div className="font-serif text-lg font-medium text-foreground leading-snug">
+                            Leave your details and Fazal will review this assessment before the session.
+                          </div>
                         </div>
-                        <div className="space-y-4 mb-6">
+
+                        <div className="grid md:grid-cols-2 gap-4 mb-6">
                           {[
                             { key:'name' as const, label:'Name', type:'text', placeholder:'Your name', required:true },
                             { key:'email' as const, label:'Email', type:'email', placeholder:'your@email.com', required:true },
@@ -574,7 +595,7 @@ export default function AssessmentTriage() {
                                 value={contact[f.key]}
                                 onChange={e => setContact(p => ({ ...p, [f.key]: e.target.value }))}
                                 placeholder={f.placeholder}
-                                className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg p-3.5 focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
+                                className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg px-3.5 py-3 focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
                               />
                             </div>
                           ))}
@@ -586,14 +607,17 @@ export default function AssessmentTriage() {
                           </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-center">
-                          <Button 
+                        <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+                          <Button
                             onClick={submitContact}
                             disabled={contactLoading || !contact.name.trim() || !contact.email.trim()}
                             variant="hero"
-                            className="w-full py-6 uppercase tracking-widest text-xs"
+                            className="flex-1 py-5 uppercase tracking-widest text-xs"
                           >
-                            {contactLoading ? 'Sending…' : 'Send my results to Fazal ' + '\u2192'}
+                            {contactLoading ? 'Sending…' : 'Request session ' + '\u2192'}
+                          </Button>
+                          <Button variant="outline" onClick={restart} className="sm:w-auto px-6 py-5 uppercase tracking-widest text-xs">
+                            {aw.result.restart}
                           </Button>
                         </div>
                       </>
@@ -604,12 +628,15 @@ export default function AssessmentTriage() {
                             <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                           </div>
                         </div>
-                        <div className="font-serif text-xl font-medium text-foreground mb-2">Sent.</div>
-                        <div className="text-sm text-muted-foreground">Fazal will review your assessment and be in touch.</div>
+                        <div className="font-serif text-xl font-medium text-foreground mb-2">Request sent.</div>
+                        <div className="text-sm text-muted-foreground mb-5">Fazal will review your assessment and be in touch about the session.</div>
+                        <Button variant="outline" onClick={restart} className="px-6 py-5 uppercase tracking-widest text-xs">
+                          {aw.result.restart}
+                        </Button>
                       </div>
                     )}
                   </div>
-                )}
+                </div>
               </div>
             )}
           </div>

@@ -5,15 +5,14 @@ export const en = {
     description: "AI & Cloud Architecture Consulting for High-Stakes Decisions. We design the right AI system, fix what's broken, or get clarity before you commit serious time and money.",
   },
   nav: {
-    bookSession: "Book a Strategic Session",
+    bookSession: "Start Assessment",
   },
   hero: {
     badge: "CTO-Level Consulting",
     headline1: "Get the Architecture Decision Right",
     headline2: "Before You Build.",
     subtext: "Most AI and cloud failures are locked in at the architecture stage — long before systems go live. These engagements exist to give you clarity, direction, and a written plan before you commit time or budget.",
-    cta1: "Book a Strategic Session",
-    cta2: "Take AI Assessment",
+    cta1: "Start Assessment",
   },
   positioningStrip: {
     items: [
@@ -49,7 +48,7 @@ export const en = {
   coreOfferings: {
     badge: "What We Do",
     headline: "CTO-Level Thinking, Without the Full-Time Hire",
-    subtext: "Three engagement types, each designed for a specific stage of technical decision-making.",
+    subtext: "Three ways the advisory session can be focused, depending on the decision in front of you.",
     offerings: [
       {
         title: "Architecture Design",
@@ -78,50 +77,6 @@ export const en = {
       "SME Platform & Marketplace Businesses",
     ],
   },
-  bookingSessions: {
-    badge: "Request a Session",
-    headline: "Choose the Right Engagement",
-    subtext: "Every session is outcome-driven with clear, written deliverables. Pick the depth that matches your decision.",
-    idealForLabel: "Ideal For",
-    whatYouGetLabel: "What You Get",
-    currency: "USD",
-    bookLabelPrefix: "Request Session",
-    sessionSuffix: "Session",
-    sessions: [
-      {
-        id: "strategic",
-        title: "Strategic Clarity Session",
-        duration: "1-2 Hours",
-        calendlyUrl: "#",
-        description: "A focused, high-impact session for leaders who need fast clarity on a specific AI or cloud architecture decision.",
-        idealFor: [
-          "Evaluating AI feasibility for a product or workflow",
-          "Choosing between build vs. buy for an AI capability",
-          "Getting a second opinion on an existing architecture",
-          "Understanding LLM, RAG, or agentic workflow fit",
-        ],
-        outcome: "Walk away with a clear recommendation, decision framework, or validated direction — documented in a follow-up summary.",
-        price: "$350 / Hour",
-        accent: "from-gold/20 to-transparent",
-      },
-      {
-        id: "deep-dive",
-        title: "Deep Dive Session",
-        duration: "3-7 Hours",
-        calendlyUrl: "#",
-        description: "An intensive working session to go deep on your AI system design, cloud architecture, or technical strategy.",
-        idealFor: [
-          "Designing a full AI system architecture end-to-end",
-          "Auditing an underperforming AI system",
-          "Planning an AWS/Azure migration or optimization",
-          "Building a technical roadmap for a new AI product",
-        ],
-        outcome: "You receive a comprehensive architecture document covering system design, tech stack, data flow, cost estimates, and an execution-ready build plan for your engineering team.",
-        price: "$400 / Hour",
-        accent: "from-primary/20 to-transparent",
-      },
-    ]
-  },
   directConnect: {
     headline: "Request Your Session",
     subtext: "If you know what you need or prefer to discuss your case directly, provide your details below.",
@@ -137,26 +92,16 @@ export const en = {
     successHeadline: "Request Sent.",
     successSubtext: "Your message has been received. I will be in touch shortly.",
   },
-  inviteGate: {
-    badge: "Restricted Access",
-    headline: "Invitation Required",
-    subtext: "Please enter your invitation code to access the platform.",
-    placeholder: "Enter code...",
-    buttonDefault: "Enter site",
-    buttonVerifying: "Verifying...",
-    errorInvalid: "Invalid invitation code",
-    errorRequired: "Code is required"
-  },
   assessment: {
     badge: "Assessment",
     headline1: "Assess your architecture.",
-    headline2: "Get the right engagement.",
-    subtext: "5 questions to identify your risk profile. Then a single AI-powered recommendation — the exact engagement, the exact reason, specific to your situation.",
+    headline2: "Request the right session.",
+    subtext: "5 questions to identify your risk profile. Then request one advisory session with the right focus for your situation.",
   },
   finalCta: {
     headline: "If the architecture decision matters, it's worth getting it right before you build.",
     subtext: "If you are planning, fixing, or accelerating an AI or cloud initiative, we determine the optimal architectural direction and mitigate build risks fast.",
-    cta: "Assess Your Case",
+    cta: "Start Assessment",
   },
   footer: {
     tagline: "CTO-level AI and cloud architecture consulting for businesses that need clarity before execution.",
@@ -204,30 +149,6 @@ export const en = {
         { metric: "2–3x", label: "Faster Response" },
         { metric: "↑↑", label: "Output Relevance" },
       ],
-    },
-    workflowCard: {
-      title: "AI Workflow Design — Business Process Automation",
-      extract: "Sample Extract",
-      useCaseLabel: "Use Case:",
-      useCase: "Automating a multi-step seller onboarding and verification workflow",
-      steps: [
-        {
-          label: "1. Document Intake",
-          action: "LLM extraction + classification",
-          output: "Output: Structured entity record",
-        },
-        {
-          label: "2. Validation",
-          action: "Rule engine + confidence scoring",
-          output: "Output: Pass / flag / reject with reason",
-        },
-        {
-          label: "3. Escalation",
-          action: "Human-in-the-loop trigger",
-          output: "Output: Routed review task",
-        },
-      ],
-      outcome: "Outcome: 70% reduction in manual review load with full audit trail",
     },
   },
   assessmentWidget: {
@@ -286,24 +207,22 @@ export const en = {
     phase2: {
       heading: "One more thing.",
       subheading: "Optional — but the analysis will be sharper.",
-      label: "Briefly describe your situation.",
-      placeholder: "What are you building? What decision are you stuck on? What has already been tried?",
+      label: "Add one sentence of context.",
+      placeholder: "What are you building, and what decision needs clarity?",
       skip: "Skip — use my answers only",
       generate: "Generate My Assessment",
     },
     phase3: {
       heading: "Generating your assessment…",
-      subheading: "Analysing your risk profile against the engagement framework.",
+    subheading: "Analysing your risk profile before the session request.",
     },
     result: {
       riskLabel: "Risk Level",
       scoreLabel: "Risk Score",
       analysisLabel: "Assessment",
       topRiskLabel: "Primary Risk Identified",
-      engagementLabel: "Recommended Engagement",
-      reasonLabel: "Why this engagement",
       nextStepLabel: "Immediate next step",
-      cta: "Request This Engagement",
+      cta: "Request Session",
       restart: "Re-take Assessment",
       errorLabel: "Something went wrong",
       retry: "Please try again.",

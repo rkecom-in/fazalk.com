@@ -3,8 +3,7 @@
  *
  * NOTE: On Vercel, each serverless function runs in its own process/instance.
  * This Map is per-process and resets on cold starts. It is best-effort protection
- * that works well against sustained bursts within a warm instance. The primary
- * security layer is the invite-gated middleware that sits in front of all routes.
+ * that works well against sustained bursts within a warm instance.
  */
 
 interface RateLimitEntry {

@@ -4,8 +4,7 @@ import { checkRateLimit, getRequestKey } from '@/lib/rate-limit'
 // ── Rate limit: 5 AI assessment calls per IP per 24 hours ──
 // NOTE: This in-memory Map is per serverless function instance. On Vercel, cold
 // starts create a new process, so limits reset. This provides meaningful
-// protection against sustained bursts within a warm instance. The invite gate
-// in middleware.ts is the primary defence layer against unauthenticated abuse.
+// protection against sustained bursts within a warm instance.
 const MAX_REQUESTS = 5
 const WINDOW_MS = 24 * 60 * 60 * 1000
 
@@ -26,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[anthropic] ANTHROPIC_API_KEY environment variable is not set.')
-    return res.status(500).json({ error: 'Server configuration error.' })
+    return res.status(503).json({ error: 'AI assessment service is not configured.' })
   }
 
   try {

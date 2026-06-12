@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <>
       <Head>
-        <title>{s.headline} | Fazal K.</title>
+        <title>{`${s.headline} | Fazal K.`}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <div className="min-h-screen bg-background text-foreground">

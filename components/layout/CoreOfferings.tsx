@@ -1,7 +1,13 @@
 import { Shield, Wrench, Cpu, Cloud, MessageSquare } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
+import Link from "next/link";
 
 const icons = [Shield, Wrench, Cpu, Cloud, MessageSquare];
+const offeringLinks = [
+  "/services/ai-architecture-consulting",
+  "/services/technical-architecture-review",
+  "/services/ai-technical-due-diligence",
+];
 
 const CoreOfferings = () => {
   const { t } = useGlobalUX();
@@ -18,8 +24,9 @@ const CoreOfferings = () => {
           {s.offerings.map((offering, i) => {
             const Icon = icons[i % icons.length];
             return (
-              <div
+              <Link
                 key={offering.title}
+                href={offeringLinks[i] || "/#assessment"}
                 className="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]"
               >
                 <div className="flex items-center gap-3 mb-5">
@@ -28,7 +35,7 @@ const CoreOfferings = () => {
                 </div>
                 <h3 className="text-lg font-bold text-foreground mb-3 font-serif">{offering.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{offering.description}</p>
-              </div>
+              </Link>
             );
           })}
         </div>

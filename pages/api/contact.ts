@@ -101,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     html += `
       <div style="background: #111; color: #fff; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
         <h3 style="color: #c5a059; margin-top: 0;">Risk Profile: ${result.riskLevel} (${result.overallScore}/20)</h3>
-        <p><strong>Recommendation:</strong> ${result.recommendedEngagement} - ${result.engagementFee}</p>
+        <p><strong>Requested Session:</strong> ${sourceDetail || 'Architecture Advisory Session'}</p>
       </div>
       <h3 style="color: #666;">AI Analysis</h3>
       <p><strong>${result.headline}</strong></p>
