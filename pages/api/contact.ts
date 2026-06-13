@@ -1,71 +1,127 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { checkRateLimit, getRequestKey } from '@/lib/rate-limit'
+import { checkRateLimit, getClientIp, getRequestKey } from '@/lib/rate-limit'
+import { isAllowedOrigin } from '@/lib/security'
+import { verifyTurnstile } from '@/lib/turnstile'
+import { getStrings, type Language } from '@/lib/i18n'
+import { QUESTION_RISKS, computeScores, getRiskLevelFromScore } from '@/lib/assessment-shared'
+
+export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
 
 const RESEND_API_URL = 'https://api.resend.com/emails'
 
-// Field length caps — prevents oversized payload abuse
+// Field length caps — prevents oversized payload abuse.
 const MAX_LENGTHS = {
-  name:        100,
-  email:       254,
-  phone:        30,
-  website:     200,
-  situation:  2000,
+  name:         100,
+  email:        254,
+  phone:         30,
+  website:      200,
+  situation:   2000,
   sourceDetail: 200,
+  headline:     200,
+  analysis:    2000,
+  topRisk:      400,
+  nextStep:     400,
 }
 
-const BUILD_STAGE_MAP  = ['Idea / Deciding', 'Designed / Pre-build', 'Actively Building', 'Live / Underperforming']
-const LEADERSHIP_MAP   = ['CTO / Senior Architect', 'Senior Dev Learning', 'Founder / Product Team', 'Vendor / Agency Deciding']
-const CLARITY_MAP      = ['All Decisions Made', 'Most Made / Some Gaps', 'Rough Direction Only', 'No Architecture Plan']
-const EXPOSURE_MAP     = ['Low', 'Moderate', 'High', 'Critical']
-const CHALLENGE_MAP    = ['AI Approach', 'Cloud Infrastructure', 'Broken System', 'Need Second Opinion']
-const VALID_SOURCES    = ['Direct Connect', 'Assessment']
+/** HTML-entity-escape a value for safe interpolation into the email HTML. */
+function esc(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 
-/** Sanitise a string: trim, enforce max length, strip HTML tags */
-function sanitise(value: unknown, maxLen: number): string {
+/** Trim, length-cap, then HTML-escape an untrusted string. */
+function clean(value: unknown, maxLen: number): string {
   if (typeof value !== 'string') return ''
-  return value.trim().slice(0, maxLen).replace(/<[^>]*>/g, '')
+  return esc(value.trim().slice(0, maxLen))
 }
 
-/** Basic email format check */
+/** Basic email format check (validates the raw value before escaping). */
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+/** answers must be exactly 5 integers in [0,3]. */
+function validAnswers(answers: unknown): answers is number[] {
+  return (
+    Array.isArray(answers) &&
+    answers.length === QUESTION_RISKS.length &&
+    answers.every(a => Number.isInteger(a) && a >= 0 && a <= 3)
+  )
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end()
 
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ ok: false, error: 'Forbidden.' })
+  }
+
+  const headers = req.headers as Record<string, string | string[] | undefined>
+
   // ── Rate limit: 3 contact submissions per IP per hour ──
-  const key = getRequestKey(req.headers as Record<string, string | string[] | undefined>, 'contact')
+  const key = getRequestKey(headers, 'contact')
   const { allowed } = checkRateLimit(key, 3, 60 * 60 * 1000)
   if (!allowed) {
     return res.status(429).json({ ok: false, error: 'Too many requests. Please try again later.' })
   }
 
-  // ── Input validation & sanitisation ──
-  const { answers, situation: rawSituation, result, contact: rawContact, source: rawSource, sourceDetail: rawSourceDetail } = req.body
+  const verified = await verifyTurnstile(req.body?.turnstileToken, getClientIp(headers))
+  if (!verified) {
+    return res.status(403).json({ ok: false, error: 'Verification failed. Please reload and try again.' })
+  }
 
-  const source      = sanitise(rawSource, 50)
-  const sourceDetail = sanitise(rawSourceDetail, MAX_LENGTHS.sourceDetail)
-  const situation   = sanitise(rawSituation, MAX_LENGTHS.situation)
+  if (!process.env.RESEND_API_KEY) {
+    console.error('[contact] RESEND_API_KEY environment variable is not set.')
+    return res.status(503).json({ ok: false, error: 'Email service is not configured.' })
+  }
+
+  // ── Input validation & sanitisation ──
+  const body = (req.body ?? {}) as Record<string, unknown>
+  const rawContact = (body.contact ?? {}) as Record<string, unknown>
+  const rawResult = (body.result ?? {}) as Record<string, unknown>
+  const language: Language = body.language === 'ar' ? 'ar' : 'en'
+
+  const situation    = clean(body.situation, MAX_LENGTHS.situation)
+  const sourceDetail = clean(body.sourceDetail, MAX_LENGTHS.sourceDetail) || 'Architecture Advisory Session'
 
   const contact = {
-    name:    sanitise(rawContact?.name,    MAX_LENGTHS.name),
-    email:   sanitise(rawContact?.email,   MAX_LENGTHS.email),
-    phone:   sanitise(rawContact?.phone,   MAX_LENGTHS.phone),
-    website: sanitise(rawContact?.website, MAX_LENGTHS.website),
+    name:    clean(rawContact.name,    MAX_LENGTHS.name),
+    email:   clean(rawContact.email,   MAX_LENGTHS.email),
+    phone:   clean(rawContact.phone,   MAX_LENGTHS.phone),
+    website: clean(rawContact.website, MAX_LENGTHS.website),
   }
 
-  if (!VALID_SOURCES.includes(source)) {
-    return res.status(400).json({ ok: false, error: 'Invalid source.' })
-  }
+  // Validate the raw (pre-escape) email so the regex sees the real value.
+  const rawEmail = typeof rawContact.email === 'string' ? rawContact.email.trim() : ''
   if (!contact.name) {
     return res.status(400).json({ ok: false, error: 'Name is required.' })
   }
-  if (!contact.email || !isValidEmail(contact.email)) {
+  if (!rawEmail || !isValidEmail(rawEmail)) {
     return res.status(400).json({ ok: false, error: 'A valid email address is required.' })
   }
+  if (!validAnswers(body.answers)) {
+    return res.status(400).json({ ok: false, error: 'Invalid assessment answers.' })
+  }
+  const answers = body.answers as number[]
 
-  const isDirectConnect = source === 'Direct Connect'
+  // ── Recompute risk server-side — never trust client-supplied scores ──
+  const scores = computeScores(answers)
+  const overallScore = scores.reduce((a, b) => a + b, 0)
+  const riskLevel = getRiskLevelFromScore(overallScore)
+
+  // Option labels come from the canonical i18n dictionary (no hand-duplicated maps).
+  const questions = getStrings(language).assessmentWidget.questions
+  const optionLabel = (i: number) => esc(questions[i]?.options[answers[i]] ?? 'N/A')
+
+  // AI-generated narrative (escaped — model output is untrusted in an HTML context).
+  const headline = clean(rawResult.headline, MAX_LENGTHS.headline)
+  const analysis = clean(rawResult.analysis, MAX_LENGTHS.analysis).replace(/\n/g, '<br/>')
+  const topRisk  = clean(rawResult.topRisk,  MAX_LENGTHS.topRisk)
+  const nextStep = clean(rawResult.nextStep, MAX_LENGTHS.nextStep)
 
   const timestamp = new Date().toLocaleString('en-GB', {
     timeZone: 'Asia/Kolkata',
@@ -73,55 +129,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     timeStyle: 'short',
   })
 
-  const subject = isDirectConnect
-    ? `New Session Request: ${contact.name}`
-    : `New AI Assessment: ${result?.riskLevel || 'Unknown'} Risk (${contact.name})`
+  const subject = `New AI Assessment: ${riskLevel} Risk (${contact.name})`
 
-  // ── Build email body ──
-  let html = `
+  const html = `
     <div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
-      <h2 style="color: #c5a059; border-bottom: 2px solid #c5a059; padding-bottom: 10px;">${isDirectConnect ? 'Session Request' : 'AI Assessment Result'}</h2>
+      <h2 style="color: #c5a059; border-bottom: 2px solid #c5a059; padding-bottom: 10px;">AI Assessment Result</h2>
       <div style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 5px;">
         <p><strong>Name:</strong> ${contact.name}</p>
         <p><strong>Email:</strong> ${contact.email}</p>
         <p><strong>Phone:</strong> ${contact.phone || 'N/A'}</p>
         <p><strong>Website:</strong> ${contact.website || 'N/A'}</p>
-        <p><strong>Submitted:</strong> ${timestamp}</p>
+        <p><strong>Submitted:</strong> ${esc(timestamp)}</p>
       </div>
-  `
-
-  if (isDirectConnect) {
-    html += `
-      <h3 style="color: #666;">Requested Session</h3>
-      <p style="background: #fffbe6; padding: 10px; border-left: 4px solid #c5a059;">${sourceDetail || 'General Inquiry'}</p>
-      <h3 style="color: #666;">Client Situation</h3>
-      <div style="white-space: pre-wrap; background: #fff; padding: 15px; border: 1px solid #eee;">${situation || 'No detail provided.'}</div>
-    `
-  } else if (answers && result) {
-    html += `
       <div style="background: #111; color: #fff; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-        <h3 style="color: #c5a059; margin-top: 0;">Risk Profile: ${result.riskLevel} (${result.overallScore}/20)</h3>
-        <p><strong>Requested Session:</strong> ${sourceDetail || 'Architecture Advisory Session'}</p>
+        <h3 style="color: #c5a059; margin-top: 0;">Risk Profile: ${riskLevel} (${overallScore}/20)</h3>
+        <p><strong>Requested Session:</strong> ${sourceDetail}</p>
       </div>
-      <h3 style="color: #666;">AI Analysis</h3>
-      <p><strong>${result.headline}</strong></p>
-      <div style="color: #555;">${String(result.analysis || '').replace(/\n/g, '<br/>')}</div>
-      <h3 style="color: #666;">Top Risk</h3>
-      <p style="color: #d9534f;">${result.topRisk}</p>
+      ${headline ? `<h3 style="color: #666;">AI Analysis</h3><p><strong>${headline}</strong></p>` : ''}
+      ${analysis ? `<div style="color: #555;">${analysis}</div>` : ''}
+      ${topRisk ? `<h3 style="color: #666;">Top Risk</h3><p style="color: #d9534f;">${topRisk}</p>` : ''}
+      ${nextStep ? `<h3 style="color: #666;">Next Step</h3><p>${nextStep}</p>` : ''}
       <h3 style="color: #666;">Assessment Breakdown</h3>
       <ul style="list-style: none; padding: 0;">
-        <li style="margin-bottom: 8px;"><strong>Build Stage:</strong> ${BUILD_STAGE_MAP[answers[0]] || 'N/A'}</li>
-        <li style="margin-bottom: 8px;"><strong>Technical Leadership:</strong> ${LEADERSHIP_MAP[answers[1]] || 'N/A'}</li>
-        <li style="margin-bottom: 8px;"><strong>Decision Clarity:</strong> ${CLARITY_MAP[answers[2]] || 'N/A'}</li>
-        <li style="margin-bottom: 8px;"><strong>Risk Exposure:</strong> ${EXPOSURE_MAP[answers[3]] || 'N/A'}</li>
-        <li style="margin-bottom: 8px;"><strong>Primary Challenge:</strong> ${CHALLENGE_MAP[answers[4]] || 'N/A'}</li>
+        <li style="margin-bottom: 8px;"><strong>Build Stage:</strong> ${optionLabel(0)} (${scores[0]}/4)</li>
+        <li style="margin-bottom: 8px;"><strong>Technical Leadership:</strong> ${optionLabel(1)} (${scores[1]}/4)</li>
+        <li style="margin-bottom: 8px;"><strong>Decision Clarity:</strong> ${optionLabel(2)} (${scores[2]}/4)</li>
+        <li style="margin-bottom: 8px;"><strong>Risk Exposure:</strong> ${optionLabel(3)} (${scores[3]}/4)</li>
+        <li style="margin-bottom: 8px;"><strong>Primary Challenge:</strong> ${optionLabel(4)} (${scores[4]}/4)</li>
       </ul>
-      <h3 style="color: #666;">Founder's Words</h3>
-      <div style="white-space: pre-wrap; background: #fff; padding: 15px; border: 1px solid #eee;">${situation || 'No situation description provided.'}</div>
-    `
-  }
-
-  html += `
+      ${situation ? `<h3 style="color: #666;">Founder's Words</h3><div style="white-space: pre-wrap; background: #fff; padding: 15px; border: 1px solid #eee;">${situation}</div>` : ''}
       <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999; text-align: center;">
         Sent from fazalk.com lead engine
       </div>
@@ -143,13 +179,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }),
     })
 
-    const data = await resendResp.json()
     if (!resendResp.ok) {
-      console.error('[contact] Resend error:', data)
+      const detail = await resendResp.text().catch(() => '')
+      console.error('[contact] Resend error:', detail.slice(0, 1000))
+      return res.status(502).json({ ok: false, error: 'Email sending failed' })
     }
-    res.status(resendResp.status).json({ ok: resendResp.ok, id: data.id })
+    // Avoid leaking upstream ids/status — return a fixed shape.
+    return res.status(200).json({ ok: true })
   } catch (err) {
     console.error('[contact] Fetch error:', err)
-    res.status(500).json({ ok: false, error: 'Email sending failed' })
+    return res.status(500).json({ ok: false, error: 'Email sending failed' })
   }
 }
