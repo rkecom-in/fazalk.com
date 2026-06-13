@@ -12,8 +12,7 @@ export default function App({ Component, pageProps }: AppProps<PageProps>) {
   return (
     <GlobalUXProvider initialLanguage={pageProps.initialLanguage}>
       <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <title>CTO-Level AI &amp; Cloud Architecture Consulting</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Component {...pageProps} />
     </GlobalUXProvider>

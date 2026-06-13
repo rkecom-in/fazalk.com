@@ -1,9 +1,9 @@
-import { Shield, Wrench, Cpu, Cloud, MessageSquare } from "lucide-react";
+import { Shield, Wrench, Cpu } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
 import Link from "next/link";
 import { getArabicServiceForEnglishSlug } from "@/lib/seo-services";
 
-const icons = [Shield, Wrench, Cpu, Cloud, MessageSquare];
+const icons = [Shield, Wrench, Cpu];
 const offeringLinks = [
   "/services/ai-architecture-consulting",
   "/services/technical-architecture-review",

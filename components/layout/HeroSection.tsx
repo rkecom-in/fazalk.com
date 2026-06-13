@@ -31,12 +31,12 @@ const HeroSection = () => {
         </p>
 
         <div className="flex justify-center animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
-          <a href="#assessment" className="w-full sm:w-auto">
-            <Button variant="hero" size="xl" className="w-full sm:w-auto">
+          <Button asChild variant="hero" size="xl" className="w-full sm:w-auto">
+            <a href="#assessment">
               {s.cta1}
               <ArrowRight className="ms-1 rtl:rotate-180" />
-            </Button>
-          </a>
+            </a>
+          </Button>
         </div>
       </div>
     </section>
