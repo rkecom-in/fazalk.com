@@ -30,7 +30,7 @@ export function GlobalUXProvider({
   children: React.ReactNode
   initialLanguage?: Language
 }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const [language, setLanguageState] = useState<Language>(initialLanguage ?? 'en');
   const [mounted, setMounted] = useState(false);
 
@@ -39,7 +39,7 @@ export function GlobalUXProvider({
     const savedTheme = localStorage.getItem('ux-theme') as Theme | null;
     const savedLang = localStorage.getItem('ux-language') as Language | null;
 
-    setThemeState(savedTheme ?? 'light');
+    setThemeState(savedTheme ?? 'dark');
     setLanguageState(initialLanguage ?? savedLang ?? detectDefaultLanguage());
     setMounted(true);
   }, [initialLanguage]);
