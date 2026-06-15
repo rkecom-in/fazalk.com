@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Consolidate legacy URLs from the pre-"open site" era (static index.html and
+  // the removed invite gate) onto the canonical home. Emits 308 (permanent);
+  // Google treats it as a 301 equivalent.
+  async redirects() {
+    return [
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/invite", destination: "/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
