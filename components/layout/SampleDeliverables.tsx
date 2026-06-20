@@ -62,11 +62,11 @@ const SampleDeliverables = () => {
             </div>
           </div>
 
-          {/* Audit Card */}
-          <div className="rounded-xl border border-border bg-card p-8 hover:border-gold/20 transition-colors">
+          {/* Audit Card — brass secondary accent (review counterpart to the azure blueprint) */}
+          <div className="rounded-xl border border-border bg-card p-8 hover:border-brass/20 transition-colors">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-lg bg-gold/10">
-                <AlertTriangle className="w-5 h-5 text-gold" />
+              <div className="p-2 rounded-lg bg-brass/10">
+                <AlertTriangle className="w-5 h-5 text-brass" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground font-serif">{au.title}</h3>
@@ -84,13 +84,13 @@ const SampleDeliverables = () => {
                 const Icon = icons[i % icons.length];
                 return (
                   <div key={finding.title} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                    <Icon className="w-4 h-4 text-gold flex-shrink-0 mt-0.5" />
+                    <Icon className="w-4 h-4 text-brass flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-foreground">{finding.title}</span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${
                           i === 0 ? "bg-destructive/20 text-destructive" :
-                          i <= 2 ? "bg-gold/15 text-gold" :
+                          i <= 2 ? "bg-brass/15 text-brass" :
                           "bg-muted text-muted-foreground"
                         }`}>{finding.severity}</span>
                       </div>
@@ -102,11 +102,11 @@ const SampleDeliverables = () => {
             </div>
 
             <div className="border-t border-border pt-5">
-              <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">{au.outcomeLabel}</p>
+              <p className="text-xs font-semibold text-brass uppercase tracking-wider mb-3">{au.outcomeLabel}</p>
               <div className="grid grid-cols-3 gap-2 md:gap-3">
                 {au.stats.map((stat) => (
-                  <div key={stat.label} className="text-center p-2 md:p-3 rounded-lg bg-gold/5 border border-gold/10">
-                    <p className="text-base md:text-lg font-bold text-gold">{stat.metric}</p>
+                  <div key={stat.label} className="text-center p-2 md:p-3 rounded-lg bg-brass/5 border border-brass/10">
+                    <p className="text-base md:text-lg font-bold text-brass">{stat.metric}</p>
                     <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider leading-tight mt-1">{stat.label}</p>
                   </div>
                 ))}
