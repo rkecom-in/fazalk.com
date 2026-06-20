@@ -9,6 +9,7 @@ import {
   QUESTION_RISKS,
   getRiskLevelFromScore,
 } from '@/lib/assessment-shared'
+import { trackEvent, trackConversion, ADS_ENQUIRY_LABEL } from '@/lib/analytics'
 
 /* ─── TYPES ─────────────────────────────────────────────────────────────── */
 interface Question { category: string; text: string; options: { label: string; risk: number }[] }
@@ -118,6 +119,7 @@ export default function AssessmentTriage() {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const mounted = useRef(true)
   const advanceGuard = useRef(false)
+  const startedRef = useRef(false) // fire assessment_start once per run
 
   // Track a timeout so it can be cleared on unmount/restart.
   const track = (id: ReturnType<typeof setTimeout>) => { timers.current.push(id); return id }
@@ -162,7 +164,21 @@ export default function AssessmentTriage() {
     }
   }, [phase, result])
 
+  // Fire once when a result first appears (covers both AI and fallback paths).
+  useEffect(() => {
+    if (result) {
+      trackEvent('assessment_complete', {
+        risk_level: result.riskLevel,
+        score: result.overallScore,
+        used_fallback: usedFallback,
+        language,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result])
+
   function selectOpt(i: number) {
+    if (!startedRef.current) { startedRef.current = true; trackEvent('assessment_start', { language }) }
     const next = [...answers]; next[current] = i; setAnswers(next)
     track(setTimeout(() => goNext(next), 340))
   }
@@ -284,6 +300,14 @@ export default function AssessmentTriage() {
       })
       if (!resp.ok) throw new Error(`Contact API ${resp.status}`)
       setContactSent(true)
+      // Primary conversion: enquiry submitted. GA4 event + Google Ads conversion.
+      trackEvent('generate_lead', {
+        risk_level: result?.riskLevel,
+        score: result?.overallScore,
+        language,
+        source_detail: 'Architecture Advisory Session',
+      })
+      trackConversion(ADS_ENQUIRY_LABEL)
     } catch (err) {
       // Log internally, show a calm reassurance — never expose network errors to clients
       console.error('[Assessment] Contact submission failed:', err)
@@ -296,6 +320,7 @@ export default function AssessmentTriage() {
   function restart() {
     clearTimers()
     advanceGuard.current = false
+    startedRef.current = false
     setCurrent(0); setAnswers([]); setSituation(''); setPhase(1)
     setResult(null); setUsedFallback(false); setCardVisible(false)
     setContact({ name:'', email:'', phone:'', website:'' })
