@@ -8,6 +8,7 @@ export default function ConfirmPage() {
     <>
       <Head>
         <title>Assessment Sent | Fazal K.</title>
+        <meta name="robots" content="noindex,follow" />
       </Head>
       <main className="min-h-screen flex flex-col bg-background relative overflow-hidden">
         {/* Simple Navbar equivalent */}

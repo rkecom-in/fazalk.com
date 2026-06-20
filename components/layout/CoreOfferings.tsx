@@ -1,13 +1,18 @@
-import { Shield, Wrench, Cpu, Cloud, MessageSquare } from "lucide-react";
+import { Shield, Wrench, Cpu } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
 import Link from "next/link";
 import { getArabicServiceForEnglishSlug } from "@/lib/seo-services";
 
-const icons = [Shield, Wrench, Cpu, Cloud, MessageSquare];
+const icons = [Shield, Wrench, Cpu];
 const offeringLinks = [
   "/services/ai-architecture-consulting",
   "/services/technical-architecture-review",
   "/services/ai-technical-due-diligence",
+];
+// Alternate the primary (azure) and secondary (brass) accent for visual rhythm.
+const accentStyles = [
+  { num: "text-gold/50", icon: "text-gold", border: "hover:border-gold/30", shadow: "hover:shadow-[0_4px_30px_-4px_hsl(var(--gold)/0.1)]" },
+  { num: "text-brass/50", icon: "text-brass", border: "hover:border-brass/30", shadow: "hover:shadow-[0_4px_30px_-4px_hsl(var(--brass)/0.1)]" },
 ];
 
 const CoreOfferings = () => {
@@ -25,17 +30,18 @@ const CoreOfferings = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {s.offerings.map((offering, i) => {
             const Icon = icons[i % icons.length];
+            const a = accentStyles[i % accentStyles.length];
             return (
               <Link
                 key={offering.title}
                 href={isAr && offeringLinks[i]?.startsWith('/services/')
                   ? `/ar/services/${getArabicServiceForEnglishSlug(offeringLinks[i].replace('/services/', ''))?.slug || offeringLinks[i].replace('/services/', '')}`
                   : offeringLinks[i] || "/#assessment"}
-                className="group relative p-8 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all duration-300 hover:shadow-[0_4px_30px_-4px_hsl(40_65%_55%/0.1)]"
+                className={`group relative p-8 rounded-xl bg-card border border-border/50 transition-all duration-300 ${a.border} ${a.shadow}`}
               >
                 <div className="flex items-center gap-3 mb-5">
-                  <span className="text-xs font-bold text-gold/50 tracking-widest">{String(i + 1).padStart(2, '0')}</span>
-                  <Icon className="w-5 h-5 text-gold" />
+                  <span className={`text-xs font-bold ${a.num} tracking-widest`}>{String(i + 1).padStart(2, '0')}</span>
+                  <Icon className={`w-5 h-5 ${a.icon}`} />
                 </div>
                 <h3 className="text-lg font-bold text-foreground mb-3 font-serif">{offering.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{offering.description}</p>

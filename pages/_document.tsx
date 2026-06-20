@@ -27,7 +27,7 @@ export default class Document extends NextDocument<DocumentProps> {
     const dir = this.props.language === 'ar' ? 'rtl' : 'ltr'
 
     return (
-      <Html lang={this.props.language} dir={dir} className="light">
+      <Html lang={this.props.language} dir={dir} className="dark">
         <Head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -38,7 +38,7 @@ export default class Document extends NextDocument<DocumentProps> {
               try {
                 var path = window.location.pathname || '/';
                 var routeLang = (path === '/ar' || path.indexOf('/ar/') === 0) ? 'ar' : ((path === '/' || path.indexOf('/services/') === 0) ? 'en' : null);
-                var theme = localStorage.getItem('ux-theme') || 'light';
+                var theme = localStorage.getItem('ux-theme') || 'dark';
                 var savedLang = localStorage.getItem('ux-language');
                 var lang = routeLang || savedLang || (navigator.language.startsWith('ar') ? 'ar' : 'en');
                 var el = document.documentElement;

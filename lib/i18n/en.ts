@@ -19,6 +19,7 @@ export const en = {
       "AI System Architecture",
       "Cloud Infrastructure Advisory",
       "LLM & RAG Design",
+      "Technical Due Diligence",
       "Architecture Reviews",
     ],
   },
@@ -224,12 +225,6 @@ export const en = {
       nextStepLabel: "Immediate next step",
       cta: "Request Session",
       restart: "Re-take Assessment",
-      errorLabel: "Something went wrong",
-      retry: "Please try again.",
-      fallbackHeading: "Assessment Unavailable",
-      fallbackSubheading: "We couldn't generate your recommendation right now.",
-      fallbackText: "Our AI service is temporarily unavailable. Your answers have been noted — share your details below and Fazal will personally review your situation and be in touch with a recommendation.",
-      fallbackContext: "Assessment Follow-up",
     },
   },
   terms: {
@@ -302,7 +297,7 @@ export const en = {
       },
       {
         title: "7. Third-Party Services",
-        content: "This website uses Anthropic's API for the assessment feature and Notion for lead capture. These services have their own privacy policies. We are not responsible for the data practices of these third parties.",
+        content: "This website uses Anthropic's API for the assessment feature and Resend for email delivery of your enquiry. These services have their own privacy policies. We are not responsible for the data practices of these third parties.",
       },
       {
         title: "8. Changes to This Policy",

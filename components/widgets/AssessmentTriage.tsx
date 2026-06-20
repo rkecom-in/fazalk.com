@@ -1,130 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
+import { useTurnstile } from '@/components/widgets/useTurnstile'
 import { CheckCircle2 } from 'lucide-react'
-import DirectConnectForm from '@/components/widgets/DirectConnectForm'
+import {
+  type AssessmentResult,
+  DIM_LABELS,
+  QUESTION_RISKS,
+  getRiskLevelFromScore,
+} from '@/lib/assessment-shared'
 
 /* ─── TYPES ─────────────────────────────────────────────────────────────── */
 interface Question { category: string; text: string; options: { label: string; risk: number }[] }
 
-interface AssessmentResult {
-  riskLevel: 'Low' | 'Medium' | 'High'
-  overallScore: number
-  dimensionScores: Record<string, number>
-  headline: string
-  analysis: string
-  topRisk: string
-  nextStep: string
-}
-
 /* ─── DATA ──────────────────────────────────────────────────────────────── */
-const DIM_LABELS = ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge']
 const DIM_LABELS_AR = ['المرحلة', 'القيادة', 'الوضوح', 'التعرض', 'التحدي']
-
-// Questions are supplied at runtime from the i18n dictionary.
-// The risk values must stay fixed — only the display strings are translated.
-const QUESTION_RISKS = [
-  [1, 2, 3, 4],
-  [1, 2, 3, 4],
-  [1, 2, 3, 4],
-  [1, 2, 3, 4],
-  [2, 2, 3, 4],
-]
-
-const SYSTEM_PROMPT = `You are the advisory assessment AI for Fazal K.'s CTO-level architecture consulting practice (fazalk.com).
-
-ABOUT FAZAL K.
-Fazal K. is a CTO-level AI and cloud architecture consultant with 25+ years of production systems experience. He works with businesses that need senior technical clarity before they build, scale, or invest. He is not a freelance developer — he is a strategic advisor who operates at the architecture and decision-making level. Engagements are intentionally selective and outcome-driven.
-
-WHAT IS OFFERED
-Three core service types, delivered through focused sessions:
-
-1. Architecture Design
-   Full system architecture for AI products, cloud infrastructure, and data pipelines — built around the client's constraints, team, and strategic goals. Clients walk away with an end-to-end technical specification ready for their engineering team to execute.
-
-2. Technical Review
-   An independent assessment of an existing architecture to identify risks, inefficiencies, and missed opportunities before they become production problems. Delivered as a structured written report.
-
-3. Technical Due Diligence
-   Rigorous technical evaluation of AI systems, vendor proposals, or existing platforms — before signing a contract, making a hire, or committing to a roadmap. Designed for high-stakes decisions where an expert second opinion is critical.
-
-SESSION OPTION
-One outcome-driven advisory session, requested after the assessment:
-
-Architecture Advisory Session
-   A focused session scoped around the assessment result. It can be short and tactical when the problem is narrow, or deeper when the answers show interconnected architecture risk. Ideal for:
-   - Evaluating AI feasibility for a product or workflow
-   - Choosing between build vs. buy for an AI capability
-   - Getting a second opinion on an existing architecture
-   - Understanding LLM, RAG, fine-tuning, or agentic workflow fit
-   - Designing a full AI system architecture end-to-end
-   - Auditing an underperforming AI system (high cost, poor output, slow latency)
-   - Planning an AWS/Azure migration or optimization
-   - Building a technical roadmap for a new AI product
-   Deliverable: Clear CTO-level recommendation, decision framework, architecture review, or execution-ready direction depending on the assessed risk.
-
-WHO THE CLIENTS ARE
-- GCC Software & IT Companies (primary market)
-- SaaS & Platform Businesses building AI features
-- Digital Transformation Firms at a critical architecture decision point
-- Founders building AI products who lack a senior technical co-founder
-- IT Resellers & System Integrators presenting AI proposals to enterprise clients
-- SME Platform & Marketplace Businesses scaling into AI infrastructure
-
-RISK SCORING
-Total score out of 20 across 5 dimensions (each 1–4):
-- Low risk: 5–9 — architecture is on solid footing, specific clarity needed
-- Medium risk: 10–14 — meaningful gaps or fragile decisions requiring structured advisory
-- High risk: 15–20 — significant exposure, wrong decisions already compounding
-
-RULES FOR GENERATING THE REPORT
-- Be specific. Reference exactly what the person said — their stage, their team composition, their primary challenge.
-- Do not be generic. Name the exact risk pattern you see based on their combination of answers.
-- If they provided a free-text situation description, use it to sharpen and personalise the analysis beyond what the answers alone reveal.
-- Keep the report concise. The client should be able to scan it in under one minute.
-- The analysis must be exactly two short paragraphs, 35-50 words each.
-- The top risk and next step must each be one sentence.
-- The analysis should feel like it was written by a senior technical advisor who has read the answers once and diagnosed a familiar pattern — not by a form processor.`
-
-const ASSESSMENT_TOOL = {
-  name: 'generate_assessment',
-  description: 'Generate a structured advisory assessment report based on the 5-question risk profile.',
-  input_schema: {
-    type: 'object' as const,
-    properties: {
-      riskLevel:             { type: 'string', enum: ['Low', 'Medium', 'High'], description: 'Overall risk level based on total score.' },
-      overallScore:          { type: 'number', minimum: 5, maximum: 20, description: 'Total risk score out of 20. Use the exact total supplied by the application.' },
-      dimensionScores: {
-        type: 'object',
-        properties: {
-          Stage:      { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
-          Leadership: { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
-          Clarity:    { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
-          Exposure:   { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
-          Challenge:  { type: 'number', minimum: 1, maximum: 4, description: 'Use the exact 1-4 score supplied by the application.' },
-        },
-        required: ['Stage', 'Leadership', 'Clarity', 'Exposure', 'Challenge'],
-      },
-      headline:              { type: 'string', description: 'One sharp sentence naming their specific situation and risk. Maximum 12 words.' },
-      analysis:              { type: 'string', description: 'Exactly two short paragraphs separated by double newlines. Each paragraph must be 35-50 words. Para 1: the specific risk pattern. Para 2: what resolving it should focus on. Be direct and specific.' },
-      topRisk:               { type: 'string', description: 'The single most critical risk in one sentence, maximum 22 words.' },
-      nextStep:              { type: 'string', description: 'One clear action the person should take now, maximum 28 words.' },
-    },
-    required: ['riskLevel', 'overallScore', 'dimensionScores', 'headline', 'analysis', 'topRisk', 'nextStep'],
-  },
-}
-
-async function readAssessmentApiError(resp: Response) {
-  try {
-    return await resp.json()
-  } catch {
-    try {
-      return await resp.text()
-    } catch {
-      return null
-    }
-  }
-}
 
 function logAssessmentFailure(reason: unknown) {
   let message = typeof reason === 'string' ? reason : ''
@@ -137,12 +27,6 @@ function logAssessmentFailure(reason: unknown) {
   }
 
   console.error(`[Assessment] AI call failed: ${message}`)
-}
-
-function getRiskLevelFromScore(score: number): AssessmentResult['riskLevel'] {
-  if (score <= 9) return 'Low'
-  if (score <= 14) return 'Medium'
-  return 'High'
 }
 
 function buildLocalAssessmentResult({
@@ -207,6 +91,7 @@ function buildLocalAssessmentResult({
 /* ─── COMPONENT ─────────────────────────────────────────────────────────── */
 export default function AssessmentTriage() {
   const { t, language } = useGlobalUX()
+  const { getToken } = useTurnstile()
   const aw = t.assessmentWidget
 
   // Build questions from i18n strings, preserving hardcoded risk values
@@ -221,7 +106,7 @@ export default function AssessmentTriage() {
   const [situation, setSituation]   = useState('')
   const [loading, setLoading]       = useState(false)
   const [result, setResult]         = useState<AssessmentResult|null>(null)
-  const [error, setError]           = useState<string|null>(null)
+  const [usedFallback, setUsedFallback] = useState(false)
   const [cardVisible, setCardVisible] = useState(false)
   const [contact, setContact] = useState({ name: '', email: '', phone: '', website: '' })
   const [contactSent, setContactSent]       = useState(false)
@@ -230,8 +115,21 @@ export default function AssessmentTriage() {
 
   const scoreRowRef = useRef<HTMLDivElement>(null)
   const riskSummaryRef = useRef<HTMLDivElement>(null)
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const mounted = useRef(true)
+  const advanceGuard = useRef(false)
+
+  // Track a timeout so it can be cleared on unmount/restart.
+  const track = (id: ReturnType<typeof setTimeout>) => { timers.current.push(id); return id }
+  const clearTimers = () => { timers.current.forEach(clearTimeout); timers.current = [] }
 
   useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false; clearTimers() }
+  }, [])
+
+  useEffect(() => {
+    advanceGuard.current = false // allow one advance per question/phase
     setCardVisible(false)
     const t = setTimeout(() => setCardVisible(true), 50)
     return () => clearTimeout(t)
@@ -257,19 +155,22 @@ export default function AssessmentTriage() {
   useEffect(() => {
     if (phase === 3 && result && scoreRowRef.current) {
       const fills = scoreRowRef.current.querySelectorAll<HTMLElement>('.sc-fill')
-      setTimeout(() => {
+      const id = setTimeout(() => {
         fills.forEach(el => { el.style.width = (el.dataset.pct || '0') + '%' })
       }, 200)
+      return () => clearTimeout(id)
     }
   }, [phase, result])
 
   function selectOpt(i: number) {
     const next = [...answers]; next[current] = i; setAnswers(next)
-    setTimeout(() => goNext(next), 340)
+    track(setTimeout(() => goNext(next), 340))
   }
 
   function goNext(ans = answers) {
     if (ans[current] === undefined) return
+    if (advanceGuard.current) return // one advance per question — block timer/click race
+    advanceGuard.current = true
     if (current === QUESTIONS.length - 1) { goToPhase2(); return }
     setCurrent(c => c + 1)
   }
@@ -283,7 +184,7 @@ export default function AssessmentTriage() {
   function backToPhase1() { setPhase(1) }
 
   async function submitAssessment() {
-    setPhase(3); setLoading(true); setError(null)
+    setPhase(3); setLoading(true); setUsedFallback(false)
     const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
     const totalRisk = scores.reduce((a,b) => a+b, 0)
     const localResult = buildLocalAssessmentResult({
@@ -298,86 +199,76 @@ export default function AssessmentTriage() {
       overallScore: totalRisk,
       dimensionScores: Object.fromEntries(DIM_LABELS.map((label, i) => [label, scores[i] || 0])),
     } satisfies Pick<AssessmentResult, 'riskLevel' | 'overallScore' | 'dimensionScores'>
-    const userMsg = `Assessment answers:\n${QUESTIONS.map((q,i) =>
-      `Q${i+1} [${q.category}]: "${q.text}"\nAnswer: "${q.options[answers[i]]?.label}" (risk: ${scores[i]}/4)`
-    ).join('\n\n')}\n\nUse these exact calculated scores. Do not convert them to percentages:\nRisk level: ${deterministicResult.riskLevel}\nTotal risk score: ${totalRisk}/20\nDimension scores: ${DIM_LABELS.map((label, i) => `${label}: ${scores[i]}/4`).join(', ')}\n${situation ? `\nFounder's situation (their words):\n"${situation}"` : '\nNo situation description provided.'}`
 
     ;[0,550,1150,1800,2500].forEach((d,i) => {
-      setTimeout(() => {
+      track(setTimeout(() => {
         const el = document.getElementById(`ls${i}`)
         if (el) el.classList.add('opacity-100')
-      }, d)
+      }, d))
     })
 
-    const langInstruction = language === 'ar'
-      ? '\n\nIMPORTANT: Write all text field values (headline, analysis, topRisk, nextStep) in Arabic (Modern Standard Arabic). Keep all property names and enum values in English exactly as defined in the tool schema.'
-      : ''
+    // Use the deterministic local analysis when the AI is unavailable.
+    const fallback = async () => {
+      await new Promise(r => setTimeout(r, 600))
+      if (!mounted.current) return
+      setUsedFallback(true)
+      setLoading(false)
+      setResult(localResult)
+    }
+
+    // Keep AI text within sane display bounds before storing/forwarding.
+    const clampText = (value: unknown, max: number, fallbackValue: string): string =>
+      typeof value === 'string' && value.trim() ? value.trim().slice(0, max) : fallbackValue
+
     try {
+      // The server owns model/max_tokens/system/tools — send only the inputs.
+      const turnstileToken = await getToken()
       const resp = await fetch('/api/anthropic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5',
-          max_tokens: 900,
-          system: [
-            {
-              type: 'text',
-              text: SYSTEM_PROMPT + langInstruction,
-              cache_control: { type: 'ephemeral' }
-            }
-          ],
-          tools: [ASSESSMENT_TOOL],
-          tool_choice: { type: 'tool', name: 'generate_assessment' },
-          messages: [{ role: 'user', content: userMsg }],
-        }),
+        body: JSON.stringify({ answers, situation, language, turnstileToken }),
       })
       if (!resp.ok) {
-        const detail = await readAssessmentApiError(resp)
-        logAssessmentFailure({ status: resp.status, detail })
-        await new Promise(r => setTimeout(r, 600))
-        setLoading(false)
-        setResult(localResult)
+        logAssessmentFailure({ status: resp.status })
+        await fallback()
         return
       }
       const data = await resp.json()
-
-      // With tool_use, Claude always returns a tool_use block with a pre-parsed input object.
-      // No JSON.parse, no regex — the API enforces the schema.
-      const toolBlock = data.content?.find((b: { type: string }) => b.type === 'tool_use')
-      if (!toolBlock?.input) {
+      const aiInput = data?.result as Partial<AssessmentResult> | undefined
+      if (!aiInput) {
         logAssessmentFailure('No structured response received from AI.')
-        await new Promise(r => setTimeout(r, 600))
-        setLoading(false)
-        setResult(localResult)
+        await fallback()
         return
       }
-      const aiInput = toolBlock.input as Partial<AssessmentResult>
       const json: AssessmentResult = {
         ...localResult,
-        headline: typeof aiInput.headline === 'string' && aiInput.headline.trim() ? aiInput.headline : localResult.headline,
-        analysis: typeof aiInput.analysis === 'string' && aiInput.analysis.trim() ? aiInput.analysis : localResult.analysis,
-        topRisk: typeof aiInput.topRisk === 'string' && aiInput.topRisk.trim() ? aiInput.topRisk : localResult.topRisk,
-        nextStep: typeof aiInput.nextStep === 'string' && aiInput.nextStep.trim() ? aiInput.nextStep : localResult.nextStep,
+        headline: clampText(aiInput.headline, 160, localResult.headline),
+        analysis: clampText(aiInput.analysis, 1200, localResult.analysis),
+        topRisk: clampText(aiInput.topRisk, 300, localResult.topRisk),
+        nextStep: clampText(aiInput.nextStep, 300, localResult.nextStep),
         ...deterministicResult,
       }
 
       await new Promise(r => setTimeout(r, 600))
+      if (!mounted.current) return
       setLoading(false)
       setResult(json)
     } catch (err: unknown) {
       // Log internally, but avoid throwing Error objects into the Next dev overlay.
       logAssessmentFailure(err instanceof Error ? err.message : err)
-      await new Promise(r => setTimeout(r, 600))
-      setLoading(false)
-      setResult(localResult)
+      await fallback()
     }
   }
 
   async function submitContact() {
     if (!contact.name.trim() || !contact.email.trim()) return
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) {
+      setContactError(language === 'ar' ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.')
+      return
+    }
     setContactLoading(true); setContactError(null)
     try {
-      const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
+      const turnstileToken = await getToken()
       const resp = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -386,8 +277,9 @@ export default function AssessmentTriage() {
           situation,
           result,
           contact,
-          source: 'Assessment',
+          language,
           sourceDetail: 'Architecture Advisory Session',
+          turnstileToken,
         }),
       })
       if (!resp.ok) throw new Error(`Contact API ${resp.status}`)
@@ -402,11 +294,12 @@ export default function AssessmentTriage() {
   }
 
   function restart() {
+    clearTimers()
+    advanceGuard.current = false
     setCurrent(0); setAnswers([]); setSituation(''); setPhase(1)
-    setResult(null); setError(null); setCardVisible(false)
+    setResult(null); setUsedFallback(false); setCardVisible(false)
     setContact({ name:'', email:'', phone:'', website:'' })
     setContactSent(false); setContactError(null)
-    document.querySelectorAll('[id^="ls"]').forEach(el => el.classList.remove('opacity-100'))
   }
 
   const scores = QUESTIONS.map((q,i) => q.options[answers[i]]?.risk || 0)
@@ -548,8 +441,9 @@ export default function AssessmentTriage() {
                 })}
               </div>
 
-              <div className="text-xs text-muted-foreground mb-3 italic">{aw.phase2.label}</div>
+              <label htmlFor="assessment-situation" className="text-xs text-muted-foreground mb-3 italic block">{aw.phase2.label}</label>
               <textarea
+                id="assessment-situation"
                 value={situation}
                 onChange={e => setSituation(e.target.value)}
                 maxLength={280}
@@ -557,12 +451,6 @@ export default function AssessmentTriage() {
                 className="w-full bg-muted/30 border border-border outline-none text-foreground text-sm rounded-lg p-4 resize-none min-h-[92px] focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all placeholder:text-muted-foreground/50"
               />
               <div className="text-[10px] text-muted-foreground mt-2 text-right">{situation.length} / 280</div>
-
-              {error && (
-                <div className="bg-destructive/10 border border-destructive/20 text-destructive p-4 text-sm rounded-lg mt-4">
-                  {error}
-                </div>
-              )}
             </div>
 
             <div className="flex gap-3">
@@ -599,36 +487,15 @@ export default function AssessmentTriage() {
               </div>
             )}
 
-            {!loading && !result && error && (
-              <div className="animate-fade-in-up">
-                <div className="bg-card border border-border rounded-xl p-8 mb-6 text-center">
-                  <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-5">
-                    <span className="text-2xl">&#128203;</span>
-                  </div>
-                  <div className="text-[10px] tracking-widest text-gold uppercase mb-3">{aw.result.fallbackHeading}</div>
-                  <div className="font-serif text-xl font-medium text-foreground mb-3">
-                    {aw.result.fallbackSubheading}
-                  </div>
-                  <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                    {aw.result.fallbackText}
-                  </p>
-                </div>
-
-                <DirectConnectForm
-                  sessionContext={`${aw.result.fallbackContext} (${answers.map((_,i) => i+1).join('/')} answered)`}
-                  onComplete={restart}
-                />
-
-                <div className="mt-6 flex justify-center">
-                  <Button variant="outline" onClick={restart} className="uppercase tracking-widest text-xs px-6">
-                      {language === 'ar' ? '→' : '←'} {aw.result.restart}
-                  </Button>
-                </div>
-              </div>
-            )}
-
             {!loading && result && (
               <div className="animate-fade-in-up">
+                {usedFallback && (
+                  <div className="bg-gold/5 border border-gold/20 text-muted-foreground text-xs rounded-lg px-4 py-3 mb-4 text-center">
+                    {language === 'ar'
+                      ? 'تعذّر الوصول إلى التحليل الذكي الآن — هذه نتيجة أساسية مبنية على إجاباتك. سيراجع Fazal التفاصيل عند تواصلك.'
+                      : 'AI analysis is unavailable right now — showing a baseline result from your answers. Fazal will review the details when you connect.'}
+                  </div>
+                )}
                 {/* Result header */}
                 <div className="bg-card border border-border rounded-t-xl px-6 py-5 flex items-center justify-between border-b-0">
                   <span className="text-[10px] tracking-widest text-gold uppercase">
@@ -698,10 +565,11 @@ export default function AssessmentTriage() {
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                           {contactFields.map(f => (
                             <div key={f.key}>
-                              <label className="text-[10px] tracking-widest text-muted-foreground uppercase block mb-1.5">
+                              <label htmlFor={`assessment-contact-${f.key}`} className="text-[10px] tracking-widest text-muted-foreground uppercase block mb-1.5">
                                 {f.label}{f.required && <span className="text-gold"> *</span>}
                               </label>
                               <input
+                                id={`assessment-contact-${f.key}`}
                                 type={f.type}
                                 value={contact[f.key]}
                                 onChange={e => setContact(p => ({ ...p, [f.key]: e.target.value }))}
