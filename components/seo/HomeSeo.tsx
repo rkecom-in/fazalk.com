@@ -148,8 +148,9 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <meta property="og:description" content={description} key="og:description" />
       <meta property="og:url" content={url} key="og:url" />
       <meta property="og:image" content={DEFAULT_OG_IMAGE} key="og:image" />
-      <meta property="og:image:width" content="1920" key="og:image:width" />
-      <meta property="og:image:height" content="1080" key="og:image:height" />
+      <meta property="og:image:type" content="image/png" key="og:image:type" />
+      <meta property="og:image:width" content="1200" key="og:image:width" />
+      <meta property="og:image:height" content="630" key="og:image:height" />
       <meta property="og:image:alt" content="AI and cloud architecture consulting by Fazal K." key="og:image:alt" />
       <meta property="og:locale" content={isAr ? 'ar_AE' : 'en_US'} key="og:locale" />
 
