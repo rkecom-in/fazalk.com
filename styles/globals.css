@@ -209,3 +209,26 @@
     box-shadow: 0 0 40px -10px hsl(var(--gold) / 0.3);
   }
 }
+
+/* ── Scroll-reveal: section content fades/slides in on entry ───────────
+   Inner content only (section bg stays put). Hero (first section) keeps
+   its own intro. Active only when JS adds html.reveal-on AND motion is
+   allowed — so no-JS / reduced-motion shows everything immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  /* each direct child of a section's container animates, staggered */
+  html.reveal-on main > section:not(:first-of-type) > div > * {
+    opacity: 0;
+    transform: translateY(38px);
+    transition: opacity 0.8s cubic-bezier(0.16, 0.7, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 0.7, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  html.reveal-on main > section.is-visible > div > * {
+    opacity: 1;
+    transform: none;
+  }
+  html.reveal-on main > section.is-visible > div > *:nth-child(2) { transition-delay: 0.1s; }
+  html.reveal-on main > section.is-visible > div > *:nth-child(3) { transition-delay: 0.2s; }
+  html.reveal-on main > section.is-visible > div > *:nth-child(4) { transition-delay: 0.3s; }
+  html.reveal-on main > section.is-visible > div > *:nth-child(n+5) { transition-delay: 0.4s; }
+}

@@ -47,6 +47,8 @@ export default class Document extends NextDocument<DocumentProps> {
                 el.classList.add(theme);
                 el.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
                 el.setAttribute('lang', lang);
+                // Enable scroll-reveal only with JS + motion allowed (avoids FOUC; safe no-JS fallback)
+                if (!window.matchMedia || !matchMedia('(prefers-reduced-motion: reduce)').matches) el.classList.add('reveal-on');
               } catch(e) {}
             })();
           `}} />

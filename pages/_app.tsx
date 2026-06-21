@@ -22,6 +22,32 @@ export default function App({ Component, pageProps }: AppProps<PageProps>) {
     return () => router.events.off('routeChangeComplete', handler)
   }, [router.events])
 
+  // Scroll-reveal: fade/slide section content in as it enters the viewport.
+  // Re-scans on route change. No-op under reduced-motion; reveals all if
+  // IntersectionObserver is unavailable so content is never stuck hidden.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const sections = document.querySelectorAll('main > section:not(:first-of-type)')
+    if (!('IntersectionObserver' in window)) {
+      sections.forEach((s) => s.classList.add('is-visible'))
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible')
+            io.unobserve(e.target)
+          }
+        }
+      },
+      { rootMargin: '0px 0px -15% 0px', threshold: 0.05 },
+    )
+    sections.forEach((s) => io.observe(s))
+    return () => io.disconnect()
+  }, [router.asPath])
+
   return (
     <GlobalUXProvider initialLanguage={pageProps.initialLanguage}>
       <Head>
