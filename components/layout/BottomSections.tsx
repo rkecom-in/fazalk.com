@@ -13,7 +13,7 @@ const BottomSections = () => {
 
   return (
     <>
-      {/* Who We Work With */}
+      {/* Who I Work With */}
       <section className="py-20 bg-background transition-opacity duration-1000">
         <div className="container mx-auto px-6 max-w-4xl text-center">
           <p className="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">{t.clients.badge}</p>
