@@ -4,10 +4,12 @@ import { isAllowedOrigin } from '@/lib/security'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { getStrings, type Language } from '@/lib/i18n'
 import { QUESTION_RISKS, computeScores, getRiskLevelFromScore } from '@/lib/assessment-shared'
+import nodemailer from 'nodemailer'
 
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
 
-const RESEND_API_URL = 'https://api.resend.com/emails'
+const MAIL_FROM = process.env.CONTACT_FROM || 'Fazal K. <fazal@rkecom.in>'
+const MAIL_TO = process.env.CONTACT_TO || 'connect@fazalk.com'
 
 // Field length caps — prevents oversized payload abuse.
 const MAX_LENGTHS = {
@@ -74,8 +76,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ ok: false, error: 'Verification failed. Please reload and try again.' })
   }
 
-  if (!process.env.RESEND_API_KEY) {
-    console.error('[contact] RESEND_API_KEY environment variable is not set.')
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+    console.error('[contact] SMTP_* environment variables are not set.')
     return res.status(503).json({ ok: false, error: 'Email service is not configured.' })
   }
 
@@ -165,29 +168,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   `
 
   try {
-    const resendResp = await fetch(RESEND_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'connect@viabe.ai',
-        to:   'connect@fazalk.com',
-        subject,
-        html,
-      }),
+    const port = Number(SMTP_PORT) || 587
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port,
+      secure: port === 465, // 465 = implicit TLS; 587 = STARTTLS
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
     })
 
-    if (!resendResp.ok) {
-      const detail = await resendResp.text().catch(() => '')
-      console.error('[contact] Resend error:', detail.slice(0, 1000))
-      return res.status(502).json({ ok: false, error: 'Email sending failed' })
-    }
+    await transporter.sendMail({
+      from: MAIL_FROM,
+      to: MAIL_TO,
+      replyTo: rawEmail, // replies go straight to the lead
+      subject,
+      html,
+    })
     // Avoid leaking upstream ids/status — return a fixed shape.
     return res.status(200).json({ ok: true })
   } catch (err) {
-    console.error('[contact] Fetch error:', err)
-    return res.status(500).json({ ok: false, error: 'Email sending failed' })
+    console.error('[contact] SMTP send error:', err)
+    return res.status(502).json({ ok: false, error: 'Email sending failed' })
   }
 }
