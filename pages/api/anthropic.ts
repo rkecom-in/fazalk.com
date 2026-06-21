@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const key = getRequestKey(headers, 'anthropic')
   const { allowed } = checkRateLimit(key, MAX_REQUESTS, WINDOW_MS)
   if (!allowed) {
-    return res.status(429).json({ error: 'Rate limit exceeded. Please contact us directly.' })
+    return res.status(429).json({ error: 'Rate limit exceeded. Please contact me directly.' })
   }
 
   // Validate and normalise the untrusted payload. The client may ONLY supply the

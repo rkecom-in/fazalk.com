@@ -2,7 +2,7 @@
 export const en = {
   meta: {
     title: "Fazal K. | CTO-Level AI & Cloud Architecture Consulting",
-    description: "AI & Cloud Architecture Consulting for High-Stakes Decisions. We design the right AI system, fix what's broken, or get clarity before you commit serious time and money.",
+    description: "AI & Cloud Architecture Consulting for High-Stakes Decisions. I design the right AI system, fix what's broken, or get you clarity before you commit serious time and money.",
   },
   nav: {
     bookSession: "Start Assessment",
@@ -47,7 +47,7 @@ export const en = {
     ],
   },
   coreOfferings: {
-    badge: "What We Do",
+    badge: "What I Do",
     headline: "CTO-Level Thinking, Without the Full-Time Hire",
     subtext: "Three ways the advisory session can be focused, depending on the decision in front of you.",
     offerings: [
@@ -68,7 +68,7 @@ export const en = {
 
   clients: {
     badge: "Clients",
-    headline: "Who We Work With",
+    headline: "Who I Work With",
     list: [
       "GCC Software & IT Companies",
       "SaaS & Platform Businesses",
@@ -101,7 +101,7 @@ export const en = {
   },
   finalCta: {
     headline: "If the architecture decision matters, it's worth getting it right before you build.",
-    subtext: "If you are planning, fixing, or accelerating an AI or cloud initiative, we determine the optimal architectural direction and mitigate build risks fast.",
+    subtext: "If you are planning, fixing, or accelerating an AI or cloud initiative, I determine the optimal architectural direction and mitigate build risks fast.",
     cta: "Start Assessment",
   },
   footer: {
@@ -258,7 +258,7 @@ export const en = {
       },
       {
         title: "7. Changes to Terms",
-        content: "We reserve the right to modify these terms at any time. Continued use of the website after changes constitutes your acceptance of the new terms.",
+        content: "I reserve the right to modify these terms at any time. Continued use of the website after changes constitutes your acceptance of the new terms.",
       },
       {
         title: "8. Contact",
@@ -272,36 +272,36 @@ export const en = {
     lastUpdated: "Last updated: April 2026",
     sections: [
       {
-        title: "1. Information We Collect",
-        content: "When you use the assessment tool or contact form, we may collect your name, email address, phone number, and the information you provide as part of the assessment. We do not collect data through cookies or tracking scripts beyond what is standard for web analytics.",
+        title: "1. Information I Collect",
+        content: "When you use the assessment tool or contact form, I may collect your name, email address, phone number, and the information you provide as part of the assessment. The site also uses Google Analytics and Google Ads cookies, set only after you accept the cookie banner.",
       },
       {
-        title: "2. How We Use Your Information",
-        content: "Information you submit is used solely to review your assessment results, respond to your enquiry, and determine whether an engagement is appropriate. We do not sell, share, or rent your personal data to third parties.",
+        title: "2. How I Use Your Information",
+        content: "Information you submit is used solely to review your assessment results, respond to your enquiry, and determine whether an engagement is appropriate. I do not sell, share, or rent your personal data to third parties.",
       },
       {
         title: "3. AI Assessment Data",
-        content: "Responses submitted through the architecture assessment tool are processed by Anthropic's Claude API to generate a recommendation. Your responses are transmitted securely and are not stored by us beyond the session.",
+        content: "Responses submitted through the architecture assessment tool are processed by Anthropic's Claude API to generate a recommendation. Your responses are transmitted securely and are not stored by me beyond the session.",
       },
       {
         title: "4. Data Retention",
-        content: "If you choose to submit your contact details after an assessment, this information may be retained in our CRM for up to 12 months for the purpose of follow-up communication. You may request deletion at any time.",
+        content: "If you choose to submit your contact details after an assessment, this information may be retained in my CRM for up to 12 months for the purpose of follow-up communication. You may request deletion at any time.",
       },
       {
         title: "5. Security",
-        content: "We implement industry-standard security measures to protect your personal information. All data transmission occurs over HTTPS. API keys and credentials are stored in secure environment variables and never exposed client-side.",
+        content: "I implement industry-standard security measures to protect your personal information. All data transmission occurs over HTTPS. API keys and credentials are stored in secure environment variables and never exposed client-side.",
       },
       {
         title: "6. Your Rights",
-        content: "Under applicable data protection laws (including GDPR for EU/UK visitors and PDPL for Saudi Arabia), you have the right to access, correct, or delete your personal data. To exercise these rights, please contact us via LinkedIn.",
+        content: "Under applicable data protection laws (including GDPR for EU/UK visitors and PDPL for Saudi Arabia), you have the right to access, correct, or delete your personal data. To exercise these rights, please contact me via LinkedIn.",
       },
       {
         title: "7. Third-Party Services",
-        content: "This website uses Anthropic's API for the assessment feature and Resend for email delivery of your enquiry. These services have their own privacy policies. We are not responsible for the data practices of these third parties.",
+        content: "This website uses Anthropic's API for the assessment feature and Amazon SES for email delivery of your enquiry. These services have their own privacy policies. I am not responsible for the data practices of these third parties.",
       },
       {
         title: "8. Changes to This Policy",
-        content: "We may update this Privacy Policy periodically. The 'Last updated' date at the top of this page indicates when the most recent changes were made.",
+        content: "I may update this Privacy Policy periodically. The 'Last updated' date at the top of this page indicates when the most recent changes were made.",
       },
     ],
   },

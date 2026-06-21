@@ -31,8 +31,8 @@ export default function ConsentBanner() {
       <div className="mx-auto max-w-3xl rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-[var(--shadow-card)] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4">
         <p className="text-sm text-muted-foreground leading-relaxed flex-1">
           {isAr
-            ? 'نستخدم ملفات تعريف الارتباط للتحليلات والإعلانات لفهم استخدام الموقع وتحسينه.'
-            : 'We use cookies for analytics and ads to understand site usage and improve it.'}{' '}
+            ? 'يستخدم هذا الموقع ملفات تعريف الارتباط للتحليلات والإعلانات لفهم الاستخدام وتحسينه.'
+            : 'This site uses cookies for analytics and ads to understand usage and improve it.'}{' '}
           <Link href="/privacy" className="text-gold underline-offset-4 hover:underline">
             {isAr ? 'سياسة الخصوصية' : 'Privacy Policy'}
           </Link>

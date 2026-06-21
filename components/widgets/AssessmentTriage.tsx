@@ -311,7 +311,7 @@ export default function AssessmentTriage() {
     } catch (err) {
       // Log internally, show a calm reassurance — never expose network errors to clients
       console.error('[Assessment] Contact submission failed:', err)
-      setContactError('We could not send your details right now. Please try again, or connect with Fazal directly on LinkedIn.')
+      setContactError('Couldn\'t send your details right now. Please try again, or reach Fazal directly on LinkedIn.')
     } finally {
       setContactLoading(false)
     }
