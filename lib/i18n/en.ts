@@ -79,7 +79,6 @@ export const en = {
       "SaaS & Multi-tenant Platform Businesses",
       "Digital Transformation Firms",
       "Founders Building AI Products",
-      "IT Resellers & System Integrators",
     ],
   },
   directConnect: {

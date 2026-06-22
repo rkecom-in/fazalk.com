@@ -18,7 +18,7 @@ const BottomSections = () => {
         <div className="container mx-auto px-6 max-w-4xl text-center">
           <p className="text-sm font-semibold text-gold tracking-widest uppercase mb-4 text-center">{t.clients.badge}</p>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center font-serif">{t.clients.headline}</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 text-left">
+          <div className="grid sm:grid-cols-2 gap-5 text-left max-w-3xl mx-auto">
             {t.clients.list.map((label, i) => {
               const Icon = clientIcons[i % clientIcons.length];
               return (
