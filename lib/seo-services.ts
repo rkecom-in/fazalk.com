@@ -1,6 +1,7 @@
 export const SITE_URL = 'https://fazalk.com'
 export const SITE_NAME = 'Fazal K. AI & Cloud Architecture Consulting'
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`
+export const DEFAULT_OG_IMAGE_AR = `${SITE_URL}/og-image-ar.png`
 
 export type ServicePage = {
   slug: string

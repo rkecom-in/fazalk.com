@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { homepageFaqs, homepageFaqsAr } from '@/components/layout/FaqSection'
-import { DEFAULT_OG_IMAGE, servicePages, servicePagesAr, SITE_NAME, SITE_URL } from '@/lib/seo-services'
+import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_AR, servicePages, servicePagesAr, SITE_NAME, SITE_URL } from '@/lib/seo-services'
 import type { Language } from '@/lib/i18n'
 
 const TITLE_EN = 'AI CTO Consultant for AI Architecture & Cloud Strategy | Fazal K.'
@@ -43,7 +43,7 @@ function buildStructuredData(language: Language) {
         name: SITE_NAME,
         url: `${SITE_URL}/`,
         logo: `${SITE_URL}/favicon.ico`,
-        image: DEFAULT_OG_IMAGE,
+        image: isAr ? DEFAULT_OG_IMAGE_AR : DEFAULT_OG_IMAGE,
         sameAs: ['https://in.linkedin.com/in/fazalk1980'],
         founder: { '@id': `${SITE_URL}/#person` },
         contactPoint: {
@@ -131,6 +131,7 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
   const description = isAr ? DESCRIPTION_AR : DESCRIPTION_EN
   const url = homeUrl(language)
   const alternateUrl = isAr ? `${SITE_URL}/` : `${SITE_URL}/ar`
+  const ogImage = isAr ? DEFAULT_OG_IMAGE_AR : DEFAULT_OG_IMAGE
 
   return (
     <Head>
@@ -147,7 +148,7 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <meta property="og:title" content={title} key="og:title" />
       <meta property="og:description" content={description} key="og:description" />
       <meta property="og:url" content={url} key="og:url" />
-      <meta property="og:image" content={DEFAULT_OG_IMAGE} key="og:image" />
+      <meta property="og:image" content={ogImage} key="og:image" />
       <meta property="og:image:type" content="image/png" key="og:image:type" />
       <meta property="og:image:width" content="1200" key="og:image:width" />
       <meta property="og:image:height" content="630" key="og:image:height" />
@@ -157,7 +158,7 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <meta name="twitter:card" content="summary_large_image" key="twitter:card" />
       <meta name="twitter:title" content={title} key="twitter:title" />
       <meta name="twitter:description" content={description} key="twitter:description" />
-      <meta name="twitter:image" content={DEFAULT_OG_IMAGE} key="twitter:image" />
+      <meta name="twitter:image" content={ogImage} key="twitter:image" />
 
       <script
         type="application/ld+json"
