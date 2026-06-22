@@ -2,6 +2,7 @@ import HomeSeo from "@/components/seo/HomeSeo";
 import HeroSection from "@/components/layout/HeroSection";
 import PositioningStrip from "@/components/layout/PositioningStrip";
 import WhatWeSolve from "@/components/layout/WhatWeSolve";
+import ProofStrip from "@/components/layout/ProofStrip";
 import CoreOfferings from "@/components/layout/CoreOfferings";
 import SeoServiceLinks from "@/components/layout/SeoServiceLinks";
 import SampleDeliverables from "@/components/layout/SampleDeliverables";
@@ -34,6 +35,7 @@ export default function Home({
         <HeroSection />
         <PositioningStrip />
         <WhatWeSolve />
+        <ProofStrip />
         <CoreOfferings />
         <SeoServiceLinks />
         <SampleDeliverables />
