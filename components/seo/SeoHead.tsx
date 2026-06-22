@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo-services'
+import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_AR, SITE_NAME, SITE_URL } from '@/lib/seo-services'
 
 type SeoHeadProps = {
   title: string
@@ -21,6 +21,7 @@ export default function SeoHead({
   structuredData,
 }: SeoHeadProps) {
   const canonical = path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`
+  const ogImage = language === 'ar' ? DEFAULT_OG_IMAGE_AR : DEFAULT_OG_IMAGE
 
   return (
     <Head>
@@ -43,7 +44,7 @@ export default function SeoHead({
       <meta property="og:title" content={title} key="og:title" />
       <meta property="og:description" content={description} key="og:description" />
       <meta property="og:url" content={canonical} key="og:url" />
-      <meta property="og:image" content={DEFAULT_OG_IMAGE} key="og:image" />
+      <meta property="og:image" content={ogImage} key="og:image" />
       <meta property="og:image:type" content="image/png" key="og:image:type" />
       <meta property="og:image:width" content="1200" key="og:image:width" />
       <meta property="og:image:height" content="630" key="og:image:height" />
@@ -53,7 +54,7 @@ export default function SeoHead({
       <meta name="twitter:card" content="summary_large_image" key="twitter:card" />
       <meta name="twitter:title" content={title} key="twitter:title" />
       <meta name="twitter:description" content={description} key="twitter:description" />
-      <meta name="twitter:image" content={DEFAULT_OG_IMAGE} key="twitter:image" />
+      <meta name="twitter:image" content={ogImage} key="twitter:image" />
 
       {structuredData && (
         <script
