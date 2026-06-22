@@ -149,6 +149,7 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <meta property="og:description" content={description} key="og:description" />
       <meta property="og:url" content={url} key="og:url" />
       <meta property="og:image" content={ogImage} key="og:image" />
+      <meta property="og:image:secure_url" content={ogImage} key="og:image:secure_url" />
       <meta property="og:image:type" content="image/png" key="og:image:type" />
       <meta property="og:image:width" content="1200" key="og:image:width" />
       <meta property="og:image:height" content="630" key="og:image:height" />
@@ -159,6 +160,7 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <meta name="twitter:title" content={title} key="twitter:title" />
       <meta name="twitter:description" content={description} key="twitter:description" />
       <meta name="twitter:image" content={ogImage} key="twitter:image" />
+      <meta name="twitter:image:alt" content="AI and cloud architecture consulting by Fazal K." key="twitter:image:alt" />
 
       <script
         type="application/ld+json"
