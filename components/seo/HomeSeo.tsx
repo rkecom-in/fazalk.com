@@ -11,6 +11,15 @@ const LINKEDIN = 'https://www.linkedin.com/in/fazalk1980'
 const VIABE = 'https://viabe.ai'
 const RKECOM = 'https://rkecom.in'
 
+// Canonical, cross-domain @ids. These MUST match the graph declared on
+// rkecom.in and viabe.ai byte-for-byte so Google resolves rkecom.in +
+// viabe.ai + fazalk.com to a single set of entities (0006). Page objects
+// (#website / #profilepage / #viabe-reports) stay fazalk.com-scoped.
+const ORG_ID = `${RKECOM}/#org`
+const FAZAL_ID = `${RKECOM}/#fazal-khan`
+const LUBNA_ID = `${RKECOM}/#lubna-khan`
+const VIABE_BRAND_ID = `${VIABE}/#brand`
+
 function buildStructuredData() {
   return {
     '@context': 'https://schema.org',
@@ -22,7 +31,7 @@ function buildStructuredData() {
         name: SITE_NAME,
         description: DESCRIPTION,
         inLanguage: 'en',
-        publisher: { '@id': `${SITE_URL}/#organization` },
+        publisher: { '@id': ORG_ID },
       },
       {
         '@type': 'ProfilePage',
@@ -31,17 +40,25 @@ function buildStructuredData() {
         name: TITLE,
         inLanguage: 'en',
         isPartOf: { '@id': `${SITE_URL}/#website` },
-        mainEntity: { '@id': `${SITE_URL}/#fazal` },
+        mainEntity: { '@id': FAZAL_ID },
       },
       {
         '@type': 'Organization',
-        '@id': `${SITE_URL}/#organization`,
+        '@id': ORG_ID,
         name: 'RKeCom Services',
         legalName: 'RKeCom Services (OPC) Private Limited',
+        description:
+          'Mumbai-based applied-AI company building affordable, enterprise-grade business intelligence for small businesses, one product at a time — starting with its Viabe brand.',
         url: RKECOM,
         foundingDate: '2020-08-23',
         logo: `${SITE_URL}/favicon.ico`,
         image: DEFAULT_OG_IMAGE,
+        contactPoint: {
+          '@type': 'ContactPoint',
+          email: 'info@rkecom.in',
+          contactType: 'customer support',
+          availableLanguage: 'English',
+        },
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Mumbai',
@@ -53,10 +70,31 @@ function buildStructuredData() {
           propertyID: 'CIN',
           value: 'U52609MH2020OPC344309',
         },
-        brand: { '@type': 'Brand', name: 'Viabe' },
-        founder: { '@id': `${SITE_URL}/#lubna` },
-        employee: { '@id': `${SITE_URL}/#fazal` },
-        sameAs: [VIABE, LINKEDIN],
+        brand: { '@id': VIABE_BRAND_ID },
+        founder: { '@id': LUBNA_ID },
+        employee: { '@id': FAZAL_ID },
+        sameAs: [
+          'https://www.wikidata.org/wiki/Q140472966',
+          'https://www.linkedin.com/company/rkecom',
+          'https://www.crunchbase.com/organization/rkecom-services',
+          'https://www.zaubacorp.com/RKECOM-SERVICES-OPC-PRIVATE-LIMITED-U52609MH2020OPC344309',
+          'https://www.instafinancials.com/company/rkecom-services-opc-private-limited-U52609MH2020OPC344309',
+          'https://www.indiafilings.com/search/rkecom-services-opc-private-limited-cin-U52609MH2020OPC344309',
+          'https://www.facebook.com/rkecom.in',
+          'https://x.com/rkecom_in',
+          'https://www.instagram.com/rkecom_in',
+          'https://github.com/rkecom-in',
+        ],
+      },
+      {
+        '@type': 'Brand',
+        '@id': VIABE_BRAND_ID,
+        name: 'Viabe',
+        url: `${VIABE}/`,
+        sameAs: [
+          'https://www.wikidata.org/wiki/Q140473104',
+          'https://www.linkedin.com/showcase/viabe',
+        ],
       },
       {
         '@type': 'Service',
@@ -66,8 +104,8 @@ function buildStructuredData() {
         description:
           'A composite viability score for a specific address and business type — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view, every figure sourced with cited methodology.',
         url: VIABE,
-        brand: { '@type': 'Brand', name: 'Viabe' },
-        provider: { '@id': `${SITE_URL}/#organization` },
+        brand: { '@id': VIABE_BRAND_ID },
+        provider: { '@id': ORG_ID },
         areaServed: [
           { '@type': 'Country', name: 'IN' },
           { '@type': 'Country', name: 'US' },
@@ -76,11 +114,11 @@ function buildStructuredData() {
       },
       {
         '@type': 'Person',
-        '@id': `${SITE_URL}/#fazal`,
+        '@id': FAZAL_ID,
         name: 'Fazal Khan',
         url: `${SITE_URL}/`,
         jobTitle: 'Chief Executive Officer',
-        worksFor: { '@id': `${SITE_URL}/#organization` },
+        worksFor: { '@id': ORG_ID },
         alumniOf: { '@type': 'Organization', name: 'GlobalLinker' },
         description:
           'CEO of RKeCom Services, building Viabe. Former CTO of GlobalLinker.',
@@ -94,14 +132,14 @@ function buildStructuredData() {
           'Managed SaaS e-commerce storefronts',
           'Multi-tenant commerce platforms',
         ],
-        sameAs: [LINKEDIN],
+        sameAs: [LINKEDIN, `${SITE_URL}/`],
       },
       {
         '@type': 'Person',
-        '@id': `${SITE_URL}/#lubna`,
+        '@id': LUBNA_ID,
         name: 'Lubna Khan',
         jobTitle: 'Founder & Director',
-        worksFor: { '@id': `${SITE_URL}/#organization` },
+        worksFor: { '@id': ORG_ID },
       },
     ],
   }
@@ -118,9 +156,17 @@ export default function HomeSeo({ language = 'en' }: { language?: Language }) {
       <title>{TITLE}</title>
       <meta name="description" content={DESCRIPTION} key="description" />
       <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" key="robots" />
+      <meta name="author" content="Fazal Khan" key="author" />
+      <meta name="publisher" content="RKeCom Services (OPC) Private Limited" key="publisher" />
+      <meta name="theme-color" content="#0b141a" key="theme-color" />
       <link rel="canonical" href={url} key="canonical" />
       <link rel="alternate" hrefLang="en" href={url} key="alternate-en" />
       <link rel="alternate" hrefLang="x-default" href={url} key="alternate-x-default" />
+
+      <link rel="icon" href="/favicon.ico" sizes="any" key="icon" />
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" key="apple-touch-icon" />
+      <link rel="manifest" href="/site.webmanifest" key="manifest" />
+      <link rel="me" href={LINKEDIN} key="me" />
 
       <meta property="og:type" content="website" key="og:type" />
       <meta property="og:site_name" content={SITE_NAME} key="og:site_name" />
