@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
       { source: "/ar/:path*", destination: "/", permanent: true },
       { source: "/services", destination: "/", permanent: true },
       { source: "/services/:path*", destination: "/", permanent: true },
+      // Retired assessment "thanks" page (0003).
+      { source: "/confirm", destination: "/", permanent: true },
     ];
   },
 };
