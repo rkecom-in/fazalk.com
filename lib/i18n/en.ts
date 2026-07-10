@@ -1,309 +1,175 @@
-// English string dictionary for fazalk.com
+// English string dictionary for fazalk.com — Fazal Khan founder page (0003).
 export const en = {
   meta: {
-    title: "Fazal K. | CTO-Level AI & Cloud Architecture Consulting",
-    description: "AI & Cloud Architecture Consulting for High-Stakes Decisions. I design the right AI system, fix what's broken, or get you clarity before you commit serious time and money.",
+    title: "Fazal Khan — CEO of RKeCom Services | Building Viabe",
+    description:
+      "Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe — AI-powered business intelligence for small businesses. Former CTO of GlobalLinker.",
   },
   nav: {
-    bookSession: "Start Assessment",
+    viabe: "Explore Viabe",
   },
   hero: {
-    badge: "CTO-Level Consulting",
-    headline1: "Get the Architecture Decision Right",
-    headline2: "Before You Build.",
-    subtext: "Most AI and cloud failures are locked in at the architecture stage — long before systems go live. These engagements exist to give you clarity, direction, and a written plan before you commit time or budget. Especially for marketplaces, commerce, and multi-tenant platforms scaling AI.",
-    cta1: "Start Assessment",
+    eyebrow: "RKeCom Services · Mumbai",
+    headline1: "The decisions big companies make with data,",
+    headline2: "small businesses still make on gut.",
+    subheadline: "I'm building the AI that changes that.",
+    body: "I'm Fazal Khan, CEO of RKeCom Services — an applied-AI company putting enterprise-grade business intelligence within reach of the businesses that never had it. Our first product, Viabe, tells you whether a location will work before you sign the lease.",
+    ctaPrimary: "Explore Viabe",
+    ctaSecondary: "Connect on LinkedIn",
   },
-  positioningStrip: {
-    items: [
-      "Marketplace & Commerce AI",
-      "AI System Architecture",
-      "Cloud Infrastructure Advisory",
-      "LLM & RAG Design",
-      "Technical Due Diligence",
-      "Architecture Reviews",
+  bet: {
+    badge: "The Bet",
+    headline: "Enterprise decisioning, priced for the small business.",
+    body: "Large firms don't guess. They model demand, test locations, read the competition and price against data. Small businesses — most of every economy — make the same high-stakes calls on instinct, because the tools were never built for them or priced for them. RKeCom exists to close that gap: affordable, AI-powered business intelligence, shipped one product at a time.",
+  },
+  viabe: {
+    badge: "The Product",
+    headline: "Viabe — know before you commit.",
+    body: "Viabe is our applied-AI brand. Its first product, Viabe Reports, answers the most expensive question an owner faces before signing a lease: will this location actually work? For a specific address and business type, Viabe returns a composite viability score — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view — every figure sourced, with cited methodology.",
+    status:
+      "Live today for food businesses across India — restaurants, cafés, bakeries and QSR — and expanding across location-dependent verticals and into the US and UAE.",
+    cta: "See Viabe Reports",
+  },
+  track: {
+    badge: "Track Record",
+    headline: "I've built this kind of system before.",
+    body: "Before RKeCom, I was CTO of GlobalLinker, where I spent nearly a decade building and running a multi-tenant B2B/B2C commerce platform used across South and Southeast Asia, including white-label portals for banks and trade bodies. I designed and led its AI — hybrid semantic search, RFQ-to-seller matching, AI catalog generation, and fraud and risk screening — and its cloud architecture on AWS, and I led the team that ran it in production. Viabe applies that same engineering discipline to a bigger, harder audience: the small business.",
+  },
+  company: {
+    badge: "The Company",
+    headline: "RKeCom Services",
+    body: "RKeCom Services (OPC) Private Limited is an applied-AI company, founded in 2020 and headquartered in Mumbai, India. It develops and ships AI-powered business-intelligence products one at a time — the first is its Viabe brand.",
+    facts: [
+      { label: "Legal name", value: "RKeCom Services (OPC) Private Limited" },
+      { label: "CIN", value: "U52609MH2020OPC344309" },
+      { label: "Incorporated", value: "23 Aug 2020" },
+      { label: "HQ", value: "Mumbai, India" },
+      { label: "Web", value: "rkecom.in" },
     ],
   },
-  whatWeSolve: {
-    badge: "The Problem",
-    headline: "Why Most AI Initiatives Fail Before They Start",
-    subtext: "The decisions that determine success or failure are made early — before development begins. Most teams don't realise they've made the wrong ones until they're deep into a build.",
-    problems: [
+  leadership: {
+    badge: "Leadership",
+    headline: "Who leads RKeCom",
+    people: [
       {
-        title: "Wrong Architecture Chosen",
-        description: "Teams select AI frameworks, cloud providers, or system designs based on trends rather than fit. The result is technical debt baked in from day one.",
+        name: "Fazal Khan",
+        title: "Chief Executive Officer",
+        bio: "Fazal Khan leads RKeCom's applied-AI products, including Viabe, driving product, engineering and go-to-market. An experienced technology leader and the former CTO of GlobalLinker, he turns AI into practical decision tools for small businesses.",
+        linkedin: "https://www.linkedin.com/in/fazalk1980",
       },
       {
-        title: "No Clear AI Strategy",
-        description: "Building AI features without a coherent technical strategy leads to fragmented systems that don't scale, integrate, or deliver measurable ROI.",
-      },
-      {
-        title: "Expensive Pivots Mid-Build",
-        description: "Discovering architectural flaws after significant development investment forces costly redesigns, timeline extensions, and team frustration.",
-      },
-      {
-        title: "Missing Technical Leadership",
-        description: "Founders and product teams often lack access to senior technical guidance at the critical strategy stage, when the stakes are highest.",
-      },
-    ],
-  },
-  proofStrip: {
-    badge: "Why this advisory",
-    text: "Grounded in 25 years architecting and running production systems — including a multi-tenant B2B/B2C commerce marketplace whose AI (semantic search, RFQ matching, catalog generation, fraud detection) and cloud architecture I designed and led on AWS. Not theory — decisions I made and systems I ran.",
-  },
-  coreOfferings: {
-    badge: "What I Do",
-    headline: "CTO-Level Thinking, Without the Full-Time Hire",
-    subtext: "Three ways the advisory session can be focused, depending on the decision in front of you.",
-    offerings: [
-      {
-        title: "Architecture Design",
-        description: "Full system architecture for AI products, cloud infrastructure, and data pipelines — built around your constraints, team, and strategic goals.",
-      },
-      {
-        title: "Technical Review",
-        description: "An independent assessment of your existing architecture, identifying risks, inefficiencies, and opportunities before they become problems.",
-      },
-      {
-        title: "AI Due Diligence",
-        description: "Rigorous technical evaluation of AI systems, vendor proposals, or existing platforms — before you sign a contract, make a hire, or commit to a roadmap.",
+        name: "Lubna Khan",
+        title: "Founder & Director",
+        bio: "Lubna Khan is the founder and sole Director of RKeCom Services (OPC) Private Limited, the Mumbai-based applied-AI company she incorporated in 2020. She holds the company's governance and directorial responsibilities as its One Person Company member-director.",
+        linkedin: "",
       },
     ],
   },
-
-  clients: {
-    badge: "Clients",
-    headline: "Who I Work With",
-    list: [
-      "Marketplace & Commerce Platforms scaling AI",
-      "SaaS & Multi-tenant Platform Businesses",
-      "Digital Transformation Firms",
-      "Founders Building AI Products",
-    ],
-  },
-  directConnect: {
-    headline: "Request Your Session",
-    subtext: "If you know what you need or prefer to discuss your case directly, provide your details below.",
-    nameLabel: "Full Name",
-    emailLabel: "Email Address",
-    phoneLabel: "Phone Number (Optional)",
-    websiteLabel: "Corporate Website (Optional)",
-    websitePlaceholder: "https://yourcompany.com",
-    messageLabel: "How can I help?",
-    messagePlaceholder: "Briefly describe your situation, what you are building, or what you need help with...",
-    submit: "Request Session",
-    submitting: "Sending...",
-    successHeadline: "Request Sent.",
-    successSubtext: "Your message has been received. I will be in touch shortly.",
-  },
-  assessment: {
-    badge: "Assessment",
-    headline1: "Assess your architecture.",
-    headline2: "Request the right session.",
-    subtext: "5 questions to identify your risk profile. Then request one advisory session with the right focus for your situation.",
-  },
-  finalCta: {
-    headline: "If the architecture decision matters, it's worth getting it right before you build.",
-    subtext: "If you are planning, fixing, or accelerating an AI or cloud initiative, I determine the optimal architectural direction and mitigate build risks fast.",
-    cta: "Start Assessment",
+  connect: {
+    badge: "Connect",
+    headline: "Building in applied AI. Always glad to meet people doing the same.",
+    linkedinLabel: "Connect on LinkedIn",
+    emailLabel: "info@rkecom.in",
+    viabeLabel: "Viabe →",
+    rkecomLabel: "RKeCom →",
   },
   footer: {
-    tagline: "CTO-level AI and cloud architecture consulting for businesses that need clarity before execution.",
-    linkedinLabel: "View Fazal's LinkedIn Profile",
+    entity: "RKeCom Services (OPC) Private Limited · Mumbai, India · CIN U52609MH2020OPC344309",
     termsLabel: "Terms of Use",
     privacyLabel: "Privacy Policy",
     copyright: "All rights reserved.",
   },
-  sampleDeliverables: {
-    badge: "Proof of Work",
-    headline: "Sample Deliverables",
-    subtext: "Every engagement produces clear, written outputs. Here's what that looks like.",
-    blueprintCard: {
-      title: "Marketplace AI Architecture Blueprint",
-      extract: "Sample Extract",
-      useCaseLabel: "Use Case:",
-      useCase: "AI across a multi-tenant B2B/B2C commerce platform — search, RFQ↔seller matching, catalog generation.",
-      stackItems: [
-        "Query → hybrid retrieval (keyword + embeddings/ANN) → ranking → grounded LLM response",
-        "Catalog pipeline: source → validate → generate copy/images → review queue",
-      ],
-      decisionsLabel: "Key Decisions",
-      decisions: [
-        "Hybrid semantic + keyword search over raw-LLM Q&A",
-        "Separate retrieval and generation layers; per-tenant cost controls",
-        "Fraud/risk tagging at order; trust gates before listing",
-      ],
-      outcome: "Outcome: Production-grade, cost-controlled AI across a multi-tenant commerce platform.",
-    },
-    auditCard: {
-      title: "Search & Ranking Cost/Quality Audit",
-      extract: "Sample Extract",
-      systemLabel: "System:",
-      system: "Marketplace search + recommendation under cost and relevance strain.",
-      findings: [
-        { title: "Retrieval is the bottleneck", desc: "Retrieval — not the model — caps latency and quality.", severity: "Critical" },
-        { title: "Ranking signals mis-weighted", desc: "The ranking signal mix is mis-weighted.", severity: "High" },
-        { title: "Avoidable infra cost", desc: "2–4x higher than necessary for the workload.", severity: "High" },
-        { title: "Weak long-tail relevance", desc: "Poor relevance on long-tail queries.", severity: "Medium" },
-      ],
-      outcomeLabel: "Expected Outcome After Fix",
-      stats: [
-        { metric: "Lower", label: "Infra cost" },
-        { metric: "Faster", label: "Response" },
-        { metric: "Higher", label: "Relevance" },
-      ],
-    },
-  },
-  assessmentWidget: {
-    questions: [
-      {
-        category: "Build Stage",
-        text: "Where are you in the build process right now?",
-        options: [
-          "We have an idea and are deciding what to build",
-          "We have a rough design but development has not started",
-          "We are actively building — some components are live",
-          "We have a live system that is underperforming or expensive",
-        ],
-      },
-      {
-        category: "Technical Leadership",
-        text: "Who is making the core architecture decisions on your team?",
-        options: [
-          "A CTO or senior architect with AI/cloud production experience",
-          "A senior developer who is learning as we build",
-          "Decisions are made by the founder or product team",
-          "We are relying on a vendor or agency to decide for us",
-        ],
-      },
-      {
-        category: "Decision Clarity",
-        text: "How clearly defined are your core architecture decisions right now?",
-        options: [
-          "All major decisions are documented and agreed",
-          "Most decisions are made but a few key gaps remain",
-          "Rough direction only — significant unknowns still open",
-          "We are building without a clear architecture plan",
-        ],
-      },
-      {
-        category: "Risk Exposure",
-        text: "What is the cost of getting the architecture wrong at this stage?",
-        options: [
-          "Low — we can pivot quickly, limited investment committed",
-          "Moderate — a few months of work and some budget at stake",
-          "High — significant engineering time and budget committed",
-          "Critical — a wrong call would set us back 6+ months",
-        ],
-      },
-      {
-        category: "Primary Challenge",
-        text: "What is your single biggest architecture concern right now?",
-        options: [
-          "Choosing the right AI approach — LLM, RAG, fine-tuning, or agentic",
-          "Cloud infrastructure — scalability, cost, and reliability at production",
-          "Existing system is broken — high cost, latency, or poor output quality",
-          "We do not know what we do not know — need an expert second opinion",
-        ],
-      },
-    ],
-    phase2: {
-      heading: "One more thing.",
-      subheading: "Optional — but the analysis will be sharper.",
-      label: "Add one sentence of context.",
-      placeholder: "What are you building, and what decision needs clarity?",
-      skip: "Skip — use my answers only",
-      generate: "Generate My Assessment",
-    },
-    phase3: {
-      heading: "Generating your assessment…",
-    subheading: "Analysing your risk profile before the session request.",
-    },
-    result: {
-      riskLabel: "Risk Level",
-      scoreLabel: "Risk Score",
-      analysisLabel: "Assessment",
-      topRiskLabel: "Primary Risk Identified",
-      nextStepLabel: "Immediate next step",
-      cta: "Request Session",
-      restart: "Re-take Assessment",
-    },
-  },
   terms: {
     badge: "Legal",
     headline: "Terms of Use",
-    lastUpdated: "Last updated: April 2026",
+    lastUpdated: "Last updated: July 2026",
     sections: [
       {
         title: "1. Acceptance of Terms",
-        content: "By accessing and using this website (fazalk.com), you accept and agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use this website.",
+        content:
+          "By accessing and using this website (fazalk.com), you accept and agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use this website.",
       },
       {
-        title: "2. Nature of Services",
-        content: "This website provides information about CTO-level AI and cloud architecture consulting services offered by Fazal K. The content on this site is for informational purposes. Engagement for consulting services is subject to a separate consulting agreement.",
+        title: "2. Nature of This Site",
+        content:
+          "This website is the personal page of Fazal Khan, Chief Executive Officer of RKeCom Services (OPC) Private Limited. It provides information about Fazal Khan, the company he leads, and its Viabe product brand. Products and services referenced here are operated through their own platforms (viabe.ai, rkecom.in) under their own separate terms.",
       },
       {
         title: "3. Intellectual Property",
-        content: "All content on this website, including text, graphics, and assessments, is the intellectual property of Fazal K. and protected by applicable copyright laws. You may not reproduce, distribute, or create derivative works without express written permission.",
+        content:
+          "All content on this website, including text and graphics, is the intellectual property of RKeCom Services (OPC) Private Limited and is protected by applicable copyright laws. You may not reproduce, distribute, or create derivative works without express written permission.",
       },
       {
-        title: "4. Assessment Tool",
-        content: "The AI-powered architecture assessment tool on this website is provided as a value-added service. Results are generated by an AI model and are indicative only. They do not constitute professional consulting advice and should not be solely relied upon for technical or business decisions.",
+        title: "4. External Links",
+        content:
+          "This website links to external sites, including viabe.ai, rkecom.in, and LinkedIn. Those sites are governed by their own terms and privacy policies. We are not responsible for the content or practices of any third-party site.",
       },
       {
         title: "5. Limitation of Liability",
-        content: "To the fullest extent permitted by law, Fazal K. shall not be liable for any indirect, incidental, or consequential damages arising from the use of this website or its services. Total liability shall not exceed the fees paid for consulting services in the prior 3 months.",
+        content:
+          "This website is provided on an \"as is\" basis for informational purposes. To the fullest extent permitted by law, RKeCom Services (OPC) Private Limited shall not be liable for any indirect, incidental, or consequential damages arising from the use of this website.",
       },
       {
         title: "6. Governing Law",
-        content: "These terms are governed by the laws of the United Arab Emirates. Disputes shall be subject to the exclusive jurisdiction of the courts of Dubai, UAE.",
+        content:
+          "These terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts of Mumbai, Maharashtra, India.",
       },
       {
         title: "7. Changes to Terms",
-        content: "I reserve the right to modify these terms at any time. Continued use of the website after changes constitutes your acceptance of the new terms.",
+        content:
+          "We reserve the right to modify these terms at any time. Continued use of the website after changes constitutes your acceptance of the new terms.",
       },
       {
         title: "8. Contact",
-        content: "For questions regarding these terms, please connect via the LinkedIn profile linked in the footer.",
+        content:
+          "For questions regarding these terms, contact info@rkecom.in or connect via the LinkedIn profile linked in the footer.",
       },
     ],
   },
   privacy: {
     badge: "Legal",
     headline: "Privacy Policy",
-    lastUpdated: "Last updated: April 2026",
+    lastUpdated: "Last updated: July 2026",
     sections: [
       {
-        title: "1. Information I Collect",
-        content: "When you use the assessment tool or contact form, I may collect your name, email address, phone number, and the information you provide as part of the assessment. The site also uses Google Analytics and Google Ads cookies, set only after you accept the cookie banner.",
+        title: "1. Information We Collect",
+        content:
+          "This website does not operate a lead form or account system. If you email us (info@rkecom.in) or connect on LinkedIn, we receive the information you choose to send. The site also uses Google Analytics and Google Ads cookies, which are set only after you accept the cookie banner.",
       },
       {
-        title: "2. How I Use Your Information",
-        content: "Information you submit is used solely to review your assessment results, respond to your enquiry, and determine whether an engagement is appropriate. I do not sell, share, or rent your personal data to third parties.",
+        title: "2. How We Use Your Information",
+        content:
+          "Information you send by email is used solely to respond to your message. Analytics data is used in aggregate to understand how the site is used and to improve it. We do not sell, share, or rent your personal data to third parties.",
       },
       {
-        title: "3. AI Assessment Data",
-        content: "Responses submitted through the architecture assessment tool are processed by Anthropic's Claude API to generate a recommendation. Your responses are transmitted securely and are not stored by me beyond the session.",
+        title: "3. Cookies & Analytics",
+        content:
+          "The site uses Google Analytics 4 and Google Ads with Consent Mode. No analytics or advertising cookies are set until you accept the cookie banner; before that, consent is denied by default. You can decline, and the site remains fully functional.",
       },
       {
         title: "4. Data Retention",
-        content: "If you choose to submit your contact details after an assessment, this information may be retained in my CRM for up to 12 months for the purpose of follow-up communication. You may request deletion at any time.",
+        content:
+          "Email correspondence is retained only as long as needed to handle your enquiry and any follow-up. You may request deletion of your correspondence at any time by emailing info@rkecom.in.",
       },
       {
         title: "5. Security",
-        content: "I implement industry-standard security measures to protect your personal information. All data transmission occurs over HTTPS. API keys and credentials are stored in secure environment variables and never exposed client-side.",
+        content:
+          "We implement industry-standard security measures to protect information. All data transmission occurs over HTTPS. Keys and credentials are stored in secure environment variables and are never exposed client-side.",
       },
       {
         title: "6. Your Rights",
-        content: "Under applicable data protection laws (including GDPR for EU/UK visitors and PDPL for Saudi Arabia), you have the right to access, correct, or delete your personal data. To exercise these rights, please contact me via LinkedIn.",
+        content:
+          "Under applicable data protection laws (including India's Digital Personal Data Protection Act, 2023, and the GDPR for EU/UK visitors), you have the right to access, correct, or delete your personal data. To exercise these rights, email info@rkecom.in.",
       },
       {
         title: "7. Third-Party Services",
-        content: "This website uses Anthropic's API for the assessment feature and Amazon SES for email delivery of your enquiry. These services have their own privacy policies. I am not responsible for the data practices of these third parties.",
+        content:
+          "This website uses Google Analytics and Google Ads for measurement, and links to external sites including viabe.ai, rkecom.in, and LinkedIn. These services have their own privacy policies. We are not responsible for the data practices of these third parties.",
       },
       {
         title: "8. Changes to This Policy",
-        content: "I may update this Privacy Policy periodically. The 'Last updated' date at the top of this page indicates when the most recent changes were made.",
+        content:
+          "We may update this Privacy Policy periodically. The 'Last updated' date at the top of this page indicates when the most recent changes were made.",
       },
     ],
   },

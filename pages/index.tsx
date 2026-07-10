@@ -1,14 +1,12 @@
 import HomeSeo from "@/components/seo/HomeSeo";
-import HeroSection from "@/components/layout/HeroSection";
-import PositioningStrip from "@/components/layout/PositioningStrip";
-import WhatWeSolve from "@/components/layout/WhatWeSolve";
-import ProofStrip from "@/components/layout/ProofStrip";
-import CoreOfferings from "@/components/layout/CoreOfferings";
-import SeoServiceLinks from "@/components/layout/SeoServiceLinks";
-import SampleDeliverables from "@/components/layout/SampleDeliverables";
-import BottomSections from "@/components/layout/BottomSections";
 import SiteHeader from "@/components/layout/SiteHeader";
-import FaqSection from "@/components/layout/FaqSection";
+import HeroSection from "@/components/layout/HeroSection";
+import TheBet from "@/components/layout/TheBet";
+import ViabeSection from "@/components/layout/ViabeSection";
+import TrackRecord from "@/components/layout/TrackRecord";
+import CompanySection from "@/components/layout/CompanySection";
+import Leadership from "@/components/layout/Leadership";
+import BottomSections from "@/components/layout/BottomSections";
 import type { GetStaticProps } from "next";
 import type { Language } from "@/lib/i18n";
 
@@ -22,24 +20,18 @@ export const getStaticProps = (async () => ({
   },
 })) satisfies GetStaticProps<HomeProps>
 
-export default function Home({
-  initialLanguage,
-}: HomeProps) {
-  const isAr = initialLanguage === 'ar'
-
+export default function Home({ initialLanguage }: HomeProps) {
   return (
     <>
       <HomeSeo language={initialLanguage} />
-      <main className="min-h-screen bg-background" lang={initialLanguage} dir={isAr ? 'rtl' : 'ltr'}>
+      <main className="min-h-screen bg-background" lang="en" dir="ltr">
         <SiteHeader />
         <HeroSection />
-        <PositioningStrip />
-        <WhatWeSolve />
-        <ProofStrip />
-        <CoreOfferings />
-        <SeoServiceLinks />
-        <SampleDeliverables />
-        <FaqSection />
+        <TheBet />
+        <ViabeSection />
+        <TrackRecord />
+        <CompanySection />
+        <Leadership />
         <BottomSections />
       </main>
     </>
