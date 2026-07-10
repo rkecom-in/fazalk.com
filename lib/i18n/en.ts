@@ -27,7 +27,7 @@ export const en = {
     headline: "Viabe — know before you commit.",
     body: "Viabe is our applied-AI brand. Its first product, Viabe Reports, answers the most expensive question an owner faces before signing a lease: will this location actually work? For a specific address and business type, Viabe returns a composite viability score — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view — every figure sourced, with cited methodology.",
     status:
-      "Live today for food businesses across India — restaurants, cafés, bakeries and QSR — and expanding across location-dependent verticals and into the US and UAE.",
+      "Live for restaurants, cafés, bakeries and QSR — across India, the US and the UAE, with more verticals to follow.",
     cta: "See Viabe Reports",
   },
   track: {
@@ -45,24 +45,6 @@ export const en = {
       { label: "Incorporated", value: "23 Aug 2020" },
       { label: "HQ", value: "Mumbai, India" },
       { label: "Web", value: "rkecom.in" },
-    ],
-  },
-  leadership: {
-    badge: "Leadership",
-    headline: "Who leads RKeCom",
-    people: [
-      {
-        name: "Fazal Khan",
-        title: "Chief Executive Officer",
-        bio: "Fazal Khan leads RKeCom's applied-AI products, including Viabe, driving product, engineering and go-to-market. An experienced technology leader and the former CTO of GlobalLinker, he turns AI into practical decision tools for small businesses.",
-        linkedin: "https://www.linkedin.com/in/fazalk1980",
-      },
-      {
-        name: "Lubna Khan",
-        title: "Founder & Director",
-        bio: "Lubna Khan is the founder and sole Director of RKeCom Services (OPC) Private Limited, the Mumbai-based applied-AI company she incorporated in 2020. She holds the company's governance and directorial responsibilities as its One Person Company member-director.",
-        linkedin: "",
-      },
     ],
   },
   connect: {
