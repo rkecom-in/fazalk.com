@@ -5,7 +5,6 @@ import TheBet from "@/components/layout/TheBet";
 import ViabeSection from "@/components/layout/ViabeSection";
 import TrackRecord from "@/components/layout/TrackRecord";
 import CompanySection from "@/components/layout/CompanySection";
-import Leadership from "@/components/layout/Leadership";
 import BottomSections from "@/components/layout/BottomSections";
 import type { GetStaticProps } from "next";
 import type { Language } from "@/lib/i18n";
@@ -31,7 +30,6 @@ export default function Home({ initialLanguage }: HomeProps) {
         <ViabeSection />
         <TrackRecord />
         <CompanySection />
-        <Leadership />
         <BottomSections />
       </main>
     </>

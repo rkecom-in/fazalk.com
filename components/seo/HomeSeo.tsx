@@ -59,6 +59,22 @@ function buildStructuredData() {
         sameAs: [VIABE, LINKEDIN],
       },
       {
+        '@type': 'Service',
+        '@id': `${SITE_URL}/#viabe-reports`,
+        name: 'Viabe Reports',
+        serviceType: 'AI-powered business location viability report',
+        description:
+          'A composite viability score for a specific address and business type — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view, every figure sourced with cited methodology.',
+        url: VIABE,
+        brand: { '@type': 'Brand', name: 'Viabe' },
+        provider: { '@id': `${SITE_URL}/#organization` },
+        areaServed: [
+          { '@type': 'Country', name: 'IN' },
+          { '@type': 'Country', name: 'US' },
+          { '@type': 'Country', name: 'AE' },
+        ],
+      },
+      {
         '@type': 'Person',
         '@id': `${SITE_URL}/#fazal`,
         name: 'Fazal Khan',
