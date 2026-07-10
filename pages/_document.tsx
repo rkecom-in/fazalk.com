@@ -53,23 +53,35 @@ export default class Document extends NextDocument<DocumentProps> {
           `}} />
 
           {/* Google Analytics 4 + Google Ads with Consent Mode v2.
-              Consent defaults to denied; the banner grants on accept. The inline
-              snippet runs before gtag.js finishes loading and queues consent +
-              config in dataLayer, so ordering is correct. */}
+              Consent defaults + config are set inline immediately (so consent
+              ordering is correct and the pageview is queued in dataLayer), but
+              the ~90 KiB gtag.js is loaded lazily — on first interaction, or on
+              idle as a fallback — to keep it off the LCP critical path. The
+              queued commands flush as soon as gtag.js arrives. */}
           {GA_ID && (
-            <>
-              <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-              <script dangerouslySetInnerHTML={{ __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                window.gtag = gtag;
-                gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});
-                try{if(localStorage.getItem('cookie-consent')==='granted'){gtag('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});}}catch(e){}
-                gtag('js', new Date());
-                gtag('config','${GA_ID}');
-                ${ADS_ID ? `gtag('config','${ADS_ID}');` : ''}
-              `}} />
-            </>
+            <script dangerouslySetInnerHTML={{ __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              window.gtag = gtag;
+              gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});
+              try{if(localStorage.getItem('cookie-consent')==='granted'){gtag('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});}}catch(e){}
+              gtag('js', new Date());
+              gtag('config','${GA_ID}');
+              ${ADS_ID ? `gtag('config','${ADS_ID}');` : ''}
+              (function(){
+                var loaded=false;
+                function load(){ if(loaded) return; loaded=true;
+                  var s=document.createElement('script'); s.async=true;
+                  s.src='https://www.googletagmanager.com/gtag/js?id=${GA_ID}';
+                  document.head.appendChild(s);
+                }
+                ['pointerdown','keydown','touchstart','scroll'].forEach(function(evt){
+                  window.addEventListener(evt, load, {once:true, passive:true});
+                });
+                if('requestIdleCallback' in window){ requestIdleCallback(load,{timeout:3500}); }
+                else { setTimeout(load, 3500); }
+              })();
+            `}} />
           )}
         </Head>
         <body>

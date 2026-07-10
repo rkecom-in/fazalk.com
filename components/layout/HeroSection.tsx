@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
@@ -12,9 +13,15 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('/hero-bg.jpg')` }}
+      {/* LCP image: next/image serves AVIF/WebP, preloads with fetchpriority
+          high, and is responsive — far lighter than the raw 1920x1080 JPG. */}
+      <Image
+        src="/hero-bg.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
       />
       <div className="absolute inset-0 bg-background/80" />
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
