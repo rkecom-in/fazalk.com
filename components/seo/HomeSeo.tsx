@@ -91,6 +91,7 @@ function buildStructuredData() {
           'Cloud architecture',
           'AWS',
           'B2B/B2C marketplaces',
+          'Managed SaaS e-commerce storefronts',
           'Multi-tenant commerce platforms',
         ],
         sameAs: [LINKEDIN],

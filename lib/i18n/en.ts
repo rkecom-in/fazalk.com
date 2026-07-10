@@ -33,7 +33,7 @@ export const en = {
   track: {
     badge: "Track Record",
     headline: "I've built this kind of system before.",
-    body: "Before RKeCom, I was CTO of GlobalLinker, where I spent nearly a decade building and running a multi-tenant B2B/B2C commerce marketplace used across South and Southeast Asia, including white-label portals for banks and trade bodies. I designed and led its AI — hybrid semantic search, RFQ-to-seller matching, AI catalog generation, and fraud and risk screening — and its cloud architecture on AWS, and I led the team that ran it in production. Viabe applies that same engineering discipline to a bigger, harder audience: the small business.",
+    body: "Before RKeCom, I was CTO of GlobalLinker, where I spent nearly a decade building and running its commerce business end to end: a multi-tenant B2B/B2C marketplace, and a managed SaaS platform for businesses to launch and run their own branded online stores — used across South and Southeast Asia, including white-label portals for banks and trade bodies. I designed and led its AI — hybrid semantic search, RFQ-to-seller matching, AI catalog generation, and fraud and risk screening — and its cloud architecture on AWS, and I led the team that ran it in production. Viabe applies that same engineering discipline to a bigger, harder audience: the small business.",
   },
   company: {
     badge: "The Company",
