@@ -30,9 +30,8 @@ export default class Document extends NextDocument<DocumentProps> {
     return (
       <Html lang={this.props.language} dir={dir} className="dark">
         <Head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+          {/* Fonts are self-hosted via next/font (see _app.tsx) — no external
+              font stylesheet or preconnect on the critical path. */}
           {/* Anti-FOUC: apply route language and saved theme before first paint */}
           <script dangerouslySetInnerHTML={{ __html: `
             (function() {

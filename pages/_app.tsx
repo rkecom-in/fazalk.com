@@ -3,10 +3,18 @@ import { useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { Inter, Playfair_Display } from 'next/font/google'
 import { GlobalUXProvider } from '@/components/providers/GlobalUXProvider'
 import ConsentBanner from '@/components/analytics/ConsentBanner'
 import { pageview } from '@/lib/analytics'
 import type { Language } from '@/lib/i18n'
+
+// Self-hosted via next/font — removes the render-blocking fonts.googleapis.com
+// stylesheet and the extra RTT to fonts.gstatic.com. Fonts are inlined and
+// preloaded from our own origin. Variable fonts cover every weight the design
+// uses (Inter 100–900, Playfair 400–900).
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' })
 
 type PageProps = {
   initialLanguage?: Language
@@ -53,8 +61,13 @@ export default function App({ Component, pageProps }: AppProps<PageProps>) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <Component {...pageProps} />
-      <ConsentBanner />
+      {/* font-sans here (not just on <body>) so the --font-inter variable —
+          which is defined on this wrapper — actually resolves for the whole
+          subtree; body sits above the variable scope. */}
+      <div className={`${inter.variable} ${playfair.variable} font-sans`}>
+        <Component {...pageProps} />
+        <ConsentBanner />
+      </div>
     </GlobalUXProvider>
   )
 }
