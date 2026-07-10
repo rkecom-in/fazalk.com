@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
+import { LinkedInIcon } from "@/components/ui/icons";
+
+const VIABE_URL = "https://viabe.ai";
+const LINKEDIN_URL = "https://www.linkedin.com/in/fazalk1980";
 
 const HeroSection = () => {
   const { t } = useGlobalUX();
@@ -18,25 +22,39 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-6 py-32 text-center max-w-4xl">
         <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-gold/20 bg-gold/5 animate-fade-in">
           <span className="text-sm font-medium text-gold tracking-widest uppercase">
-            {s.badge}
+            {s.eyebrow}
           </span>
         </div>
 
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in-up text-foreground">
-          {s.headline1} <span className="text-gradient-gold">{s.headline2}</span>
+          {s.headline1}{" "}
+          <span className="text-gradient-gold">{s.headline2}</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-          {s.subtext}
+        <p className="text-xl md:text-2xl text-foreground/90 font-medium mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+          {s.subheadline}
         </p>
 
-        <div className="flex justify-center animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
+        <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+          {s.body}
+        </p>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
           <Button asChild variant="hero" size="xl" className="w-full sm:w-auto">
-            <a href="#assessment">
-              {s.cta1}
+            <a href={VIABE_URL} target="_blank" rel="noopener noreferrer">
+              {s.ctaPrimary}
               <ArrowRight className="ms-1 rtl:rotate-180" />
             </a>
           </Button>
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <LinkedInIcon className="w-4 h-4" />
+            {s.ctaSecondary}
+          </a>
         </div>
       </div>
     </section>

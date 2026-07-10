@@ -18,13 +18,20 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
-  // Consolidate legacy URLs from the pre-"open site" era (static index.html and
-  // the removed invite gate) onto the canonical home. Emits 308 (permanent);
+  // Consolidate legacy URLs onto the canonical home. Emits 308 (permanent);
   // Google treats it as a 301 equivalent.
+  //  - /index.html, /invite: pre-"open site" era.
+  //  - /ar and /ar/*: the Arabic surface is retired for the English-only
+  //    founder-page launch (0003 §5); the i18n scaffolding stays dormant.
+  //  - /services/*: the consulting SEO service pages were removed (0003 §4).
   async redirects() {
     return [
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/invite", destination: "/", permanent: true },
+      { source: "/ar", destination: "/", permanent: true },
+      { source: "/ar/:path*", destination: "/", permanent: true },
+      { source: "/services", destination: "/", permanent: true },
+      { source: "/services/:path*", destination: "/", permanent: true },
     ];
   },
 };

@@ -1,170 +1,131 @@
 import Head from 'next/head'
-import { homepageFaqs, homepageFaqsAr } from '@/components/layout/FaqSection'
-import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_AR, servicePages, servicePagesAr, SITE_NAME, SITE_URL } from '@/lib/seo-services'
+import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/seo-services'
 import type { Language } from '@/lib/i18n'
 
-const TITLE_EN = 'AI CTO Consultant for AI Architecture & Cloud Strategy | Fazal K.'
-const TITLE_AR = 'استشارات CTO للذكاء الاصطناعي والمعمارية السحابية | Fazal K.'
-const DESCRIPTION_EN =
-  'CTO-level AI and cloud architecture consulting for founders and teams planning, reviewing, or fixing high-stakes AI systems.'
-const DESCRIPTION_AR =
-  'استشارات معمارية بمستوى CTO للذكاء الاصطناعي والسحابة للفرق التي تخطط أو تراجع أو تعالج أنظمة ذكاء اصطناعي عالية الأثر.'
+const TITLE = 'Fazal Khan — CEO of RKeCom Services | Building Viabe'
+const DESCRIPTION =
+  'Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe — AI-powered business intelligence for small businesses. Former CTO of GlobalLinker.'
+const OG_ALT = 'Fazal Khan — CEO of RKeCom Services, building Viabe'
 
-function homeUrl(language: Language) {
-  return language === 'ar' ? `${SITE_URL}/ar` : `${SITE_URL}/`
-}
+const LINKEDIN = 'https://www.linkedin.com/in/fazalk1980'
+const VIABE = 'https://viabe.ai'
+const RKECOM = 'https://rkecom.in'
 
-function buildStructuredData(language: Language) {
-  const isAr = language === 'ar'
-  const description = isAr ? DESCRIPTION_AR : DESCRIPTION_EN
-  const url = homeUrl(language)
-  const services = isAr ? servicePagesAr : servicePages
-  const faqs = isAr ? homepageFaqsAr : homepageFaqs
-
+function buildStructuredData() {
   return {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebSite',
         '@id': `${SITE_URL}/#website`,
-        url,
+        url: `${SITE_URL}/`,
         name: SITE_NAME,
-        description,
-        inLanguage: language,
+        description: DESCRIPTION,
+        inLanguage: 'en',
         publisher: { '@id': `${SITE_URL}/#organization` },
-        potentialAction: {
-          '@type': 'ReadAction',
-          target: services.map(service => `${SITE_URL}${isAr ? '/ar' : ''}/services/${service.slug}`),
-        },
+      },
+      {
+        '@type': 'ProfilePage',
+        '@id': `${SITE_URL}/#profilepage`,
+        url: `${SITE_URL}/`,
+        name: TITLE,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE_URL}/#website` },
+        mainEntity: { '@id': `${SITE_URL}/#fazal` },
       },
       {
         '@type': 'Organization',
         '@id': `${SITE_URL}/#organization`,
-        name: SITE_NAME,
-        url: `${SITE_URL}/`,
+        name: 'RKeCom Services',
+        legalName: 'RKeCom Services (OPC) Private Limited',
+        url: RKECOM,
+        foundingDate: '2020-08-23',
         logo: `${SITE_URL}/favicon.ico`,
-        image: isAr ? DEFAULT_OG_IMAGE_AR : DEFAULT_OG_IMAGE,
-        sameAs: ['https://in.linkedin.com/in/fazalk1980'],
-        founder: { '@id': `${SITE_URL}/#person` },
-        contactPoint: {
-          '@type': 'ContactPoint',
-          contactType: 'sales',
-          email: 'connect@fazalk.com',
-          availableLanguage: ['English', 'Arabic'],
+        image: DEFAULT_OG_IMAGE,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Mumbai',
+          addressRegion: 'Maharashtra',
+          addressCountry: 'IN',
         },
+        identifier: {
+          '@type': 'PropertyValue',
+          propertyID: 'CIN',
+          value: 'U52609MH2020OPC344309',
+        },
+        brand: { '@type': 'Brand', name: 'Viabe' },
+        founder: { '@id': `${SITE_URL}/#lubna` },
+        employee: { '@id': `${SITE_URL}/#fazal` },
+        sameAs: [VIABE, LINKEDIN],
       },
       {
         '@type': 'Person',
-        '@id': `${SITE_URL}/#person`,
-        name: 'Fazal K.',
+        '@id': `${SITE_URL}/#fazal`,
+        name: 'Fazal Khan',
         url: `${SITE_URL}/`,
-        jobTitle: 'CTO-Level AI and Cloud Architecture Consultant',
+        jobTitle: 'Chief Executive Officer',
         worksFor: { '@id': `${SITE_URL}/#organization` },
-        sameAs: ['https://in.linkedin.com/in/fazalk1980'],
+        alumniOf: { '@type': 'Organization', name: 'GlobalLinker' },
+        description:
+          'CEO of RKeCom Services, building Viabe. Former CTO of GlobalLinker.',
         knowsAbout: [
-          'AI architecture',
+          'Applied AI',
+          'Business intelligence',
+          'Semantic search',
           'Cloud architecture',
-          'LLM systems',
-          'RAG systems',
-          'Technical due diligence',
-          'Architecture reviews',
-          'AWS architecture',
-          'Azure architecture',
+          'AWS',
+          'Multi-tenant commerce platforms',
         ],
+        sameAs: [LINKEDIN],
       },
       {
-        '@type': 'Service',
-        '@id': `${SITE_URL}/#service`,
-        name: isAr ? 'استشارات معمارية للذكاء الاصطناعي والسحابة' : 'AI and Cloud Architecture Consulting',
-        serviceType: [
-          'AI system architecture',
-          'Cloud architecture consulting',
-          'LLM and RAG design',
-          'Technical architecture review',
-          'AI technical due diligence',
-        ],
-        provider: { '@id': `${SITE_URL}/#organization` },
-        areaServed: [
-          { '@type': 'Place', name: 'GCC' },
-          { '@type': 'Place', name: 'Worldwide' },
-        ],
-        audience: {
-          '@type': 'BusinessAudience',
-          audienceType: 'Software companies, SaaS teams, founders, system integrators, digital transformation firms',
-        },
-        description,
-        url,
-        hasOfferCatalog: {
-          '@type': 'OfferCatalog',
-          name: isAr ? 'خدمات استشارية CTO للذكاء الاصطناعي' : 'AI CTO advisory services',
-          itemListElement: services.map(service => ({
-            '@type': 'Offer',
-            itemOffered: {
-              '@type': 'Service',
-              name: service.title,
-              url: `${SITE_URL}${isAr ? '/ar' : ''}/services/${service.slug}`,
-              description: service.description,
-            },
-          })),
-        },
-      },
-      {
-        '@type': 'FAQPage',
-        '@id': `${url}#faq`,
-        inLanguage: language,
-        mainEntity: faqs.map(item => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: item.answer,
-          },
-        })),
+        '@type': 'Person',
+        '@id': `${SITE_URL}/#lubna`,
+        name: 'Lubna Khan',
+        jobTitle: 'Founder & Director',
+        worksFor: { '@id': `${SITE_URL}/#organization` },
       },
     ],
   }
 }
 
 export default function HomeSeo({ language = 'en' }: { language?: Language }) {
-  const isAr = language === 'ar'
-  const title = isAr ? TITLE_AR : TITLE_EN
-  const description = isAr ? DESCRIPTION_AR : DESCRIPTION_EN
-  const url = homeUrl(language)
-  const alternateUrl = isAr ? `${SITE_URL}/` : `${SITE_URL}/ar`
-  const ogImage = isAr ? DEFAULT_OG_IMAGE_AR : DEFAULT_OG_IMAGE
+  // English-only surface (0003 §5). The prop is retained for call-site
+  // compatibility; the Arabic surface is dormant and redirected to `/`.
+  void language
+  const url = `${SITE_URL}/`
 
   return (
     <Head>
-      <title>{title}</title>
-      <meta name="description" content={description} key="description" />
+      <title>{TITLE}</title>
+      <meta name="description" content={DESCRIPTION} key="description" />
       <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" key="robots" />
       <link rel="canonical" href={url} key="canonical" />
-      <link rel="alternate" hrefLang={language} href={url} key={`alternate-${language}`} />
-      <link rel="alternate" hrefLang={isAr ? 'en' : 'ar'} href={alternateUrl} key={`alternate-${isAr ? 'en' : 'ar'}`} />
-      <link rel="alternate" hrefLang="x-default" href={`${SITE_URL}/`} key="alternate-x-default" />
+      <link rel="alternate" hrefLang="en" href={url} key="alternate-en" />
+      <link rel="alternate" hrefLang="x-default" href={url} key="alternate-x-default" />
 
       <meta property="og:type" content="website" key="og:type" />
       <meta property="og:site_name" content={SITE_NAME} key="og:site_name" />
-      <meta property="og:title" content={title} key="og:title" />
-      <meta property="og:description" content={description} key="og:description" />
+      <meta property="og:title" content={TITLE} key="og:title" />
+      <meta property="og:description" content={DESCRIPTION} key="og:description" />
       <meta property="og:url" content={url} key="og:url" />
-      <meta property="og:image" content={ogImage} key="og:image" />
-      <meta property="og:image:secure_url" content={ogImage} key="og:image:secure_url" />
+      <meta property="og:image" content={DEFAULT_OG_IMAGE} key="og:image" />
+      <meta property="og:image:secure_url" content={DEFAULT_OG_IMAGE} key="og:image:secure_url" />
       <meta property="og:image:type" content="image/png" key="og:image:type" />
       <meta property="og:image:width" content="1200" key="og:image:width" />
       <meta property="og:image:height" content="630" key="og:image:height" />
-      <meta property="og:image:alt" content="AI and cloud architecture consulting by Fazal K." key="og:image:alt" />
-      <meta property="og:locale" content={isAr ? 'ar_AE' : 'en_US'} key="og:locale" />
+      <meta property="og:image:alt" content={OG_ALT} key="og:image:alt" />
+      <meta property="og:locale" content="en_US" key="og:locale" />
 
       <meta name="twitter:card" content="summary_large_image" key="twitter:card" />
-      <meta name="twitter:title" content={title} key="twitter:title" />
-      <meta name="twitter:description" content={description} key="twitter:description" />
-      <meta name="twitter:image" content={ogImage} key="twitter:image" />
-      <meta name="twitter:image:alt" content="AI and cloud architecture consulting by Fazal K." key="twitter:image:alt" />
+      <meta name="twitter:title" content={TITLE} key="twitter:title" />
+      <meta name="twitter:description" content={DESCRIPTION} key="twitter:description" />
+      <meta name="twitter:image" content={DEFAULT_OG_IMAGE} key="twitter:image" />
+      <meta name="twitter:image:alt" content={OG_ALT} key="twitter:image:alt" />
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStructuredData(language)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildStructuredData()) }}
       />
     </Head>
   )

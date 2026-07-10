@@ -4,13 +4,13 @@ import { useGlobalUX } from '@/components/providers/GlobalUXProvider'
 import SiteHeader from '@/components/layout/SiteHeader'
 
 export default function TermsPage() {
-  const { t, language } = useGlobalUX()
+  const { t } = useGlobalUX()
   const s = t.terms
 
   return (
     <>
       <Head>
-        <title>{`${s.headline} | Fazal K.`}</title>
+        <title>{`${s.headline} | Fazal Khan`}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <div className="min-h-screen bg-background text-foreground">
@@ -19,7 +19,7 @@ export default function TermsPage() {
         <div className="border-b border-border/40 pt-24 pb-4">
           <div className="container mx-auto px-6 max-w-4xl">
             <Link href="/" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-              ← {language === 'ar' ? 'العودة إلى الرئيسية' : 'Back to Home'}
+              ← Back to Home
             </Link>
           </div>
         </div>
@@ -44,7 +44,7 @@ export default function TermsPage() {
         <footer className="border-t border-border/30 py-8 mt-12">
           <div className="container mx-auto px-6 max-w-4xl flex flex-wrap gap-4 justify-between items-center">
             <p className="text-xs text-muted-foreground/50">
-              © {new Date().getFullYear()} Fazal K. {t.footer.copyright}
+              © {new Date().getFullYear()} RKeCom Services (OPC) Private Limited. {t.footer.copyright}
             </p>
             <div className="flex gap-6">
               <Link href="/terms" className="text-xs text-muted-foreground hover:text-gold transition-colors">{t.footer.termsLabel}</Link>
