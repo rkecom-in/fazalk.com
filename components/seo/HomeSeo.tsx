@@ -90,6 +90,7 @@ function buildStructuredData() {
           'Semantic search',
           'Cloud architecture',
           'AWS',
+          'B2B/B2C marketplaces',
           'Multi-tenant commerce platforms',
         ],
         sameAs: [LINKEDIN],
