@@ -4,8 +4,8 @@ import type { Language } from '@/lib/i18n'
 
 const TITLE = 'Fazal Khan — CEO of RKeCom Services | Building Viabe'
 const DESCRIPTION =
-  'Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe — AI-powered business intelligence for small businesses. Former CTO of GlobalLinker.'
-const OG_ALT = 'Fazal Khan — CEO of RKeCom Services, building Viabe'
+  'Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe, with Viabe Pulse and Viabe Location Check live in India and Viabe Team coming later.'
+const OG_ALT = 'Fazal Khan — CEO of RKeCom Services, building Viabe products'
 
 const LINKEDIN = 'https://www.linkedin.com/in/fazalk1980'
 const VIABE = 'https://viabe.ai'
@@ -14,7 +14,7 @@ const RKECOM = 'https://rkecom.in'
 // Canonical, cross-domain @ids. These MUST match the graph declared on
 // rkecom.in and viabe.ai byte-for-byte so Google resolves rkecom.in +
 // viabe.ai + fazalk.com to a single set of entities (0006). Page objects
-// (#website / #profilepage / #viabe-reports) stay fazalk.com-scoped.
+// (#website / #profilepage) stay fazalk.com-scoped; live products use viabe.ai IDs.
 const ORG_ID = `${RKECOM}/#org`
 const FAZAL_ID = `${RKECOM}/#fazal-khan`
 const LUBNA_ID = `${RKECOM}/#lubna-khan`
@@ -48,7 +48,7 @@ function buildStructuredData() {
         name: 'RKeCom Services',
         legalName: 'RKeCom Services (OPC) Private Limited',
         description:
-          'Mumbai-based applied-AI company building affordable, enterprise-grade business intelligence for small businesses, one product at a time — starting with its Viabe brand.',
+          'India-based applied-AI company building affordable, enterprise-grade business intelligence for small businesses through the Viabe brand.',
         url: RKECOM,
         foundingDate: '2020-08-23',
         logo: `${SITE_URL}/favicon.ico`,
@@ -97,20 +97,24 @@ function buildStructuredData() {
         ],
       },
       {
-        '@type': 'Service',
-        '@id': `${SITE_URL}/#viabe-reports`,
-        name: 'Viabe Reports',
-        serviceType: 'AI-powered business location viability report',
-        description:
-          'A composite viability score for a specific address and business type — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view, every figure sourced with cited methodology.',
-        url: VIABE,
+        '@type': 'Product',
+        '@id': 'https://viabe.ai/in/pulse#product',
+        name: 'Viabe Pulse',
+        description: 'A scan of how shops and local businesses appear online, compared with similar businesses nearby. For shops and local businesses in India.',
+        url: 'https://viabe.ai/in/pulse',
         brand: { '@id': VIABE_BRAND_ID },
-        provider: { '@id': ORG_ID },
-        areaServed: [
-          { '@type': 'Country', name: 'IN' },
-          { '@type': 'Country', name: 'US' },
-          { '@type': 'Country', name: 'AE' },
-        ],
+        manufacturer: { '@id': ORG_ID },
+        areaServed: { '@type': 'Country', name: 'India' },
+      },
+      {
+        '@type': 'Product',
+        '@id': 'https://viabe.ai/in/location-check#product',
+        name: 'Viabe Location Check',
+        description: 'A report on one exact address before signing a lease, covering competitors, fair rent, footfall and a clear verdict for cafés, restaurants and quick-service outlets in India.',
+        url: 'https://viabe.ai/in/location-check',
+        brand: { '@id': VIABE_BRAND_ID },
+        manufacturer: { '@id': ORG_ID },
+        areaServed: { '@type': 'Country', name: 'India' },
       },
       {
         '@type': 'Person',
@@ -121,7 +125,7 @@ function buildStructuredData() {
         worksFor: { '@id': ORG_ID },
         alumniOf: { '@type': 'Organization', name: 'GlobalLinker' },
         description:
-          'CEO of RKeCom Services, building Viabe. Former CTO of GlobalLinker.',
+          'CEO of RKeCom Services, building Viabe products for small businesses in India. Former CTO of GlobalLinker.',
         knowsAbout: [
           'Applied AI',
           'Business intelligence',

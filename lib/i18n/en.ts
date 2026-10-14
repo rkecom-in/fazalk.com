@@ -3,7 +3,7 @@ export const en = {
   meta: {
     title: "Fazal Khan — CEO of RKeCom Services | Building Viabe",
     description:
-      "Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe — AI-powered business intelligence for small businesses. Former CTO of GlobalLinker.",
+      "Fazal Khan is the CEO of RKeCom Services, a Mumbai-based applied-AI company building Viabe, with Viabe Pulse and Viabe Location Check live in India and Viabe Team coming later.",
   },
   nav: {
     viabe: "Explore Viabe",
@@ -13,7 +13,7 @@ export const en = {
     headline1: "The decisions big companies make with data,",
     headline2: "small businesses still make on gut.",
     subheadline: "I'm building the AI that changes that.",
-    body: "I'm Fazal Khan, CEO of RKeCom Services — an applied-AI company putting enterprise-grade business intelligence within reach of the businesses that never had it. Our first product, Viabe, tells you whether a location will work before you sign the lease.",
+    body: "I'm Fazal Khan, CEO of RKeCom Services — an applied-AI company putting enterprise-grade business intelligence within reach of small businesses. Viabe is our brand, with three products: Viabe Pulse (a scan for shops and local businesses in India), Viabe Location Check (a report on one exact address before signing a lease), and Viabe Team (coming later; join the waitlist).",
     ctaPrimary: "Explore Viabe",
     ctaSecondary: "Connect on LinkedIn",
   },
@@ -23,12 +23,11 @@ export const en = {
     body: "Large firms don't guess. They model demand, test locations, read the competition and price against data. Small businesses — most of every economy — make the same high-stakes calls on instinct, because the tools were never built for them or priced for them. RKeCom exists to close that gap: affordable, AI-powered business intelligence, shipped one product at a time.",
   },
   viabe: {
-    badge: "The Product",
-    headline: "Viabe — know before you commit.",
-    body: "Viabe is our applied-AI brand. Its first product, Viabe Reports, answers the most expensive question an owner faces before signing a lease: will this location actually work? For a specific address and business type, Viabe returns a composite viability score — competitor landscape, rent-burden analysis, footfall read, local consumer personas and a positioning view — every figure sourced, with cited methodology.",
-    status:
-      "Live for restaurants, cafés, bakeries and QSR — across India, the US and the UAE, with more verticals to follow.",
-    cta: "See Viabe Reports",
+    badge: "The Products",
+    headline: "Viabe: three products for businesses in India.",
+    body: "Viabe Pulse scans how a shop or local business appears on Google Maps, Google Search, its website and listings, and ChatGPT, compared with similar businesses nearby. Results in minutes, not days. Viabe Location Check is a report on one exact address before signing a lease, with competitors, fair rent, footfall and a clear verdict for cafés, restaurants and quick-service outlets.",
+    status: "Viabe Pulse and Viabe Location Check are live in India in English and Hindi. Viabe Team is planned as an AI manager for sales, marketing and daily work. You stay the owner; nothing goes out and nothing is spent without your approval. It is coming later, and the waitlist is open.",
+    cta: "Explore Viabe products",
   },
   track: {
     badge: "Vision",
@@ -38,7 +37,7 @@ export const en = {
   company: {
     badge: "The Company",
     headline: "RKeCom Services",
-    body: "RKeCom Services (OPC) Private Limited is an applied-AI company, founded in 2020 and headquartered in Mumbai, India. It develops and ships AI-powered business-intelligence products one at a time — the first is its Viabe brand.",
+    body: "RKeCom Services (OPC) Private Limited is an applied-AI company, founded in 2020 and headquartered in Mumbai, India. Its Viabe brand has Viabe Pulse and Viabe Location Check live in India, with Viabe Team coming later and its waitlist open.",
     facts: [
       { label: "Legal name", value: "RKeCom Services (OPC) Private Limited" },
       { label: "CIN", value: "U52609MH2020OPC344309" },

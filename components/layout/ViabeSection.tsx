@@ -3,6 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { useGlobalUX } from "@/components/providers/GlobalUXProvider";
 
 const VIABE_URL = "https://viabe.ai";
+const VIABE_PULSE_URL = "https://viabe.ai/in/pulse";
+const VIABE_LOCATION_CHECK_URL = "https://viabe.ai/in/location-check";
+const VIABE_TEAM_WAITLIST_URL = "https://viabe.ai/in#team";
 
 const ViabeSection = () => {
   const { t } = useGlobalUX();
@@ -27,6 +30,17 @@ const ViabeSection = () => {
             <ArrowRight className="ms-1 rtl:rotate-180" />
           </a>
         </Button>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a href={VIABE_PULSE_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground underline decoration-gold/50 underline-offset-4 hover:text-gold">
+            Viabe Pulse
+          </a>
+          <a href={VIABE_LOCATION_CHECK_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground underline decoration-gold/50 underline-offset-4 hover:text-gold">
+            Viabe Location Check
+          </a>
+          <a href={VIABE_TEAM_WAITLIST_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 hover:text-gold">
+            Viabe Team (join the waitlist)
+          </a>
+        </div>
       </div>
     </section>
   );
