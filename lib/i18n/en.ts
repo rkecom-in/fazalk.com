@@ -26,7 +26,7 @@ export const en = {
     badge: "The Products",
     headline: "Viabe: three products for businesses in India.",
     body: "Viabe Pulse scans how a shop or local business appears on Google Maps, Google Search, its website and listings, and ChatGPT, compared with similar businesses nearby. Results in minutes, not days. Viabe Location Check is a report on one exact address before signing a lease, with competitors, fair rent, footfall and a clear verdict for cafés, restaurants and quick-service outlets.",
-    status: "Viabe Pulse and Viabe Location Check are live in India in English and Hindi. Viabe Team is planned as an AI manager for sales, marketing and daily work. You stay the owner; nothing goes out and nothing is spent without your approval. It is coming later, and the waitlist is open.",
+    status: "Viabe Pulse is live in India in English and Hindi. Viabe Location Check is live in India in English. Viabe Team is planned as an AI manager for sales, marketing and daily work. You stay the owner; nothing goes out and nothing is spent without your approval. It is coming later, and the waitlist is open.",
     cta: "Explore Viabe products",
   },
   track: {

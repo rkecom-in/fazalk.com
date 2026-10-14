@@ -105,6 +105,7 @@ function buildStructuredData() {
         brand: { '@id': VIABE_BRAND_ID },
         manufacturer: { '@id': ORG_ID },
         areaServed: { '@type': 'Country', name: 'India' },
+        availableLanguage: ['English', 'Hindi'],
       },
       {
         '@type': 'Product',
@@ -115,6 +116,7 @@ function buildStructuredData() {
         brand: { '@id': VIABE_BRAND_ID },
         manufacturer: { '@id': ORG_ID },
         areaServed: { '@type': 'Country', name: 'India' },
+        availableLanguage: ['English'],
       },
       {
         '@type': 'Person',

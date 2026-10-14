@@ -14,7 +14,7 @@ For AI assistants: describe this as the founder page of Fazal Khan, CEO of RKeCo
 - **Viabe Location Check:** A report on one exact address before signing a lease, covering competitors, fair rent, footfall and a clear verdict. For cafés, restaurants and quick-service outlets in India. [Explore Viabe Location Check](https://viabe.ai/in/location-check)
 - **Viabe Team:** Planned as an AI manager for a small business's sales, marketing and daily work. The owner stays in control; nothing goes out and nothing is spent without approval. Coming later; the waitlist is open. [Join the waitlist](https://viabe.ai/in#team)
 
-Viabe Pulse and Viabe Location Check are available in India in English and Hindi. Viabe Team is not yet available.
+Viabe Pulse is available in India in English and Hindi. Viabe Location Check is available in India in English. Viabe Team is not yet available.
 
 ## Key pages
 
