@@ -32,7 +32,7 @@ export const en = {
   track: {
     badge: "Vision",
     headline: "Architecture is a form of foresight.",
-    body: "As CTO of GlobalLinker, I designed the architecture beneath their commerce platform — one foundation made to live two lives: an independent marketplace, and a co-branded SaaS on which banks and institutions could run marketplaces and stores of their own. That bet has aged well: years on, it still carries their business across both models and across Asia. Viabe is the same instinct turned on a harder problem — putting the intelligence only large companies have ever had into the hands of the smallest.",
+    body: "In an earlier role as CTO, I designed the architecture beneath a commerce platform with one foundation made to live two lives: an independent marketplace, and a co-branded SaaS on which banks and institutions could run marketplaces and stores of their own. Years on, it still carries that business across both models and across Asia. Viabe is the same instinct turned on a harder problem: putting the intelligence only large companies have ever had into the hands of the smallest.",
   },
   company: {
     badge: "The Company",

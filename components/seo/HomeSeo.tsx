@@ -125,9 +125,8 @@ function buildStructuredData() {
         url: `${SITE_URL}/`,
         jobTitle: 'Chief Executive Officer',
         worksFor: { '@id': ORG_ID },
-        alumniOf: { '@type': 'Organization', name: 'GlobalLinker' },
         description:
-          'CEO of RKeCom Services, building Viabe products for small businesses in India. Former CTO of GlobalLinker.',
+          'CEO of RKeCom Services, building Viabe products for small businesses in India. Former CTO, with prior experience building commerce platforms.',
         knowsAbout: [
           'Applied AI',
           'Business intelligence',
