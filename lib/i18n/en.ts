@@ -13,7 +13,7 @@ export const en = {
     headline1: "The decisions big companies make with data,",
     headline2: "small businesses still make on gut.",
     subheadline: "I'm building the AI that changes that.",
-    body: "I'm Fazal Khan, CEO of RKeCom Services, an applied-AI company putting enterprise-grade business intelligence within reach of small businesses. Viabe is our brand, with three products: Viabe Pulse (a scan for shops and local businesses in India), Viabe Location Check (a report on one exact address before signing a lease), and Viabe Team (coming later; join the waitlist).",
+    body: "I'm Fazal Khan, CEO of RKeCom Services, an applied-AI company putting enterprise-grade business intelligence within reach of small businesses. Viabe is our brand, with three products: Viabe Pulse (an online check for shops and local businesses in India), Viabe Location Check (a report on one exact address before signing a lease), and Viabe Team (coming later; join the waitlist).",
     ctaPrimary: "Explore Viabe",
     ctaSecondary: "Connect on LinkedIn",
   },

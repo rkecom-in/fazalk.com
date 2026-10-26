@@ -100,7 +100,7 @@ function buildStructuredData() {
         '@type': 'Product',
         '@id': 'https://viabe.ai/in/pulse#product',
         name: 'Viabe Pulse',
-        description: 'A scan of how shops and local businesses appear online, compared with similar businesses nearby. For shops and local businesses in India.',
+        description: 'A check of how shops and local businesses appear online, compared with similar businesses nearby. For shops and local businesses in India.',
         url: 'https://viabe.ai/in/pulse',
         brand: { '@id': VIABE_BRAND_ID },
         manufacturer: { '@id': ORG_ID },

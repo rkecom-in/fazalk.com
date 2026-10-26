@@ -17,10 +17,9 @@ interface GlobalUXContextValue {
 
 const GlobalUXContext = createContext<GlobalUXContextValue | null>(null);
 
+// English only for now (CEO 27 Oct 2026): no automatic switch to Arabic from the browser language or a saved choice.
 function detectDefaultLanguage(): Language {
-  if (typeof navigator === 'undefined') return 'en';
-  const lang = navigator.language || '';
-  return lang.startsWith('ar') ? 'ar' : 'en';
+  return 'en';
 }
 
 export function GlobalUXProvider({
@@ -37,10 +36,9 @@ export function GlobalUXProvider({
   // Hydrate from localStorage + detect locale on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('ux-theme') as Theme | null;
-    const savedLang = localStorage.getItem('ux-language') as Language | null;
 
     setThemeState(savedTheme ?? 'dark');
-    setLanguageState(initialLanguage ?? savedLang ?? detectDefaultLanguage());
+    setLanguageState(initialLanguage === 'en' ? 'en' : detectDefaultLanguage());
     setMounted(true);
   }, [initialLanguage]);
 
